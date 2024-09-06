@@ -20,7 +20,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Temp" component={TempScreen} />
-        <Stack.Screen name="Mypage" component={MypageScreen} />
+        <Stack.Screen name="Mypage" component={MypageScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Map" component={MapScreen} />
       </Stack.Navigator>
       <StatusBar style="auto" />
