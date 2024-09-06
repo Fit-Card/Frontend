@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
+import CustomButton from "../components/button/CustomButton";
 
 export default function MapScreen() {
   // NavigationProp 타입 지정
@@ -9,10 +10,10 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>지도 화면입니다!</Text>
+      <Text style={styles.title}>지도 화면입니다!</Text>
 
       <View style={styles.buttonContainer}>
-        <Button title="임시" onPress={() => navigation.navigate("Temp")} />
+        <CustomButton title="임시" onPress={() => navigation.navigate("Temp")} />
       </View>
     </View>
   );
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "SUITE-Regular",
     marginBottom: 20,
   },
   buttonContainer: {

@@ -1,9 +1,11 @@
 import React from "react";
+
 import { View, Text, Button, StyleSheet, Image} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import common from "../styles/Common"; // 스타일 파일 가져오기
+import CustomButton from "../components/button/CustomButton";
 
 export default function MypageScreen() {
   // NavigationProp 타입 지정
