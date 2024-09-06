@@ -1,12 +1,30 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StyleSheet } from 'react-native';
+
+import LoginScreen from "./pages/Login";
+import TempScreen from './pages/Temp';
+import MypageScreen from './pages/Mypage';
+import MapScreen from "./pages/Map";
 
 export default function App() {
+
+  
+  const Stack = createStackNavigator();
+
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.mainText}>Fit-Card</Text>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Temp" component={TempScreen} />
+        <Stack.Screen name="Mypage" component={MypageScreen} />
+        <Stack.Screen name="Map" component={MapScreen} />
+      </Stack.Navigator>
       <StatusBar style="auto" />
-    </View>
+    </NavigationContainer>
   );
 }
 
