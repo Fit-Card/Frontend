@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,7 +22,9 @@ export default function MypageScreen() {
       <View style={[mypageStyle.helloContainer]}>
         <Text style={[common.textBlue, common.textLarge, common.textBold]}>
           김싸피
-          <Text style={[common.textGray, common.textMedium, common.textBold]}>님, 반갑습니다.</Text>
+          <Text style={[common.textGray, common.textMedium, common.textBold]}>
+            님, 반갑습니다.
+          </Text>
         </Text>
       </View>
 

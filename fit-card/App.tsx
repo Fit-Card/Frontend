@@ -10,10 +10,12 @@ import { Icon } from "react-native-elements";
 import Header from "./components/Header";
 
 import LoginScreen from "./pages/Login";
-import TempScreen from "./pages/Temp";
+import MainScreen from "./pages/Home";
 import MypageScreen from "./pages/Mypage";
 import MapScreen from "./pages/Map";
 import AddcardScreen from "./pages/Addcard";
+import SearchScreen from "./pages/Search";
+import CardScreen from "./pages/Card";
 
 const Tab = createBottomTabNavigator();
 
@@ -25,7 +27,7 @@ function TabNavigator() {
           let iconName: string = "home";
           let iconType: string = "ionicon";
 
-          if (route.name === "Temp") {
+          if (route.name === "Main") {
             iconName = "home";
             iconType = "ionicon";
           } else if (route.name === "Search") {
@@ -51,28 +53,28 @@ function TabNavigator() {
     >
       <Tab.Screen
         name="Home"
-        component={TempScreen}
-        options={{ headerShown: false }}
+        component={MainScreen}
+        options={{ header: () => <Header title="Main" /> }}
       />
       <Tab.Screen
         name="Search"
-        component={TempScreen}
-        options={{ headerShown: false }}
+        component={SearchScreen}
+        options={{ header: () => <Header title="Search" /> }}
       />
       <Tab.Screen
         name="Map"
         component={MapScreen}
-        options={{ headerShown: false }}
+        options={{ header: () => <Header title="Map" /> }}
       />
       <Tab.Screen
         name="Card"
-        component={TempScreen}
-        options={{ headerShown: false }}
+        component={CardScreen}
+        options={{ header: () => <Header title="Card" /> }}
       />
       <Tab.Screen
         name="Mypage"
         component={MypageScreen}
-        options={{ headerShown: false }}
+        options={{ header: () => <Header title="MyPage" /> }}
       />
     </Tab.Navigator>
   );
@@ -112,30 +114,36 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Temp" component={TempScreen} />
-        <Stack.Screen name="Mypage" component={MypageScreen} />
         <Stack.Screen name="Addcard" component={AddcardScreen} />
-        <Stack.Screen name="Map" component={MapScreen} />
         <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Temp"
+          name="Main"
           component={TabNavigator}
-          options={{ header: () => <Header title="Temp" /> }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Mypage"
-          component={MypageScreen}
-          options={{ header: () => <Header title="MyPage" /> }}
+          name="Search"
+          component={SearchScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Map"
           component={MapScreen}
-          options={{ header: () => <Header title="Map" /> }}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Card"
+          component={CardScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Mypage"
+          component={MypageScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
       <StatusBar style="auto" />

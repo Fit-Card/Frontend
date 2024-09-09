@@ -13,11 +13,17 @@ export default function TempScreen() {
       <Text style={styles.title}>다른 페이지로 가보기</Text>
 
       <View style={styles.buttonContainer}>
-        <CustomButton title="임시" onPress={() => navigation.navigate("Temp")} />
+        <CustomButton
+          title="임시"
+          onPress={() => navigation.navigate("Temp")}
+        />
       </View>
 
       <View style={styles.buttonContainer}>
-        <CustomButton title="마이페이지" onPress={() => navigation.navigate("Mypage")} />
+        <CustomButton
+          title="마이페이지"
+          onPress={() => navigation.navigate("Mypage")}
+        />
       </View>
 
       <View style={styles.buttonContainer}>

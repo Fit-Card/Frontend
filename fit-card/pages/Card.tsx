@@ -1,12 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { StackParamList } from "../navigationTypes";
 
-export default function MapScreen() {
+export default function CardScreen() {
   return (
     <View style={styles.container}>
-      <Text>지도 화면입니다!</Text>
+      <Text>카드 추천 화면입니다!</Text>
     </View>
   );
 }
@@ -20,7 +18,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontFamily: "SUITE-Regular",
+    fontWeight: "bold",
     marginBottom: 20,
   },
   buttonContainer: {

@@ -17,6 +17,8 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "@types/react": "~18.2.79",
     "expo": "~51.0.28",
+    "expo-font": "~12.0.10",
+    "expo-splash-screen": "^0.27.5",
     "expo-status-bar": "~1.12.1",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
@@ -28,9 +30,7 @@
     "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
     "react-native-webview": "^13.8.6",
-    "typescript": "~5.3.3",
-    "expo-font": "~12.0.10",
-    "expo-splash-screen": "~0.27.5"
+    "typescript": "~5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
