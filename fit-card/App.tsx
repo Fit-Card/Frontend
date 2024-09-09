@@ -5,6 +5,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Icon } from "react-native-elements";
 import Header from "./components/Header";
 
 import LoginScreen from "./pages/Login";
@@ -12,6 +14,69 @@ import TempScreen from "./pages/Temp";
 import MypageScreen from "./pages/Mypage";
 import MapScreen from "./pages/Map";
 import AddcardScreen from "./pages/Addcard";
+
+const Tab = createBottomTabNavigator();
+
+function TabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName: string = "home";
+          let iconType: string = "ionicon";
+
+          if (route.name === "Temp") {
+            iconName = "home";
+            iconType = "ionicon";
+          } else if (route.name === "Search") {
+            iconName = "search";
+            iconType = "ionicon";
+          } else if (route.name === "Map") {
+            iconName = "map-marker-alt";
+            iconType = "font-awesome-5";
+          } else if (route.name === "Card") {
+            iconName = "credit-card";
+            iconType = "font-awesome";
+          } else if (route.name === "Mypage") {
+            iconName = "user";
+            iconType = "font-awesome";
+          }
+          return (
+            <Icon name={iconName} type={iconType} size={size} color={color} />
+          );
+        },
+        tabBarActiveTintColor: "#5253F0",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={TempScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={TempScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Map"
+        component={MapScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Card"
+        component={TempScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Mypage"
+        component={MypageScreen}
+        options={{ headerShown: false }}
+      />
+    </Tab.Navigator>
+  );
+}
 
 // 앱 시작 시 SplashScreen을 표시하고 로딩이 완료되면 숨김
 export default function App() {
@@ -49,7 +114,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Temp" component={TempScreen} />
-        <Stack.Screen name="Mypage" component={MypageScreen}/>
+        <Stack.Screen name="Mypage" component={MypageScreen} />
         <Stack.Screen name="Addcard" component={AddcardScreen} />
         <Stack.Screen name="Map" component={MapScreen} />
         <Stack.Screen
@@ -59,7 +124,7 @@ export default function App() {
         />
         <Stack.Screen
           name="Temp"
-          component={TempScreen}
+          component={TabNavigator}
           options={{ header: () => <Header title="Temp" /> }}
         />
         <Stack.Screen
