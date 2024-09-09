@@ -10,6 +10,7 @@ import LoginScreen from "./pages/Login";
 import TempScreen from "./pages/Temp";
 import MypageScreen from "./pages/Mypage";
 import MapScreen from "./pages/Map";
+import AddcardScreen from "./pages/Addcard";
 
 // 앱 시작 시 SplashScreen을 표시하고 로딩이 완료되면 숨김
 export default function App() {
@@ -41,13 +42,14 @@ export default function App() {
   if (!fontsLoaded) {
     return null; // 폰트가 로드되지 않은 경우 아무것도 렌더링하지 않음
   }
-
+  // 헤더 안보이게 하기 ... options={{headerShown: false}}
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Temp" component={TempScreen} />
-        <Stack.Screen name="Mypage" component={MypageScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="Mypage" component={MypageScreen}/>
+        <Stack.Screen name="Addcard" component={AddcardScreen} />
         <Stack.Screen name="Map" component={MapScreen} />
       </Stack.Navigator>
       <StatusBar style="auto" />

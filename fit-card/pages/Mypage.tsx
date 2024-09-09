@@ -1,17 +1,16 @@
 import React from "react";
-
-import { View, Text, Button, StyleSheet, Image} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import common from "../styles/Common"; // 스타일 파일 가져오기
-import CustomButton from "../components/button/CustomButton";
 
 export default function MypageScreen() {
   // NavigationProp 타입 지정
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+
   return (
-    <SafeAreaView style={mypageStyle.container}>
+    <ScrollView style={[mypageStyle.container]}>
       {/* 인삿말 */}
       <View style={[mypageStyle.helloContainer]}>
         <Text style={[common.textBlue, common.textLarge, common.textBold]}>
@@ -32,59 +31,65 @@ export default function MypageScreen() {
         </View>
 
         {/* 카드 갱신 */}
-        <View style={[mypageStyle.menuOption]}>
+        <TouchableOpacity
+          style={[mypageStyle.menuOption]}
+          onPress={() => navigation.navigate("Addcard")}
+        >
           <Image
             source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
-            style={[mypageStyle.menuIcon]} // 아이콘 스타일
+            style={mypageStyle.menuIcon} // 아이콘 스타일
           />
           <Text style={[mypageStyle.menuText]}>카드 갱신</Text>
-        </View>
+        </TouchableOpacity>
+
         {/* 카드 삭제 */}
-        <View style={[mypageStyle.menuOption]}>
+        <TouchableOpacity style={mypageStyle.menuOption}>
           <Image
             source={require("../assets/icons/icon_delete.png")} // PNG 파일 경로
-            style={[mypageStyle.menuIcon]} // 아이콘 스타일
+            style={mypageStyle.menuIcon} // 아이콘 스타일
           />
-          <Text style={[mypageStyle.menuText]}>카드 삭제</Text>
-        </View>
+          <Text style={mypageStyle.menuText}>카드 삭제</Text>
+        </TouchableOpacity>
 
-        <View style={[mypageStyle.menuTitle]}>
+        <View style={mypageStyle.menuTitle}>
           <Text style={[common.textGray, common.textBold]}>사용자 설정</Text>
         </View>
-                {/* 사용자 정보 관리 */}
-                <View style={[mypageStyle.menuOption]}>
+
+        {/* 사용자 정보 관리 */}
+        <TouchableOpacity style={mypageStyle.menuOption}>
           <Image
             source={require("../assets/icons/icon_info.png")} // PNG 파일 경로
-            style={[mypageStyle.menuIcon]} // 아이콘 스타일
+            style={mypageStyle.menuIcon} // 아이콘 스타일
           />
-          <Text style={[mypageStyle.menuText]}>사용자 정보 관리</Text>
-        </View>
-                {/* 로그아웃 */}
-                <View style={[mypageStyle.menuOption]}>
+          <Text style={mypageStyle.menuText}>사용자 정보 관리</Text>
+        </TouchableOpacity>
+
+        {/* 로그아웃 */}
+        <TouchableOpacity style={mypageStyle.menuOption}>
           <Image
             source={require("../assets/icons/icon_signout.png")} // PNG 파일 경로
-            style={[mypageStyle.menuIcon]} // 아이콘 스타일
+            style={mypageStyle.menuIcon} // 아이콘 스타일
           />
-          <Text style={[mypageStyle.menuText]}>로그아웃</Text>
-        </View>
-                {/* 회원 탈퇴 */}
-                <View style={[mypageStyle.menuOption]}>
+          <Text style={mypageStyle.menuText}>로그아웃</Text>
+        </TouchableOpacity>
+
+        {/* 회원 탈퇴 */}
+        <TouchableOpacity style={mypageStyle.menuOption}>
           <Image
             source={require("../assets/icons/icon_no_red.png")} // PNG 파일 경로
-            style={[mypageStyle.menuIcon]} // 아이콘 스타일
+            style={mypageStyle.menuIcon} // 아이콘 스타일
           />
           <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
-        </View>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
 const mypageStyle = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
     backgroundColor: "#fff",
+    width: "100%",
   },
   helloContainer: {
     display: "flex",
