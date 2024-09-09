@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
+import Header from "./components/Header";
 
 import LoginScreen from "./pages/Login";
 import TempScreen from "./pages/Temp";
@@ -51,6 +52,26 @@ export default function App() {
         <Stack.Screen name="Mypage" component={MypageScreen}/>
         <Stack.Screen name="Addcard" component={AddcardScreen} />
         <Stack.Screen name="Map" component={MapScreen} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Temp"
+          component={TempScreen}
+          options={{ header: () => <Header title="Temp" /> }}
+        />
+        <Stack.Screen
+          name="Mypage"
+          component={MypageScreen}
+          options={{ header: () => <Header title="MyPage" /> }}
+        />
+        <Stack.Screen
+          name="Map"
+          component={MapScreen}
+          options={{ header: () => <Header title="Map" /> }}
+        />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
