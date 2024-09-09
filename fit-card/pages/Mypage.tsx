@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
-import { SafeAreaView } from "react-native-safe-area-context";
 import common from "../styles/Common"; // 스타일 파일 가져오기
 
 export default function MypageScreen() {
