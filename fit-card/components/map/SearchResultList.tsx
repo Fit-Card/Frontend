@@ -13,7 +13,7 @@ type StoreItem = {
 
 type SearchResultListProps = {
   searchQuery: string;
-  onSelectLocation: (latitude: number, longitude: number) => void; // 클릭 시 위치를 부모 컴포넌트로 전달하는 함수
+  onSelectLocation: (latitude: number, longitude: number, name: string, address: string) => void; // 인자를 추가
 };
 
 // 임의의 데이터
@@ -58,11 +58,12 @@ const renderItem = ({
   onSelectLocation,
 }: {
   item: StoreItem;
-  onSelectLocation: (latitude: number, longitude: number) => void;
+  onSelectLocation: (latitude: number, longitude: number, name: string, address: string) => void;
 }) => (
-  <TouchableOpacity onPress={() => onSelectLocation(item.latitude, item.longitude)}>
+  <TouchableOpacity
+    onPress={() => onSelectLocation(item.latitude, item.longitude, item.name, item.address)}
+  >
     <View style={styles.itemContainer}>
-      {/* 아이콘과 거리 텍스트를 수직으로 배치 */}
       <View style={styles.iconAndDistanceContainer}>
         <Image source={require("../../assets/images/distance-icon.png")} style={styles.icon} />
         <Text style={styles.distance}>{item.distance}</Text>

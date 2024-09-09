@@ -4,9 +4,10 @@ import { TextInput, StyleSheet, View, TouchableOpacity, Text, Image } from "reac
 type SearchBoxProps = {
   value: string;
   onChangeText: (text: string) => void;
+  onSubmit: () => void; // 입력 완료 시 실행할 함수
 };
 
-const SearchBox = ({ value, onChangeText }: SearchBoxProps) => {
+const SearchBox = ({ value, onChangeText, onSubmit }: SearchBoxProps) => {
   return (
     <View style={styles.container}>
       <TextInput
@@ -14,6 +15,7 @@ const SearchBox = ({ value, onChangeText }: SearchBoxProps) => {
         placeholder="검색어를 입력하세요."
         value={value}
         onChangeText={onChangeText}
+        onSubmitEditing={onSubmit} // 엔터 키 입력 시 실행
       />
       {value.length > 0 && (
         <TouchableOpacity onPress={() => onChangeText("")} style={styles.clearButton}>
