@@ -1,10 +1,15 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import ToggleButton from "@/components/benefit/ToggleButton";
+import SearchInput from "@/components/benefit/TextInputBox";
+import BasicImage from "@/components/benefit/BasicImage";
 
 export default function SearchScreen() {
   return (
     <View style={styles.container}>
-      <Text>혜택 검색 화면입니다!</Text>
+      <ToggleButton />
+      <SearchInput />
+      <BasicImage />
     </View>
   );
 }
