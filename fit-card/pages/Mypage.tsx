@@ -17,10 +17,11 @@ export default function MypageScreen() {
 
   return (
     <ScrollView style={[mypageStyle.container]}>
+      
       {/* 인삿말 */}
       <View style={[mypageStyle.helloContainer]}>
         <Text style={[common.textBlue, common.textLarge, common.textBold]}>
-          김싸피
+          윤싸피
           <Text style={[common.textGray, common.textMedium, common.textBold]}>
             님, 반갑습니다.
           </Text>

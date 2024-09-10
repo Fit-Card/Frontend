@@ -16,6 +16,8 @@ import MapScreen from "./pages/Map";
 import AddcardScreen from "./pages/Addcard";
 import SearchScreen from "./pages/Search";
 import CardScreen from "./pages/Card";
+import common from "./styles/Common";
+import KeyColors from "./styles/KeyColor";
 
 const Tab = createBottomTabNavigator();
 
@@ -47,34 +49,34 @@ function TabNavigator() {
             <Icon name={iconName} type={iconType} size={size} color={color} />
           );
         },
-        tabBarActiveTintColor: "#5253F0",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: KeyColors.blue,
+        tabBarInactiveTintColor: KeyColors.gray,
       })}
     >
       <Tab.Screen
         name="Home"
         component={MainScreen}
-        options={{ header: () => <Header title="Main" /> }}
+        options={{ header: () => <Header title="홈"/> }}
       />
       <Tab.Screen
         name="Search"
         component={SearchScreen}
-        options={{ header: () => <Header title="Search" /> }}
+        options={{ header: () => <Header title="혜택 검색" /> }}
       />
       <Tab.Screen
         name="Map"
         component={MapScreen}
-        options={{ header: () => <Header title="Map" /> }}
+        options={{ header: () => <Header title="혜택 지도" /> }}
       />
       <Tab.Screen
         name="Card"
         component={CardScreen}
-        options={{ header: () => <Header title="Card" /> }}
+        options={{ header: () => <Header title="카드 추천" /> }}
       />
       <Tab.Screen
         name="Mypage"
         component={MypageScreen}
-        options={{ header: () => <Header title="MyPage" /> }}
+        options={{ header: () => <Header title="마이 페이지" /> }}
       />
     </Tab.Navigator>
   );

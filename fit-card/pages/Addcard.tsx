@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
+import Header from "@/components/Header";
+
 import Common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "../styles/KeyColor";
 
