@@ -14,7 +14,10 @@ const Header = ({ title }: { title: string }) => {
           resizeMode="contain"
         />
       }
-      centerComponent={{ text: title, style: [common.textBlack, common.textBold, common.textMedium] }}
+      centerComponent={{
+        text: title,
+        style: { fontFamily: "SUITE-Bold", fontSize: 15 }, // 스타일 적용
+      }}
       rightComponent={{ icon: "notifications-none" }}
       containerStyle={{
         height: 65,
