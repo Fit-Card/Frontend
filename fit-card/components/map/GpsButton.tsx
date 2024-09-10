@@ -19,7 +19,7 @@ const GpsButton = ({ onPress }: GpsButtonProps) => {
 const styles = StyleSheet.create({
   gpsButton: {
     position: "absolute",
-    bottom: 30,
+    top: 100,
     right: 20,
     backgroundColor: "#fff",
     padding: 10,

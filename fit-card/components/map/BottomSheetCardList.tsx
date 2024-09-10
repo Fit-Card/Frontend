@@ -28,8 +28,7 @@ const CardList = ({ cards }: CardListProps) => {
 
 const styles = StyleSheet.create({
   cardListWrapper: {
-    maxHeight: 300, // set the max height for the list (adjust as needed)
-    flexGrow: 1,
+    flex: 1,
   },
   cardListContainer: {
     padding: 5,

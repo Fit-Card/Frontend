@@ -3,6 +3,7 @@ import { StyleSheet, View, Alert } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import SearchInput from "../map/SearchBox";
 import CategoryButtonGroup from "../category/CategoryButtonGroup";
 import GpsButton from "./GpsButton";
@@ -167,8 +168,11 @@ const MapComponent = () => {
         )}
       </MapView>
 
-      <BottomSheet ref={sheetRef} snapPoints={[400, 150]} index={-1} enablePanDownToClose={true}>
-        <BottomSheetContent selectedLocation={selectedLocation} />
+      <BottomSheet ref={sheetRef} snapPoints={[400]} index={-1} enablePanDownToClose={true}>
+        {/* <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 300 }}> */}
+        <BottomSheetScrollView>
+          <BottomSheetContent selectedLocation={selectedLocation} />
+        </BottomSheetScrollView>
       </BottomSheet>
     </View>
   );

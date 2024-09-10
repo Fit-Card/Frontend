@@ -40,6 +40,18 @@ const BottomSheetContent = ({ selectedLocation }: BottomSheetContentProps) => {
       name: "카드 이름 어쩌구 저쩌구",
       description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
     },
+    {
+      id: "5",
+      image: require("../../assets/images/temp-card.png"),
+      name: "카드 이름 어쩌구 저쩌구",
+      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
+    },
+    {
+      id: "6",
+      image: require("../../assets/images/temp-card.png"),
+      name: "카드 이름 어쩌구 저쩌구",
+      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
+    },
   ];
 
   return (
@@ -80,6 +92,7 @@ const styles = StyleSheet.create({
   bottomSheetContent: {
     backgroundColor: "white",
     padding: 10,
+    paddingBottom: 50,
     borderRadius: 10,
   },
   headerContainer: {
