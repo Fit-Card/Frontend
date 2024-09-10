@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
 import * as SplashScreen from "expo-splash-screen";
@@ -61,8 +63,9 @@ function TabNavigator() {
           } else if (route.name === "My") {
             iconName = focused ? "person-circle" : "person-circle-outline";
           }
-
-          return <Icon name={iconName} type={iconType} size={size} color={color} />;
+          return (
+            <Icon name={iconName} type={iconType} size={size} color={color} />
+          );
         },
         tabBarActiveTintColor: "#5253F0",
         tabBarInactiveTintColor: "#4D4D4D",
@@ -134,13 +137,41 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Card" component={CardScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Mypage" component={MypageScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Main"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Search"
+          component={SearchScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Map"
+          component={MapScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Card"
+          component={CardScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Mypage"
+          component={MypageScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Addcard"
+          component={AddcardScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Deletecard"
           component={DeletecardScreen}

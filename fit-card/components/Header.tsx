@@ -3,7 +3,7 @@ import React from "react";
 import { Image } from "react-native";
 import { Header as RNEHeader } from "react-native-elements";
 
-const Header = ({ title }: { title: string }) => {
+const Header = ({ title = "홈" }: { title?: string }) => {
   return (
     <RNEHeader
       backgroundColor="#fff"
@@ -16,7 +16,7 @@ const Header = ({ title }: { title: string }) => {
       }
       centerComponent={{
         text: title,
-        style: { fontFamily: "SUITE-Bold", fontSize: 15 }, // 스타일 적용
+        style: [common.textBlack, common.textBold, common.textMedium],
       }}
       rightComponent={{ icon: "notifications-none" }}
       containerStyle={{
