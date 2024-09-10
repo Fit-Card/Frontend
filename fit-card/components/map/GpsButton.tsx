@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, Image } from "react-native";
+import { TouchableOpacity, StyleSheet, Image } from "react-native";
 
 type GpsButtonProps = {
   onPress: () => void;
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    zIndex: 10,
+    zIndex: 5,
   },
   gpsButtonText: {
     fontSize: 16,

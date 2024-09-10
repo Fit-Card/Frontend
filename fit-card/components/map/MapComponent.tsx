@@ -1,27 +1,30 @@
 import React, { useRef, useEffect, useState } from "react";
-import { StyleSheet, View, Alert, Text } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
-import BottomSheet from "@gorhom/bottom-sheet"; // 추가
+import BottomSheet from "@gorhom/bottom-sheet";
 import SearchInput from "../map/SearchBox";
 import CategoryButtonGroup from "../category/CategoryButtonGroup";
 import GpsButton from "./GpsButton";
 import SearchResultList from "./SearchResultList";
+import BottomSheetContent from "./BottomSheetContent";
+
+type LocationType = {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+};
 
 const MapComponent = () => {
   const mapRef = useRef<MapView>(null);
-  const sheetRef = useRef<BottomSheet>(null); // BottomSheet의 참조 추가
+  const sheetRef = useRef<BottomSheet>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedLocation, setSelectedLocation] = useState<{
-    id: string;
-    name: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-  } | null>(null);
-  const [showSearchResults, setShowSearchResults] = useState<boolean>(false); // 리스트 표시 여부
+  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null);
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -42,14 +45,12 @@ const MapComponent = () => {
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
-    // 입력 중일 때는 리스트를 보여주지 않음
     setShowSearchResults(false);
   };
 
   const handleSearchSubmit = () => {
-    // 검색어가 있을 때만 리스트 표시
     if (searchQuery.length > 0) {
-      setShowSearchResults(true); // 엔터키 입력 시에만 리스트 표시
+      setShowSearchResults(true);
     }
   };
 
@@ -77,7 +78,6 @@ const MapComponent = () => {
   ) => {
     setSelectedLocation({ latitude, longitude, name, address, id: "" });
 
-    // 지도 이동
     if (mapRef.current) {
       const newRegion: Region = {
         latitude,
@@ -98,32 +98,19 @@ const MapComponent = () => {
     latitude: number,
     longitude: number
   ) => {
-    // 선택된 마커 정보 업데이트
     setSelectedLocation({ id, name, address, latitude, longitude });
 
-    // sheetRef가 null이 아닌지 확인 후 BottomSheet를 열기
     if (sheetRef.current) {
-      sheetRef.current.expand(); // 최신 버전에서는 snapTo 대신 expand 사용
+      sheetRef.current.expand(); // 마커 클릭 시 바텀시트 확장
     }
   };
 
-  const handleSheetChanges = (index: number) => {
-    console.log("handleSheetChanges", index);
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    if (sheetRef.current) {
+      sheetRef.current.close(); // 바텀시트를 닫음
+    }
   };
-
-  const renderBottomSheetContent = () => (
-    <View style={styles.bottomSheetContent}>
-      {selectedLocation ? (
-        <>
-          <Text style={styles.storeName}>{selectedLocation.name}</Text>
-          <Text style={styles.storeAddress}>{selectedLocation.address}</Text>
-          <Text style={styles.storeId}>ID: {selectedLocation.id}</Text>
-        </>
-      ) : (
-        <Text>No location selected</Text>
-      )}
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -131,7 +118,8 @@ const MapComponent = () => {
         <SearchInput
           value={searchQuery}
           onChangeText={handleSearchChange}
-          onSubmit={handleSearchSubmit} // 사용자가 엔터를 눌렀을 때 호출
+          onSubmit={handleSearchSubmit}
+          onClear={handleClearSearch}
         />
       </View>
 
@@ -160,7 +148,6 @@ const MapComponent = () => {
           longitudeDelta: 0.01,
         }}
       >
-        {/* 선택된 장소에 대한 마커 */}
         {selectedLocation && (
           <Marker
             coordinate={{
@@ -180,23 +167,8 @@ const MapComponent = () => {
         )}
       </MapView>
 
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={[300, 150]}
-        index={1} // 초기 스냅 인덱스 설정
-        onChange={handleSheetChanges} // 변경 이벤트 처리
-      >
-        <View style={styles.bottomSheetContent}>
-          {selectedLocation ? (
-            <>
-              <Text style={styles.storeName}>{selectedLocation.name}</Text>
-              <Text style={styles.storeAddress}>{selectedLocation.address}</Text>
-              <Text style={styles.storeId}>ID: {selectedLocation.id}</Text>
-            </>
-          ) : (
-            <Text>No location selected</Text>
-          )}
-        </View>
+      <BottomSheet ref={sheetRef} snapPoints={[400, 150]} index={-1} enablePanDownToClose={true}>
+        <BottomSheetContent selectedLocation={selectedLocation} />
       </BottomSheet>
     </View>
   );
@@ -235,25 +207,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
     padding: 10,
-  },
-  bottomSheetContent: {
-    backgroundColor: "white",
-    padding: 20,
-    height: 300,
-    borderRadius: 10,
-  },
-  storeName: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  storeAddress: {
-    fontSize: 16,
-    marginTop: 10,
-    color: "#555",
-  },
-  storeId: {
-    fontSize: 12,
-    marginTop: 10,
-    color: "#999",
   },
 });

@@ -1,13 +1,14 @@
 import React from "react";
-import { TextInput, StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
+import { TextInput, StyleSheet, View, TouchableOpacity, Image } from "react-native";
 
 type SearchBoxProps = {
   value: string;
   onChangeText: (text: string) => void;
-  onSubmit: () => void; // 입력 완료 시 실행할 함수
+  onSubmit: () => void;
+  onClear: () => void;
 };
 
-const SearchBox = ({ value, onChangeText, onSubmit }: SearchBoxProps) => {
+const SearchBox = ({ value, onChangeText, onSubmit, onClear }: SearchBoxProps) => {
   return (
     <View style={styles.container}>
       <TextInput
@@ -15,10 +16,10 @@ const SearchBox = ({ value, onChangeText, onSubmit }: SearchBoxProps) => {
         placeholder="검색어를 입력하세요."
         value={value}
         onChangeText={onChangeText}
-        onSubmitEditing={onSubmit} // 엔터 키 입력 시 실행
+        onSubmitEditing={onSubmit}
       />
       {value.length > 0 && (
-        <TouchableOpacity onPress={() => onChangeText("")} style={styles.clearButton}>
+        <TouchableOpacity onPress={onClear} style={styles.clearButton}>
           <Image
             source={require("../../assets/images/x-icon.png")}
             style={{ width: 16, height: 16 }}

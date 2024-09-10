@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
 
-// 데이터 항목의 타입 정의
 type StoreItem = {
   id: string;
   name: string;
@@ -16,7 +15,6 @@ type SearchResultListProps = {
   onSelectLocation: (latitude: number, longitude: number, name: string, address: string) => void; // 인자를 추가
 };
 
-// 임의의 데이터
 const dummyData: StoreItem[] = [
   {
     id: "1",
@@ -52,7 +50,6 @@ const dummyData: StoreItem[] = [
   },
 ];
 
-// 리스트 아이템 렌더링
 const renderItem = ({
   item,
   onSelectLocation,
@@ -78,7 +75,6 @@ const renderItem = ({
 );
 
 const SearchResultList = ({ searchQuery, onSelectLocation }: SearchResultListProps) => {
-  // 검색어로 데이터 필터링
   const filteredData = dummyData.filter((item) => item.name.includes(searchQuery));
 
   return (
@@ -98,7 +94,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   iconAndDistanceContainer: {
-    alignItems: "center", // 아이콘과 거리를 수직 정렬
+    alignItems: "center",
     justifyContent: "center",
     marginRight: 15,
     marginLeft: 10,
