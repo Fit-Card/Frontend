@@ -25,54 +25,56 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName: string = "home";
-          let iconType: string = "ionicon";
+        tabBarHideOnKeyboard: true,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName = "";
+          let iconType = "ionicon";
 
-          if (route.name === "Main") {
-            iconName = "home";
-            iconType = "ionicon";
-          } else if (route.name === "Search") {
-            iconName = "search";
-            iconType = "ionicon";
-          } else if (route.name === "Map") {
-            iconName = "map-marker-alt";
-            iconType = "font-awesome-5";
-          } else if (route.name === "Card") {
-            iconName = "credit-card";
-            iconType = "font-awesome";
-          } else if (route.name === "Mypage") {
-            iconName = "user";
-            iconType = "font-awesome";
+          if (route.name === "홈") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "혜택검색") {
+            iconName = focused ? "search" : "search-outline";
+          } else if (route.name === "지도검색") {
+            iconName = focused ? "location" : "location-outline";
+          } else if (route.name === "카드추천") {
+            iconName = focused ? "card" : "card-outline";
+          } else if (route.name === "My") {
+            iconName = focused ? "person-circle" : "person-circle-outline";
           }
+
           return <Icon name={iconName} type={iconType} size={size} color={color} />;
         },
-        tabBarActiveTintColor: KeyColors.blue,
-        tabBarInactiveTintColor: KeyColors.gray,
+        tabBarActiveTintColor: "#5253F0",
+        tabBarInactiveTintColor: "#4D4D4D",
+        tabBarLabelStyle: {
+          fontFamily: "SUITE-Bold",
+          fontSize: 11,
+          marginBottom: 4,
+        },
       })}
     >
       <Tab.Screen
-        name="Home"
+        name="홈"
         component={MainScreen}
         options={{ header: () => <Header title="홈" /> }}
       />
       <Tab.Screen
-        name="Search"
+        name="혜택검색"
         component={SearchScreen}
         options={{ header: () => <Header title="혜택 검색" /> }}
       />
       <Tab.Screen
-        name="Map"
+        name="지도검색"
         component={MapScreen}
         options={{ header: () => <Header title="혜택 지도" /> }}
       />
       <Tab.Screen
-        name="Card"
+        name="카드추천"
         component={CardScreen}
         options={{ header: () => <Header title="카드 추천" /> }}
       />
       <Tab.Screen
-        name="Mypage"
+        name="My"
         component={MypageScreen}
         options={{ header: () => <Header title="마이 페이지" /> }}
       />
@@ -126,17 +128,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "SUITE-Regular",
-  },
-  mainText: {
-    fontSize: 50,
-    fontFamily: "SUITE-Regular",
-  },
-});
