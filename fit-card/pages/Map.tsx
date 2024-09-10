@@ -2,13 +2,14 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
+import CustomButton from "../components/button/CustomButton";
+import MapComponent from "../components/map/MapComponent";
 
 export default function MapScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>지도 화면입니다!</Text>
-    </View>
-  );
+  // NavigationProp 타입 지정
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
+  return <MapComponent />;
 }
 
 const styles = StyleSheet.create({
