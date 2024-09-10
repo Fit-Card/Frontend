@@ -10,9 +10,13 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>로그인화면입니다!</Text>
+      <Text>로그인화면입니다!</Text>
+
       <View style={styles.buttonContainer}>
-        <CustomButton title="임시" onPress={() => navigation.navigate("Temp")} />
+        <CustomButton
+          title="로그인"
+          onPress={() => navigation.navigate("Main")}
+        />
       </View>
     </View>
   );

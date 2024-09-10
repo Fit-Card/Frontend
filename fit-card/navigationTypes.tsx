@@ -1,7 +1,10 @@
 export type StackParamList = {
-    Login: undefined;
-    Temp: undefined;
-    Mypage: undefined;
-    Map: undefined;
-  };
-  
+  Login: undefined;
+  Main: undefined;
+  Temp: undefined;
+  Mypage: undefined;
+  Addcard: undefined;
+  Search: undefined;
+  Card: undefined;
+  Map: undefined;
+};
