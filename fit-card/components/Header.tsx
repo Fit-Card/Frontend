@@ -1,3 +1,4 @@
+import common from "@/styles/Common";
 import React from "react";
 import { Image } from "react-native";
 import { Header as RNEHeader } from "react-native-elements";
@@ -13,7 +14,7 @@ const Header = ({ title }: { title: string }) => {
           resizeMode="contain"
         />
       }
-      centerComponent={{ text: title, style: { fontSize: 20 } }}
+      centerComponent={{ text: title, style: [common.textBlack, common.textBold, common.textMedium] }}
       rightComponent={{ icon: "notifications-none" }}
       containerStyle={{
         height: 65,

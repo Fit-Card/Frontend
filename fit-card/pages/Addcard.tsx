@@ -37,90 +37,105 @@ export default function AddcardScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={AddcardStyle.scrollContainer}>
-      {/* 안내 문구 */}
-      <View style={[AddcardStyle.commentContainer]}>
-        <Text style={[Common.textSmall]}>소유하고 계신 카드 중에서</Text>
-        <Text style={[Common.textSmall]}>앱에서 표시하고 싶은 카드를 선택해주세요!</Text>
-        <Text style={[Common.textSmall]}>카드 갱신 이후에 소유 카드 정보는</Text>
-        <Text style={[Common.textSmall]}>다음 갱신까지 폐기됩니다.</Text>
+    <View style={AddcardStyle.container}>
+      <View style={AddcardStyle.headerContainer}>
+        <Header title="카드 갱신" />
       </View>
 
-      <View style={[AddcardStyle.cardListContainer]}>
-        {cardData.map((card) => (
-          <TouchableOpacity
-            key={card.id}
-            style={[
-              AddcardStyle.card,
-              { borderColor: selectedCardIds.includes(card.id) ? KeyColors.blue : KeyColors.gray },
-              { borderWidth: selectedCardIds.includes(card.id) ? 1.4 : 1.4 },
-            ]}
-            onPress={() => {
-              const newSelectedCardIds = [...selectedCardIds];
-              const index = newSelectedCardIds.indexOf(card.id);
-              if (index !== -1) {
-                // 카드가 이미 선택되어있을 경우 : 제거
-                newSelectedCardIds.splice(index, 1);
-              } else {
-                // 카드가 새로 선택된 경우 : 추가
-                newSelectedCardIds.push(card.id);
-              }
-              setSelectedCardIds(newSelectedCardIds);
-            }}
-          >
-            <View style={AddcardStyle.cardImageContainer}>
-              <Image
-                source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
-                style={AddcardStyle.cardImage} // 아이콘 스타일
-                resizeMode="contain"
-              />
-            </View>
+      <ScrollView contentContainerStyle={AddcardStyle.scrollContainer}>
+        {/* 안내 문구 */}
+        <View style={AddcardStyle.commentContainer}>
+          <Text style={[Common.textSmall]}>소유하고 계신 카드 중에서</Text>
+          <Text style={[Common.textSmall]}>앱에서 표시하고 싶은 카드를 선택해주세요!</Text>
+          <Text style={[Common.textSmall]}>카드 갱신 이후에 소유 카드 정보는</Text>
+          <Text style={[Common.textSmall]}>다음 갱신까지 폐기됩니다.</Text>
+        </View>
 
-            <View style={AddcardStyle.cardTextContainer}>
-              <Text style={[Common.textBold, Common.textBlack]}>{card.name}</Text>
+        <View style={AddcardStyle.cardListContainer}>
+          {cardData.map((card) => (
+            <TouchableOpacity
+              key={card.id}
+              style={[
+                AddcardStyle.card,
+                {
+                  borderColor: selectedCardIds.includes(card.id) ? KeyColors.blue : "#FFFFFF",
+                  borderWidth: selectedCardIds.includes(card.id) ? 1.4 : 1.4,
+                },
+              ]}
+              onPress={() => {
+                const newSelectedCardIds = [...selectedCardIds];
+                const index = newSelectedCardIds.indexOf(card.id);
+                if (index !== -1) {
+                  // 카드가 이미 선택되어있을 경우 : 제거
+                  newSelectedCardIds.splice(index, 1);
+                } else {
+                  // 카드가 새로 선택된 경우 : 추가
+                  newSelectedCardIds.push(card.id);
+                }
+                setSelectedCardIds(newSelectedCardIds);
+              }}
+            >
+              <View style={AddcardStyle.cardImageContainer}>
+                <Image
+                  source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
+                  style={AddcardStyle.cardImage} // 아이콘 스타일
+                  resizeMode="contain"
+                />
+              </View>
 
-              {selectedCardIds.includes(card.id) ? (
-                <Text style={[AddcardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
-              ) : null}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+              <View style={AddcardStyle.cardTextContainer}>
+                <Text style={[Common.textBold, Common.textBlack]}>{card.name}</Text>
 
-      <View>
+                {selectedCardIds.includes(card.id) ? (
+                  <Text style={[AddcardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
+                ) : null}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+
+      <View style={AddcardStyle.submitButtonContainer}>
         <TouchableOpacity
           style={[
             AddcardStyle.submitButton,
-            { backgroundColor: selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray },
+            {
+              backgroundColor: selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
+            },
           ]}
           onPress={handleSubmit}
           disabled={selectedCardIds.length === 0}
         >
-          <Text style={[Common.textBold, { color: "#FFFFFF" }]}>갱신 하기</Text>
-          {(selectedCardIds.length === 0) ? (
-                <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
-                  카드를 탭해서 선택해주세요.
-                </Text>
-              ) : <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
-              {selectedCardIds.length}개 선택됨
-            </Text>}
-          
+          {selectedCardIds.length === 0 ? (
+            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>선택 필요</Text>
+          ) : (
+            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>갱신 하기</Text>
+          )}
+          {selectedCardIds.length === 0 ? (
+            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>카드를 탭해서 선택해주세요.</Text>
+          ) : (
+            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>{selectedCardIds.length}개 선택됨</Text>
+          )}
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const AddcardStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
     alignItems: "center",
     backgroundColor: "#fff",
+    paddingVertical: 100,
   },
   commentContainer: {
-    backgroundColor: "#DBE1E7",
+    backgroundColor: KeyColors.backGray,
     alignItems: "center",
     justifyContent: "center",
     margin: 10,
@@ -152,7 +167,7 @@ const AddcardStyle = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    
+
     elevation: 5,
   },
   selectText: {
@@ -161,10 +176,30 @@ const AddcardStyle = StyleSheet.create({
     right: 0, // 10px from right
     color: KeyColors.blue,
   },
+  headerContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1, // Ensure header is on top
+    backgroundColor: "#fff",
+    alignItems: "center",
+    padding: 10,
+  },
+  submitButtonContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 10,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+  },
   submitButton: {
     width: width - 40,
     height: 50,
-    marginVertical: 10,
     borderRadius: 6,
     alignItems: "center",
     justifyContent: "center",
