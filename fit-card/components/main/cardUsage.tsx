@@ -31,7 +31,8 @@ const CardUsage = (user: User) => {
   return (
     <View style={styles.cardContainer}>
       <Text style={{ marginBottom: 10 }}>
-        <Text style={styles.userName}>{user.name}</Text>님, 안녕하세요!
+        <Text style={styles.userName}>{user.name + " "}</Text>
+        님의 카드 실적 현황
       </Text>
 
       <View style={styles.cardInfo}>
@@ -70,8 +71,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     alignItems: "flex-start",
     padding: 30,
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
+    // backgroundColor: "#fff",
     width: "100%",
   },
   userName: {

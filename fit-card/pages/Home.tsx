@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "@/navigationTypes";
 import CardUsage from "@/components/main/cardUsage";
+import Benefit from "@/components/main/cardBenefit";
 
 export default function MainScreen() {
   // NavigationProp 타입 지정
@@ -13,15 +14,30 @@ export default function MainScreen() {
     name: "현경찬",
     cardImage: require("@/assets/images/temp-card.png"), // 이미지 경로
     cardName: "Fit Card 어쩌구저쩌구",
-    currentUsage: 300000,
+    currentUsage: 20000,
     goalUsage: 300000,
+  };
+
+  // 더미 혜택
+  const dummyBenefit = {
+    index: 0, // 첫 번째 탭 (음식점) 활성화
+    category: ["음식점", "카페", "편의점", "문화", "주유소"], // 카테고리 리스트
+    logo: null, // 로고가 있다면 이미지 소스 넣기 (e.g., require('./path-to-logo.png'))
+    franchiseName: "프랜차이즈 이름",
+    info: [
+      ["음식점 혜택 1", "음식점 혜택 2", "음식점 혜택 3"], // 음식점 혜택
+      ["카페 혜택 1", "카페 혜택 2", "카페 혜택 3"], // 카페 혜택
+      ["편의점 혜택 1", "편의점 혜택 2", "편의점 혜택 3"], // 편의점 혜택
+      ["문화 혜택 1", "문화 혜택 2", "문화 혜택 3"], // 문화 혜택
+      ["주유소 혜택 1", "주유소 혜택 2", "주유소 혜택 3"], // 주유소 혜택
+    ],
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <CardUsage {...dummyUser} />
-        {/*   <Benefit /> */}
+        <Benefit {...dummyBenefit} />
       </View>
 
       <View style={styles.buttonContainer}>
@@ -47,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     borderRadius: 20, // 둥근 모서리 설정
-    backgroundColor: "#f0f0f0", // 배경 색상 설정 (필요시 변경 가능)
+    backgroundColor: "#f9f9f9", // 배경 색상 설정 (필요시 변경 가능)
     width: "100%", // 부모의 padding이 반영되도록 설정
   },
   title: {
