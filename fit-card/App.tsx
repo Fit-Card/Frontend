@@ -2,11 +2,10 @@ import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
-import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 import Header from "./components/Header";
 
 import LoginScreen from "./pages/Login";
@@ -16,10 +15,29 @@ import MapScreen from "./pages/Map";
 import AddcardScreen from "./pages/Addcard";
 import SearchScreen from "./pages/Search";
 import CardScreen from "./pages/Card";
-import common from "./styles/Common";
-import KeyColors from "./styles/KeyColor";
+import CardList from "./components/benefit/CardList";
 
+// 스택 네비게이터 정의
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// SearchScreen과 CardList를 하나의 스택으로 관리
+function SearchStackNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{ header: () => <Header title="혜택 검색" /> }}
+      />
+      <Stack.Screen
+        name="CardList"
+        component={CardList}
+        options={{ header: () => <Header title="카드 목록" /> }}
+      />
+    </Stack.Navigator>
+  );
+}
 
 function TabNavigator() {
   return (
@@ -60,8 +78,8 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="혜택검색"
-        component={SearchScreen}
-        options={{ header: () => <Header title="혜택 검색" /> }}
+        component={SearchStackNavigator} // 스택 네비게이터로 변경
+        options={{ headerShown: false }} // 개별 화면에서 헤더를 관리하므로 여기선 false
       />
       <Tab.Screen
         name="지도검색"
@@ -84,8 +102,6 @@ function TabNavigator() {
 
 // 앱 시작 시 SplashScreen을 표시하고 로딩이 완료되면 숨김
 export default function App() {
-  const Stack = createStackNavigator();
-
   const [fontsLoaded] = useFonts({
     "SUITE-Regular": require("./assets/fonts/SUITE-Regular.ttf"),
     "SUITE-Bold": require("./assets/fonts/SUITE-Bold.ttf"),
@@ -112,17 +128,13 @@ export default function App() {
   if (!fontsLoaded) {
     return null; // 폰트가 로드되지 않은 경우 아무것도 렌더링하지 않음
   }
-  // 헤더 안보이게 하기 ... options={{headerShown: false}}
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Card" component={CardScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Mypage" component={MypageScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

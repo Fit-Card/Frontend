@@ -25,8 +25,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 2,
     backgroundColor: "#FFF",
-    position: "absolute",
-    top: 60,
+    marginBottom: 50,
   },
   icon: {
     marginRight: 10,

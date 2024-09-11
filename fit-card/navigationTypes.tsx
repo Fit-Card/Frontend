@@ -7,4 +7,7 @@ export type StackParamList = {
   Search: undefined;
   Card: undefined;
   Map: undefined;
+  StoreSearch: undefined;
+  CardSearch: undefined;
+  CardList: { companyId: number; companyName: string };
 };

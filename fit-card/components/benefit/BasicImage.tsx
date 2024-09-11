@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
   basicContainer: {
     flex: 1,
     alignItems: "center",
-    position: "absolute",
-    top: 170,
   },
   titleText: {
     alignItems: "center",
@@ -37,7 +35,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     fontFamily: "SUITE-Bold",
-    marginHorizontal: 70,
+    marginHorizontal: 50,
   },
 });
 

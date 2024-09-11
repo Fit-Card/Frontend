@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const ToggleButton = () => {
-  const [selected, setSelected] = useState("가맹점");
+interface ToggleButtonProps {
+  selected: string;
+  setSelected: (value: string) => void; // setSelected가 문자열을 인자로 받는 함수
+}
 
+const ToggleButton = ({ selected, setSelected }: ToggleButtonProps) => {
   return (
     <View style={styles.toggleContainer}>
       <TouchableOpacity

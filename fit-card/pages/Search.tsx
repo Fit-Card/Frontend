@@ -1,15 +1,37 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
 import ToggleButton from "@/components/benefit/ToggleButton";
-import SearchInput from "@/components/benefit/TextInputBox";
-import BasicImage from "@/components/benefit/BasicImage";
+import StoreSearch from "@/components/benefit/StoreSearch";
+import CardSearch from "@/components/benefit/CardSearch";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamList } from "../navigationTypes";
+
+// 네비게이션 타입 정의
+type SearchScreenNavigationProp = StackNavigationProp<StackParamList, "Search">;
 
 export default function SearchScreen() {
+  const [selected, setSelected] = useState("가맹점");
+  const navigation = useNavigation<SearchScreenNavigationProp>();
+
+  // 카드사 클릭 시 CardListScreen으로 이동하고 파라미터 전달
+  const handleCardPress = (companyId: number, companyName: string) => {
+    navigation.navigate("CardList", { companyId, companyName });
+  };
+
   return (
     <View style={styles.container}>
-      <ToggleButton />
-      <SearchInput />
-      <BasicImage />
+      <View style={styles.toggleContainer}>
+        <ToggleButton selected={selected} setSelected={setSelected} />
+      </View>
+
+      <View style={styles.contentContainer}>
+        {selected === "가맹점" ? (
+          <StoreSearch />
+        ) : (
+          <CardSearch onCardPress={handleCardPress} /> // 카드사 클릭 시 handleCardPress 실행
+        )}
+      </View>
     </View>
   );
 }
@@ -17,16 +39,15 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#fff",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  toggleContainer: {
+    alignItems: "center",
   },
-  buttonContainer: {
-    marginVertical: 10,
+  contentContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 50,
   },
 });
