@@ -6,9 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
-import * as SplashScreen from "expo-splash-screen";
-import { useFonts } from "expo-font";
-import Header from "./components/Header";
+import HeaderComponent from "@/components/CustomHeader";
 
 import LoginScreen from "./pages/Login";
 import MainScreen from "./pages/Home";
@@ -32,12 +30,12 @@ function SearchStackNavigator() {
       <Stack.Screen
         name="Search"
         component={SearchScreen}
-        options={{ header: () => <Header title="혜택 검색" /> }}
+        options={{ header: () => <HeaderComponent title="혜택 검색" /> }}
       />
       <Stack.Screen
         name="CardList"
         component={CardList}
-        options={{ header: () => <Header title="카드 목록" /> }}
+        options={{ header: () => <HeaderComponent title="카드 목록" /> }}
       />
     </Stack.Navigator>
   );
@@ -79,7 +77,7 @@ function TabNavigator() {
       <Tab.Screen
         name="홈"
         component={MainScreen}
-        options={{ header: () => <Header title="홈" /> }}
+        options={{ header: () => <HeaderComponent title="홈" /> }}
       />
       <Tab.Screen
         name="혜택검색"
@@ -89,17 +87,17 @@ function TabNavigator() {
       <Tab.Screen
         name="지도검색"
         component={MapScreen}
-        options={{ header: () => <Header title="혜택 지도" /> }}
+        options={{ header: () => <HeaderComponent title="혜택 지도" /> }}
       />
       <Tab.Screen
         name="카드추천"
         component={CardScreen}
-        options={{ header: () => <Header title="카드 추천" /> }}
+        options={{ header: () => <HeaderComponent title="카드 추천" /> }}
       />
       <Tab.Screen
         name="My"
         component={MypageScreen}
-        options={{ header: () => <Header title="마이 페이지" /> }}
+        options={{ header: () => <HeaderComponent title="마이페이지" /> }}
       />
     </Tab.Navigator>
   );
