@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import common from "../styles/Common"; // 스타일 파일 가져오기
@@ -17,14 +10,11 @@ export default function MypageScreen() {
 
   return (
     <ScrollView style={[mypageStyle.container]}>
-      
       {/* 인삿말 */}
       <View style={[mypageStyle.helloContainer]}>
         <Text style={[common.textBlue, common.textLarge, common.textBold]}>
           윤싸피
-          <Text style={[common.textGray, common.textMedium, common.textBold]}>
-            님, 반갑습니다.
-          </Text>
+          <Text style={[common.textGray, common.textMedium, common.textBold]}>님, 반갑습니다.</Text>
         </Text>
       </View>
 
@@ -52,7 +42,10 @@ export default function MypageScreen() {
         </TouchableOpacity>
 
         {/* 카드 삭제 */}
-        <TouchableOpacity style={mypageStyle.menuOption}>
+        <TouchableOpacity 
+          style={mypageStyle.menuOption}
+          onPress={() => navigation.navigate("Deletecard")}
+        >
           <Image
             source={require("../assets/icons/icon_delete.png")} // PNG 파일 경로
             style={mypageStyle.menuIcon} // 아이콘 스타일

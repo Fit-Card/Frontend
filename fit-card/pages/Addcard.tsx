@@ -59,7 +59,7 @@ export default function AddcardScreen() {
                 AddcardStyle.card,
                 {
                   borderColor: selectedCardIds.includes(card.id) ? KeyColors.blue : "#FFFFFF",
-                  borderWidth: selectedCardIds.includes(card.id) ? 1.4 : 1.4,
+                  borderWidth: selectedCardIds.includes(card.id) ? 2 : 2,
                 },
               ]}
               onPress={() => {
