@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
-import Header from "@/components/Header";
+import Header from "@/components/CustomHeader";
 import Common from "../styles/Common";
 import KeyColors from "../styles/KeyColor";
 import common from "../styles/Common";
@@ -38,11 +38,13 @@ export default function DeletecardScreen() {
   const handleCancel = () => {
     setModalVisible(false);
     setSelectedCardId(null);
-  }
+  };
 
   const handleDelete = () => {
     if (selectedCardId !== null) {
-      setCardData((prevCards) => prevCards.filter((card) => card.id !== selectedCardId));
+      setCardData((prevCards) =>
+        prevCards.filter((card) => card.id !== selectedCardId)
+      );
       setModalVisible(false);
       alert("카드 삭제 완료");
       setSelectedCardId(null);
@@ -59,8 +61,12 @@ export default function DeletecardScreen() {
         {/* 안내 문구 */}
         <View style={DeletecardStyle.commentContainer}>
           <Text style={[Common.textSmall]}>갱신을 통해 등록한 카드 중에서</Text>
-          <Text style={[Common.textSmall]}>앱에서 삭제하고 싶은 카드를 선택해주세요!</Text>
-          <Text style={[Common.textSmall]}>삭제를 하더라도, 이후 카드갱신에서</Text>
+          <Text style={[Common.textSmall]}>
+            앱에서 삭제하고 싶은 카드를 선택해주세요!
+          </Text>
+          <Text style={[Common.textSmall]}>
+            삭제를 하더라도, 이후 카드갱신에서
+          </Text>
           <Text style={[Common.textSmall]}>다시 등록할 수 있습니다.</Text>
         </View>
 
@@ -71,7 +77,8 @@ export default function DeletecardScreen() {
               style={[
                 DeletecardStyle.card,
                 {
-                  borderColor: selectedCardId === card.id ? KeyColors.red : "#FFFFFF",
+                  borderColor:
+                    selectedCardId === card.id ? KeyColors.red : "#FFFFFF",
                   borderWidth: selectedCardId === card.id ? 2 : 2,
                 },
               ]}
@@ -86,10 +93,14 @@ export default function DeletecardScreen() {
               </View>
 
               <View style={DeletecardStyle.cardTextContainer}>
-                <Text style={[Common.textBold, Common.textBlack]}>{card.name}</Text>
+                <Text style={[Common.textBold, Common.textBlack]}>
+                  {card.name}
+                </Text>
 
                 {selectedCardId === card.id ? (
-                  <Text style={[DeletecardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
+                  <Text style={[DeletecardStyle.selectText, Common.textSmall]}>
+                    선택됨 ●
+                  </Text>
                 ) : null}
               </View>
             </TouchableOpacity>
@@ -121,16 +132,26 @@ export default function DeletecardScreen() {
 
                 <View style={DeletecardStyle.modalButtonContainer}>
                   <TouchableOpacity
-                    style={[DeletecardStyle.cancelButton, DeletecardStyle.modalButton]}
+                    style={[
+                      DeletecardStyle.cancelButton,
+                      DeletecardStyle.modalButton,
+                    ]}
                     onPress={handleCancel}
                   >
-                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>선택 취소</Text>
+                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>
+                      선택 취소
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[DeletecardStyle.deleteButton, DeletecardStyle.modalButton]}
+                    style={[
+                      DeletecardStyle.deleteButton,
+                      DeletecardStyle.modalButton,
+                    ]}
                     onPress={handleDelete}
                   >
-                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>카드 삭제</Text>
+                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>
+                      카드 삭제
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -230,11 +251,8 @@ const DeletecardStyle = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-  
   },
-  cardImage: {
-    
-  },
+  cardImage: {},
   cardTextContainer: {
     height: "100%",
     flex: 1,
@@ -286,12 +304,10 @@ const DeletecardStyle = StyleSheet.create({
     minHeight: 200,
     maxHeight: 200,
     padding: 10,
-
   },
   modalImage: {
     width: "90%",
     height: "90%",
     resizeMode: "contain",
   },
-  
 });

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
-import Header from "@/components/Header";
+import Header from "@/components/CustomHeader";
 
 import Common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "../styles/KeyColor";
@@ -46,8 +46,12 @@ export default function AddcardScreen() {
         {/* 안내 문구 */}
         <View style={AddcardStyle.commentContainer}>
           <Text style={[Common.textSmall]}>소유하고 계신 카드 중에서</Text>
-          <Text style={[Common.textSmall]}>앱에서 표시하고 싶은 카드를 선택해주세요!</Text>
-          <Text style={[Common.textSmall]}>카드 갱신 이후에 소유 카드 정보는</Text>
+          <Text style={[Common.textSmall]}>
+            앱에서 표시하고 싶은 카드를 선택해주세요!
+          </Text>
+          <Text style={[Common.textSmall]}>
+            카드 갱신 이후에 소유 카드 정보는
+          </Text>
           <Text style={[Common.textSmall]}>다음 갱신까지 폐기됩니다.</Text>
         </View>
 
@@ -58,7 +62,9 @@ export default function AddcardScreen() {
               style={[
                 AddcardStyle.card,
                 {
-                  borderColor: selectedCardIds.includes(card.id) ? KeyColors.blue : "#FFFFFF",
+                  borderColor: selectedCardIds.includes(card.id)
+                    ? KeyColors.blue
+                    : "#FFFFFF",
                   borderWidth: selectedCardIds.includes(card.id) ? 2 : 2,
                 },
               ]}
@@ -84,10 +90,14 @@ export default function AddcardScreen() {
               </View>
 
               <View style={AddcardStyle.cardTextContainer}>
-                <Text style={[Common.textBold, Common.textBlack]}>{card.name}</Text>
+                <Text style={[Common.textBold, Common.textBlack]}>
+                  {card.name}
+                </Text>
 
                 {selectedCardIds.includes(card.id) ? (
-                  <Text style={[AddcardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
+                  <Text style={[AddcardStyle.selectText, Common.textSmall]}>
+                    선택됨 ●
+                  </Text>
                 ) : null}
               </View>
             </TouchableOpacity>
@@ -100,21 +110,30 @@ export default function AddcardScreen() {
           style={[
             AddcardStyle.submitButton,
             {
-              backgroundColor: selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
+              backgroundColor:
+                selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
             },
           ]}
           onPress={handleSubmit}
           disabled={selectedCardIds.length === 0}
         >
           {selectedCardIds.length === 0 ? (
-            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>선택 필요</Text>
+            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>
+              선택 필요
+            </Text>
           ) : (
-            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>갱신 하기</Text>
+            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>
+              갱신 하기
+            </Text>
           )}
           {selectedCardIds.length === 0 ? (
-            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>카드를 탭해서 선택해주세요.</Text>
+            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
+              카드를 탭해서 선택해주세요.
+            </Text>
           ) : (
-            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>{selectedCardIds.length}개 선택됨</Text>
+            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
+              {selectedCardIds.length}개 선택됨
+            </Text>
           )}
         </TouchableOpacity>
       </View>
