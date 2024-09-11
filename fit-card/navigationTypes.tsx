@@ -4,6 +4,7 @@ export type StackParamList = {
   Temp: undefined;
   Mypage: undefined;
   Addcard: undefined;
+  DeleteCard: undefined;
   Search: undefined;
   Card: undefined;
   Map: undefined;
