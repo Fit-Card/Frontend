@@ -5,15 +5,29 @@ type ButtonComponentProps = {
   title: string;
   isSelected: boolean;
   onPress: () => void;
+  customStyle?: object; // 추가적인 스타일을 받을 수 있게 함
+  textStyle?: object; // 텍스트 스타일도 받음
 };
 
-const ButtonComponent = ({ title, isSelected, onPress }: ButtonComponentProps) => {
+const ButtonComponent = ({
+  title,
+  isSelected,
+  onPress,
+  customStyle,
+  textStyle,
+}: ButtonComponentProps) => {
   return (
     <TouchableOpacity
-      style={[styles.button, isSelected ? styles.buttonPressed : styles.buttonNormal]}
+      style={[
+        styles.button,
+        isSelected ? styles.buttonPressed : styles.buttonNormal,
+        customStyle, // 전달된 추가적인 스타일을 적용
+      ]}
       onPress={onPress}
     >
-      <Text style={[styles.buttonText, isSelected ? styles.textPressed : styles.textNormal]}>
+      <Text
+        style={[styles.buttonText, isSelected ? styles.textPressed : styles.textNormal, textStyle]}
+      >
         {title}
       </Text>
     </TouchableOpacity>

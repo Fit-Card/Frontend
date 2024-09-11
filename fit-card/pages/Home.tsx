@@ -14,15 +14,15 @@ export default function MainScreen() {
     name: "현경찬",
     cardImage: require("@/assets/images/temp-card.png"), // 이미지 경로
     cardName: "Fit Card 어쩌구저쩌구",
-    currentUsage: 20000,
+    currentUsage: 202115,
     goalUsage: 300000,
   };
 
   // 더미 혜택
   const dummyBenefit = {
-    index: 0, // 첫 번째 탭 (음식점) 활성화
-    category: ["음식점", "카페", "편의점", "문화", "주유소"], // 카테고리 리스트
-    logo: null, // 로고가 있다면 이미지 소스 넣기 (e.g., require('./path-to-logo.png'))
+    index: 0,
+    category: ["음식점", "카페", "편의점", "문화", "주유소"],
+    logo: null,
     franchiseName: "프랜차이즈 이름",
     info: [
       ["음식점 혜택 1", "음식점 혜택 2", "음식점 혜택 3"], // 음식점 혜택
@@ -40,12 +40,9 @@ export default function MainScreen() {
         <Benefit {...dummyBenefit} />
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Button
-          title="로그인 화면 이동"
-          onPress={() => navigation.navigate("Login")}
-        />
-      </View>
+      {/* <View style={styles.buttonContainer}>
+        <Button title="로그인 화면 이동" onPress={() => navigation.navigate("Login")} />
+      </View> */}
     </View>
   );
 }
@@ -56,15 +53,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 10,
+    paddingHorizontal: 20,
   },
   innerContainer: {
-    flex: 1, // 내부 콘텐츠가 차지할 수 있도록 설정
+    flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    borderRadius: 20, // 둥근 모서리 설정
-    backgroundColor: "#f9f9f9", // 배경 색상 설정 (필요시 변경 가능)
-    width: "100%", // 부모의 padding이 반영되도록 설정
+    borderRadius: 20,
+    backgroundColor: "#D9D9D9",
+    width: "100%",
   },
   title: {
     fontSize: 24,

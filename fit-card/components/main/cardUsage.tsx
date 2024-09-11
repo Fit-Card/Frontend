@@ -23,9 +23,9 @@ const CardUsage = (user: User) => {
   };
 
   const getTextPosition = () => {
-    const textWidth = 50; // Assuming the width of the currentUsageText is about 50px
-    const adjustedLeft = Math.max(0, filledWidth - textWidth / 2); // Ensure it doesn't go beyond the left edge
-    return Math.min(adjustedLeft, containerWidth - textWidth); // Ensure it doesn't go beyond the right edge
+    const textWidth = 50;
+    const adjustedLeft = Math.max(0, filledWidth - textWidth / 2);
+    return Math.min(adjustedLeft, containerWidth - textWidth);
   };
 
   return (
@@ -70,13 +70,13 @@ const CardUsage = (user: User) => {
 const styles = StyleSheet.create({
   cardContainer: {
     alignItems: "flex-start",
-    padding: 30,
+    padding: 20,
     // backgroundColor: "#fff",
     width: "100%",
+    marginTop: 10,
   },
   userName: {
     fontSize: 20,
-    fontWeight: "bold",
     marginBottom: 10,
     fontFamily: "SUITE-Bold", // Font 적용
   },

@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import ButtonComponent from "@/components/category/ButtonComponent";
+import { View, Text, StyleSheet } from "react-native";
 
 type Benefit = {
   index: number;
@@ -23,21 +18,18 @@ const CardBenefit = (benefit: Benefit) => {
     <View style={styles.cardContainer}>
       <Text style={styles.titleText}>이런 혜택은 어떠세요?</Text>
 
-      {/* 카테고리 탭 */}
-      <ScrollView horizontal style={styles.tabContainer}>
-        {benefit.category.map((cat, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => setActiveTab(index)}
-            style={[
-              styles.tabButton,
-              { backgroundColor: activeTab === index ? "#5253F0" : "gray" },
-            ]}
-          >
-            <Text style={styles.tabButtonText}>{cat}</Text>
-          </TouchableOpacity>
+      <View style={styles.tabContainer}>
+        {benefit.category.map((category, idx) => (
+          <ButtonComponent
+            key={idx}
+            title={category}
+            isSelected={activeTab === idx}
+            onPress={() => setActiveTab(idx)}
+            customStyle={styles.customButton} // 크기를 줄이는 스타일
+            textStyle={styles.customButtonText} // 텍스트 스타일도 전달
+          />
         ))}
-      </ScrollView>
+      </View>
 
       {/* 선택된 탭에 해당하는 혜택 3개 */}
       <View style={styles.benefitContainer}>
@@ -54,31 +46,32 @@ const CardBenefit = (benefit: Benefit) => {
 const styles = StyleSheet.create({
   cardContainer: {
     alignItems: "flex-start",
-    padding: 30,
-    // backgroundColor: "#ffffff",
     borderRadius: 20,
     width: "100%",
     marginBottom: 20,
   },
   titleText: {
+    marginLeft: 20,
     fontSize: 18,
-    fontWeight: "bold",
     marginBottom: 10,
-    fontFamily: "SUITE-Bold", // Font 적용
+    fontFamily: "SUITE-Bold",
   },
   tabContainer: {
-    marginVertical: 10,
+    flexDirection: "row",
+    marginBottom: 10,
+    marginTop: 5,
+    marginLeft: 17,
   },
-  tabButton: {
-    padding: 10,
-    marginRight: 10,
-    borderRadius: 5,
+  customButton: {
+    paddingHorizontal: 11, // 버튼 크기 조정
+    paddingVertical: 5, // 버튼 크기 조정
+    borderRadius: 15,
   },
-  tabButtonText: {
-    color: "white",
-    fontFamily: "SUITE-Bold", // Font 적용
+  customButtonText: {
+    fontSize: 12, // 텍스트 크기 조정
   },
   benefitContainer: {
+    marginLeft: 20,
     marginTop: 20,
   },
   benefitItem: {
@@ -89,7 +82,7 @@ const styles = StyleSheet.create({
   },
   benefitText: {
     fontSize: 14,
-    fontFamily: "SUITE-Bold", // Font 적용
+    fontFamily: "SUITE-Bold",
   },
 });
 

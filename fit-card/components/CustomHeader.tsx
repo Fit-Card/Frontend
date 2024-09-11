@@ -17,10 +17,7 @@ function HeaderComponent({ title }: HeaderProps) {
       <View style={styles.header}>
         {/* Left Container */}
         <View style={styles.leftContainer}>
-          <Image
-            source={require("@/assets/images/logo.png")}
-            style={styles.logo}
-          />
+          <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
         </View>
 
         {/* Center Container */}
@@ -67,7 +64,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
   },
   logo: {
     height: 35,
