@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
   },
   duplicateCheckButtonText: {
     color: "white",
-    fontSize: 14,
-    fontFamily: "SUITE-Regular",
+    fontSize: 16,
+    fontFamily: "SUITE-Bold",
   },
   signUpButton: {
     backgroundColor: common.textBlue.color,
