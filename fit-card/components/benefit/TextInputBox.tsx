@@ -1,8 +1,14 @@
 import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Ionicons에서 아이콘 불러오기
+import { Ionicons } from "@expo/vector-icons";
 
-const SearchInput = () => {
+// Define the props type for the SearchInput component
+interface SearchInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+}
+
+export default function SearchInput({ value, onChangeText }: SearchInputProps) {
   return (
     <View style={styles.container}>
       <Ionicons name="search" size={20} color="#686E74" style={styles.icon} />
@@ -10,10 +16,12 @@ const SearchInput = () => {
         style={styles.input}
         placeholder="가맹점 이름을 검색해보세요."
         placeholderTextColor="#686E74"
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -25,7 +33,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 2,
     backgroundColor: "#FFF",
-    marginBottom: 50,
   },
   icon: {
     marginRight: 10,
@@ -37,5 +44,3 @@ const styles = StyleSheet.create({
     marginRight: 75,
   },
 });
-
-export default SearchInput;

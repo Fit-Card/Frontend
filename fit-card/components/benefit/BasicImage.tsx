@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   basicContainer: {
     flex: 1,
     alignItems: "center",
+    marginTop: 55,
   },
   titleText: {
     alignItems: "center",
