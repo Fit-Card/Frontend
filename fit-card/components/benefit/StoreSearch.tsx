@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamList } from "@/navigationTypes"; // StackParamList 경로 수정
 import SearchInput from "@/components/benefit/TextInputBox";
 import BasicImage from "@/components/benefit/BasicImage";
+
+// Navigation 타입 정의
+type SearchScreenNavigationProp = StackNavigationProp<StackParamList, "StoreDetail">;
 
 interface Theater {
   id: number;
@@ -19,6 +25,8 @@ export default function StoreSearch() {
   const [searchText, setSearchText] = useState<string>("");
   const [filteredTheaters, setFilteredTheaters] = useState<Theater[]>(theaters);
 
+  const navigation = useNavigation<SearchScreenNavigationProp>();
+
   const handleSearch = (text: string) => {
     setSearchText(text);
     if (text) {
@@ -32,9 +40,14 @@ export default function StoreSearch() {
   };
 
   const renderTheaterItem = ({ item }: { item: Theater }) => (
-    <TouchableOpacity style={styles.theaterItem}>
+    <TouchableOpacity
+      style={styles.theaterItem}
+      onPress={() =>
+        navigation.navigate("StoreDetail", { storeName: item.name, storeImage: item.image })
+      } // 클릭시 상세 페이지로 이동
+    >
       <Image source={item.image} style={styles.cardImage} />
-      <Text>{item.name}</Text>
+      <Text style={styles.theaterItemText}>{item.name}</Text>
     </TouchableOpacity>
   );
 
@@ -79,5 +92,8 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     marginRight: 30,
+  },
+  theaterItemText: {
+    fontFamily: "SUITE-Bold",
   },
 });

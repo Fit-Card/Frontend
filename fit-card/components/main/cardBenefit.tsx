@@ -45,10 +45,10 @@ const CardBenefit = (benefit: Benefit) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
+    marginTop: 20,
     alignItems: "flex-start",
     borderRadius: 20,
     width: "100%",
-    marginBottom: 20,
   },
   titleText: {
     marginLeft: 20,
@@ -58,27 +58,29 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: "row",
-    marginBottom: 10,
     marginTop: 5,
     marginLeft: 17,
   },
   customButton: {
-    paddingHorizontal: 11, // 버튼 크기 조정
-    paddingVertical: 5, // 버튼 크기 조정
+    paddingHorizontal: 11,
+    paddingVertical: 5,
     borderRadius: 15,
   },
   customButtonText: {
-    fontSize: 12, // 텍스트 크기 조정
+    fontSize: 12,
   },
   benefitContainer: {
-    marginLeft: 20,
-    marginTop: 20,
+    marginTop: 10,
+    width: "100%",
+    paddingHorizontal: 20,
   },
   benefitItem: {
     padding: 10,
     marginVertical: 5,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 5,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: "#ccc",
+    width: "100%",
   },
   benefitText: {
     fontSize: 14,

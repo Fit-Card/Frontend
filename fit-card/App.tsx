@@ -17,6 +17,7 @@ import SearchScreen from "./pages/Search";
 import CardScreen from "./pages/Card";
 import DeletecardScreen from "./pages/Deletecard";
 
+import StoreDetail from "@/components/benefit/StoreDetail";
 import CardList from "./components/benefit/CardList";
 
 // 스택 네비게이터 정의
@@ -37,6 +38,11 @@ function SearchStackNavigator() {
         component={CardList}
         options={{ header: () => <HeaderComponent title="카드 목록" /> }}
       />
+      <Stack.Screen
+        name="StoreDetail"
+        component={StoreDetail}
+        options={{ header: () => <HeaderComponent title="혜택 검색" /> }}
+      />
     </Stack.Navigator>
   );
 }
@@ -44,21 +50,21 @@ function SearchStackNavigator() {
 function MypageStackNavigator() {
   return (
     <Stack.Navigator>
-        <Stack.Screen
-          name="Mypage"
-          component={MypageScreen}
-          options={{ header: () => <HeaderComponent title="마이페이지" /> }}
-        />
-        <Stack.Screen
-          name="Addcard"
-          component={AddcardScreen}
-          options={{ header: () => <HeaderComponent title="카드 갱신" /> }}
-        />
-        <Stack.Screen
-          name="Deletecard"
-          component={DeletecardScreen}
-          options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
-        />
+      <Stack.Screen
+        name="Mypage"
+        component={MypageScreen}
+        options={{ header: () => <HeaderComponent title="마이페이지" /> }}
+      />
+      <Stack.Screen
+        name="Addcard"
+        component={AddcardScreen}
+        options={{ header: () => <HeaderComponent title="카드 갱신" /> }}
+      />
+      <Stack.Screen
+        name="Deletecard"
+        component={DeletecardScreen}
+        options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
+      />
     </Stack.Navigator>
   );
 }
@@ -83,9 +89,7 @@ function TabNavigator() {
           } else if (route.name === "My") {
             iconName = focused ? "person-circle" : "person-circle-outline";
           }
-          return (
-            <Icon name={iconName} type={iconType} size={size} color={color} />
-          );
+          return <Icon name={iconName} type={iconType} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#5253F0",
         tabBarInactiveTintColor: "#4D4D4D",
@@ -99,7 +103,7 @@ function TabNavigator() {
       <Tab.Screen
         name="홈"
         component={MainScreen}
-        options={{ header: () => <HeaderComponent title="홈" /> }}
+        options={{ header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" /> }}
       />
       <Tab.Screen
         name="혜택검색"
@@ -116,11 +120,7 @@ function TabNavigator() {
         component={CardScreen}
         options={{ header: () => <HeaderComponent title="카드 추천" /> }}
       />
-      <Tab.Screen
-        name="My"
-        component={MypageStackNavigator}
-        options={{ headerShown: false }}
-      />
+      <Tab.Screen name="My" component={MypageStackNavigator} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }
@@ -157,41 +157,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Main"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Search"
-          component={SearchScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Map"
-          component={MapScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Card"
-          component={CardScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Mypage"
-          component={MypageScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Addcard"
-          component={AddcardScreen}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Card" component={CardScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Mypage" component={MypageScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />
         <Stack.Screen
           name="Deletecard"
           component={DeletecardScreen}
