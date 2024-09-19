@@ -50,19 +50,19 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#EDEDED",
     padding: 10,
     paddingHorizontal: 20,
   },
   innerContainer: {
-    flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     borderRadius: 20,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: "#fff",
     width: "100%",
+    paddingBottom: 30,
   },
   title: {
     fontSize: 24,

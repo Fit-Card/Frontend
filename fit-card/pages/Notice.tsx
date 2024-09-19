@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { StackParamList } from "../navigationTypes";
+import { StackParamList } from "@/navigationTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import KeyColors from "@/styles/KeyColor";
 import Common from "@/styles/Common";

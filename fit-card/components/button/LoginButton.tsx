@@ -2,15 +2,14 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import common from "@/styles/Common";
 
-type CustomButtonProps = {
-  title: string;
+type LoginButtonProps = {
   onPress: () => void;
 };
 
-const CustomButton = ({ title, onPress }: CustomButtonProps) => {
+const LoginButton = ({ onPress }: LoginButtonProps) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
+      <Text style={[styles.buttonText, common.textBold]}>로그인</Text>
     </TouchableOpacity>
   );
 };
@@ -18,15 +17,15 @@ const CustomButton = ({ title, onPress }: CustomButtonProps) => {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: common.textBlue.color,
+    height: 55,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 14,
     alignItems: "center",
   },
   buttonText: {
-    fontFamily: "SUITE-Regular", // 폰트 적용
     color: "white",
-    fontSize: 16,
+    fontSize: 20,
   },
 });
 
-export default CustomButton;
+export default LoginButton;

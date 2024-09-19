@@ -1,15 +1,19 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
-import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  StatusBar,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { StackParamList } from "../navigationTypes";
-import { Icon } from "react-native-elements";
+import { StackParamList } from "@/navigationTypes";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 type HeaderProps = {
   title: string;
 };
-
-
 
 function HeaderComponent({ title }: HeaderProps) {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -24,7 +28,9 @@ function HeaderComponent({ title }: HeaderProps) {
       <View style={styles.header}>
         {/* Left Container */}
         <View style={styles.leftContainer}>
-          <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <AntDesign name="close" size={24} color="#000" />
+          </TouchableOpacity>
         </View>
 
         {/* Center Container */}
@@ -33,16 +39,7 @@ function HeaderComponent({ title }: HeaderProps) {
         </View>
 
         {/* Right Container */}
-        <TouchableOpacity 
-        style={styles.rightContainer} 
-        onPress={() => navigation.navigate("Notice")}>
-          <Icon
-            name="notifications-none"
-            type="material" // Material Icons 라이브러리 사용
-            size={30}
-            color="#000"
-          />
-        </TouchableOpacity>
+        <View style={styles.rightContainer}></View>
       </View>
     </View>
   );
@@ -50,12 +47,12 @@ function HeaderComponent({ title }: HeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    height: 80,
+    height: 70,
     flexDirection: "row", // Row direction to align containers horizontally
-    // alignItems: "center", // Vertically align items in the middle
     paddingHorizontal: 15,
     backgroundColor: "#fff",
-    borderBottomWidth: 0,
+    paddingTop: 15,
+    paddingBottom: 0,
   },
   leftContainer: {
     flex: 1, // Take 1 part of the available space

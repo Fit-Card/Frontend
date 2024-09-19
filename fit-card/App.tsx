@@ -6,7 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
-import HeaderComponent from "@/components/CustomHeader";
+import HeaderComponent from "@/components/header/CustomHeader";
+import SignUpHeader from "@/components/header/SignUpHeader";
 
 import LoginScreen from "./pages/Login";
 import MainScreen from "./pages/Home";
@@ -18,7 +19,9 @@ import CardScreen from "./pages/Card";
 import DeletecardScreen from "./pages/Deletecard";
 import NoticeScreen from "./pages/Notice";
 import NoticeDetailScreen from "./pages/NoticeDetail";
+import SignUp from "@/pages/SignUp";
 
+import StoreDetail from "@/components/benefit/StoreDetail";
 import CardList from "./components/benefit/CardList";
 
 // 스택 네비게이터 정의
@@ -38,6 +41,11 @@ function SearchStackNavigator() {
         name="CardList"
         component={CardList}
         options={{ header: () => <HeaderComponent title="카드 목록" /> }}
+      />
+      <Stack.Screen
+        name="StoreDetail"
+        component={StoreDetail}
+        options={{ header: () => <HeaderComponent title="혜택 검색" /> }}
       />
     </Stack.Navigator>
     
@@ -110,7 +118,7 @@ function TabNavigator() {
       <Tab.Screen
         name="홈"
         component={MainScreen}
-        options={{ header: () => <HeaderComponent title="홈" /> }}
+        options={{ header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" /> }}
       />
       <Tab.Screen
         name="혜택검색"
@@ -177,7 +185,16 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Notice" component={NoticeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Noticedetail" component={NoticeDetailScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Noticedetail"
+          component={NoticeDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{ header: () => <SignUpHeader title="회원가입" /> }}
+        />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
