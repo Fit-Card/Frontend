@@ -6,6 +6,7 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
@@ -19,7 +20,7 @@ export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.inner}>
         <Image
           source={require("@/assets/images/logo.png")}
@@ -61,13 +62,13 @@ export default function LoginScreen() {
           <Text style={styles.signupText}>회원가입</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "#ffffff",
   },
   inner: {

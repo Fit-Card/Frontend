@@ -6,7 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
-import HeaderComponent from "@/components/CustomHeader";
+import HeaderComponent from "@/components/header/CustomHeader";
+import SignUpHeader from "@/components/header/SignUpHeader";
 
 import LoginScreen from "./pages/Login";
 import MainScreen from "./pages/Home";
@@ -223,7 +224,7 @@ export default function App() {
         <Stack.Screen
           name="SignUp"
           component={SignUp}
-          options={{ headerShown: false }}
+          options={{ header: () => <SignUpHeader title="회원가입" /> }}
         />
       </Stack.Navigator>
       <StatusBar style="auto" />
