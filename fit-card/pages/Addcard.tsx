@@ -149,7 +149,7 @@ const AddcardStyle = StyleSheet.create({
     paddingBottom: 50,
   },
   commentContainer: {
-    backgroundColor: KeyColors.backGray,
+    backgroundColor: KeyColors.lightGray,
     alignItems: "center",
     justifyContent: "center",
     margin: 10,

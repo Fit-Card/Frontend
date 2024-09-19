@@ -40,6 +40,7 @@ function SearchStackNavigator() {
         options={{ header: () => <HeaderComponent title="카드 목록" /> }}
       />
     </Stack.Navigator>
+    
   );
 }
 
@@ -64,7 +65,7 @@ function MypageStackNavigator() {
       <Stack.Screen
         name="Notice"
         component={NoticeScreen}
-        options={{ header: () => <HeaderComponent title="공지 사항" /> }}
+        options={{ header: () => <HeaderComponent title="이벤트 알림" /> }}
       />
       <Stack.Screen
         name="Noticedetail"
