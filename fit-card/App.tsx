@@ -41,6 +41,28 @@ function SearchStackNavigator() {
   );
 }
 
+function MypageStackNavigator() {
+  return (
+    <Stack.Navigator>
+        <Stack.Screen
+          name="Mypage"
+          component={MypageScreen}
+          options={{ header: () => <HeaderComponent title="마이페이지" /> }}
+        />
+        <Stack.Screen
+          name="Addcard"
+          component={AddcardScreen}
+          options={{ header: () => <HeaderComponent title="카드 갱신" /> }}
+        />
+        <Stack.Screen
+          name="Deletecard"
+          component={DeletecardScreen}
+          options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
+        />
+    </Stack.Navigator>
+  );
+}
+
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -96,8 +118,8 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="My"
-        component={MypageScreen}
-        options={{ header: () => <HeaderComponent title="마이페이지" /> }}
+        component={MypageStackNavigator}
+        options={{ headerShown: false }}
       />
     </Tab.Navigator>
   );
