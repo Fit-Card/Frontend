@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
-import Header from "@/components/CustomHeader";
 
 import Common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "../styles/KeyColor";
@@ -38,10 +37,6 @@ export default function AddcardScreen() {
 
   return (
     <View style={AddcardStyle.container}>
-      <View style={AddcardStyle.headerContainer}>
-        <Header title="카드 갱신" />
-      </View>
-
       <ScrollView contentContainerStyle={AddcardStyle.scrollContainer}>
         {/* 안내 문구 */}
         <View style={AddcardStyle.commentContainer}>
@@ -151,7 +146,7 @@ const AddcardStyle = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingVertical: 100,
+    paddingBottom: 50,
   },
   commentContainer: {
     backgroundColor: KeyColors.backGray,

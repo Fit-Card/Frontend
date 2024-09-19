@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
-import Header from "@/components/CustomHeader";
 import Common from "../styles/Common";
 import KeyColors from "../styles/KeyColor";
 import common from "../styles/Common";
@@ -53,9 +52,6 @@ export default function DeletecardScreen() {
 
   return (
     <View style={DeletecardStyle.container}>
-      <View style={DeletecardStyle.headerContainer}>
-        <Header title="카드 삭제" />
-      </View>
 
       <ScrollView contentContainerStyle={DeletecardStyle.scrollContainer}>
         {/* 안내 문구 */}
@@ -173,7 +169,7 @@ const DeletecardStyle = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingVertical: 100,
+    paddingBottom: 50,
   },
   commentContainer: {
     backgroundColor: KeyColors.backGray,
