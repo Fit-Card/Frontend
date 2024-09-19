@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { StackParamList } from "../navigationTypes";
+import { StackParamList } from "@/navigationTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Notice {
@@ -23,14 +23,11 @@ export default function NoticeScreen() {
   const handleNoticePress = (notice: Notice) => {
     alert(notice.id + "를 열람하는 로직!");
     notice.isRead = true;
-    navigation.navigate("Noticedetail", {noticeId: notice.id});
+    navigation.navigate("Noticedetail", { noticeId: notice.id });
   };
 
   const renderItem = ({ item }: { item: Notice }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => handleNoticePress(item)}
-    >
+    <TouchableOpacity style={styles.card} onPress={() => handleNoticePress(item)}>
       <Text style={styles.cardTitle}>{item.title}</Text>
       {!item.isRead && <Text style={styles.unread}>보지 않음</Text>}
     </TouchableOpacity>

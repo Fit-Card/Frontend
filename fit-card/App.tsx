@@ -70,21 +70,6 @@ function MypageStackNavigator() {
         options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
       />
       <Stack.Screen
-        name="Mypage"
-        component={MypageScreen}
-        options={{ header: () => <HeaderComponent title="마이페이지" /> }}
-      />
-      <Stack.Screen
-        name="Addcard"
-        component={AddcardScreen}
-        options={{ header: () => <HeaderComponent title="카드 갱신" /> }}
-      />
-      <Stack.Screen
-        name="Deletecard"
-        component={DeletecardScreen}
-        options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
-      />
-      <Stack.Screen
         name="Notice"
         component={NoticeScreen}
         options={{ header: () => <HeaderComponent title="공지 사항" /> }}
@@ -197,17 +182,6 @@ export default function App() {
           name="Deletecard"
           component={DeletecardScreen}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen name="Notice" component={NoticeScreen} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="Noticedetail"
-          component={NoticeDetailScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{ header: () => <SignUpHeader title="회원가입" /> }}
         />
         <Stack.Screen name="Notice" component={NoticeScreen} options={{ headerShown: false }} />
         <Stack.Screen
