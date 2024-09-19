@@ -43,14 +43,14 @@ const styles = StyleSheet.create({
     marginTop: 150, // 상단 여백 조정
   },
   logo: {
-    width: 150, // 로고 너비 조정
+    width: 135, // 로고 너비 조정
     height: 140, // 로고 높이 조정
     resizeMode: "contain",
   },
   text: {
     color: "#FFFFFF", // 텍스트 색상 흰색으로 변경
     marginTop: 5, // 로고와 텍스트 사이 간격 조정
-    fontSize: 16, // 텍스트 크기 조정
+    fontSize: 18, // 텍스트 크기 조정
     fontFamily: "SUITE-Bold",
   },
   image: {
