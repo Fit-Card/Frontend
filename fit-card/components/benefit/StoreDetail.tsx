@@ -16,11 +16,12 @@ export default function StoreDetail() {
         <View style={styles.textContainer}>
           <Text style={styles.theaterName}>{storeName}</Text>
           <Text style={styles.description}>여기구 저기구 설명 설명</Text>
+          {/* 스위치가 설명 옆에 위치하도록 배치 */}
+          <View style={styles.switchInlineContainer}>
+            <Text style={styles.switchLabel}>내 카드만 보기</Text>
+            <Switch value={false} onValueChange={() => {}} />
+          </View>
         </View>
-      </View>
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>내 카드만 보기</Text>
-        <Switch value={false} onValueChange={() => {}} />
       </View>
     </View>
   );
@@ -38,27 +39,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderRadius: 20,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#EDEDED",
   },
   theaterImage: {
-    width: 50,
-    height: 50,
-    marginRight: 20,
+    width: 70,
+    height: 70,
+    marginRight: 25,
+    marginLeft: 10,
   },
   textContainer: {
     flex: 1,
   },
   theaterName: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "SUITE-Bold",
     marginBottom: 5,
   },
   description: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#666",
     fontFamily: "SUITE-Regular",
+    marginBottom: 5,
   },
-  switchContainer: {
+  switchInlineContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
