@@ -6,7 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
-import HeaderComponent from "@/components/CustomHeader";
+import HeaderComponent from "@/components/header/CustomHeader";
+import SignUpHeader from "@/components/header/SignUpHeader";
 
 import LoginScreen from "./pages/Login";
 import MainScreen from "./pages/Home";
@@ -16,6 +17,9 @@ import AddcardScreen from "./pages/Addcard";
 import SearchScreen from "./pages/Search";
 import CardScreen from "./pages/Card";
 import DeletecardScreen from "./pages/Deletecard";
+import NoticeScreen from "./pages/Notice";
+import NoticeDetailScreen from "./pages/NoticeDetail";
+import SignUp from "@/pages/SignUp";
 
 import StoreDetail from "@/components/benefit/StoreDetail";
 import CardList from "./components/benefit/CardList";
@@ -64,6 +68,31 @@ function MypageStackNavigator() {
         name="Deletecard"
         component={DeletecardScreen}
         options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
+      />
+      <Stack.Screen
+        name="Mypage"
+        component={MypageScreen}
+        options={{ header: () => <HeaderComponent title="마이페이지" /> }}
+      />
+      <Stack.Screen
+        name="Addcard"
+        component={AddcardScreen}
+        options={{ header: () => <HeaderComponent title="카드 갱신" /> }}
+      />
+      <Stack.Screen
+        name="Deletecard"
+        component={DeletecardScreen}
+        options={{ header: () => <HeaderComponent title="카드 삭제" /> }}
+      />
+      <Stack.Screen
+        name="Notice"
+        component={NoticeScreen}
+        options={{ header: () => <HeaderComponent title="공지 사항" /> }}
+      />
+      <Stack.Screen
+        name="Noticedetail"
+        component={NoticeDetailScreen}
+        options={{ header: () => <HeaderComponent title="상세 보기" /> }}
       />
     </Stack.Navigator>
   );
@@ -168,6 +197,28 @@ export default function App() {
           name="Deletecard"
           component={DeletecardScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen name="Notice" component={NoticeScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Noticedetail"
+          component={NoticeDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{ header: () => <SignUpHeader title="회원가입" /> }}
+        />
+        <Stack.Screen name="Notice" component={NoticeScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Noticedetail"
+          component={NoticeDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{ header: () => <SignUpHeader title="회원가입" /> }}
         />
       </Stack.Navigator>
       <StatusBar style="auto" />
