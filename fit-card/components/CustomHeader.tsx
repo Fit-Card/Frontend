@@ -1,12 +1,19 @@
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { StackParamList } from "../navigationTypes";
 import { Icon } from "react-native-elements";
 
 type HeaderProps = {
   title: string;
 };
 
+
+
 function HeaderComponent({ title }: HeaderProps) {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
   return (
     <View>
       <StatusBar
@@ -26,14 +33,16 @@ function HeaderComponent({ title }: HeaderProps) {
         </View>
 
         {/* Right Container */}
-        <View style={styles.rightContainer}>
+        <TouchableOpacity 
+        style={styles.rightContainer} 
+        onPress={() => navigation.navigate("Notice")}>
           <Icon
             name="notifications-none"
             type="material" // Material Icons 라이브러리 사용
             size={30}
             color="#000"
           />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
