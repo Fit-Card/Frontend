@@ -1,5 +1,6 @@
 export type StackParamList = {
   Login: undefined;
+  SignUp: undefined;
   Main: undefined;
   Temp: undefined;
   Mypage: undefined;

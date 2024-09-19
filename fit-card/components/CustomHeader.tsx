@@ -24,7 +24,10 @@ function HeaderComponent({ title }: HeaderProps) {
       <View style={styles.header}>
         {/* Left Container */}
         <View style={styles.leftContainer}>
-          <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
+          <Image
+            source={require("@/assets/images/logo.png")}
+            style={styles.logo}
+          />
         </View>
 
         {/* Center Container */}
@@ -50,12 +53,12 @@ function HeaderComponent({ title }: HeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    height: 80,
+    height: 60,
     flexDirection: "row", // Row direction to align containers horizontally
-    // alignItems: "center", // Vertically align items in the middle
     paddingHorizontal: 15,
     backgroundColor: "#fff",
-    borderBottomWidth: 0,
+    paddingTop: 15,
+    paddingBottom: 0,
   },
   leftContainer: {
     flex: 1, // Take 1 part of the available space
