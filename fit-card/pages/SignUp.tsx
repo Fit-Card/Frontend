@@ -36,6 +36,11 @@ export default function SignUp() {
   });
 
   const [isDuplicate, setIsDuplicate] = useState<boolean | null>(null);
+  const [isLoginIdEmpty, setIsLoginIdEmpty] = useState<boolean | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<
+    string | null
+  >(null);
 
   const handleSignUp = () => {
     // 회원가입 로직을 이곳에 추가 (예: 입력 검증, 서버에 데이터 전송 등)
@@ -48,6 +53,13 @@ export default function SignUp() {
   const handleCheckDuplicate = () => {
     console.log("아이디 중복 확인:", user.loginId);
 
+    if (!user.loginId) {
+      setIsLoginIdEmpty(true);
+      return;
+    } else {
+      setIsLoginIdEmpty(false);
+    }
+
     // existingUsers에서 중복된 아이디가 있는지 확인
     const userExists = existingUsers.some(
       (existingUser) => existingUser.loginId === user.loginId
@@ -55,10 +67,8 @@ export default function SignUp() {
 
     if (userExists) {
       setIsDuplicate(true); // 중복된 아이디가 있을 경우
-      console.log("이미 사용 중인 아이디입니다.");
     } else {
       setIsDuplicate(false); // 사용 가능한 아이디
-      console.log("사용 가능한 아이디입니다.");
     }
   };
 
@@ -91,11 +101,14 @@ export default function SignUp() {
           </TouchableOpacity>
         </View>
         {/* 중복 체크 결과에 따른 메시지 표시 */}
-        {isDuplicate === true && (
+        {isLoginIdEmpty === false && isDuplicate === true && (
           <Text style={styles.errorText}>이미 사용 중인 아이디입니다.</Text>
         )}
-        {isDuplicate === false && (
+        {isLoginIdEmpty === false && isDuplicate === false && (
           <Text style={styles.successText}>사용 가능한 아이디입니다.</Text>
+        )}
+        {isLoginIdEmpty === true && (
+          <Text style={styles.errorText}>아이디를 입력해주세요.</Text>
         )}
       </View>
 
