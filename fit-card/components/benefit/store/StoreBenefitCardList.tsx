@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
-import { useRoute, RouteProp } from "@react-navigation/native";
-import { StackParamList } from "@/navigationTypes";
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack"; // 추가
+import { StackParamList } from "@/navigationTypes"; // StackParamList 임포트
 
-// 카드 데이터에 benefit 추가
+// 카드 데이터
 const cardsData = [
   {
     id: 1,
@@ -21,29 +22,34 @@ const cardsData = [
   },
   {
     id: 3,
-    name: "우리카드 혜택",
-    companyId: 2,
+    name: "신한카드 Mr.Life",
+    companyId: 1,
     image: require("@/assets/images/temp-card.png"),
-    benefit: "영화 10% 캐시백",
+    benefit: "영화 10% 할인",
   },
   {
     id: 4,
-    name: "신한카드 ZERO",
+    name: "신한카드 Z play",
     companyId: 1,
     image: require("@/assets/images/temp-card.png"),
-    benefit: "영화 10% 적립",
+    benefit: "영화 5% 할인",
   },
 ];
 
-// Route type 정의
-type CardListRouteProp = RouteProp<StackParamList, "CardList">;
+// StackNavigationProp 정의
+type CardListNavigationProp = StackNavigationProp<StackParamList, "CardDetail">;
 
 const StoreBenefitCardList = () => {
-  const route = useRoute<CardListRouteProp>();
+  const route = useRoute<RouteProp<StackParamList, "CardList">>();
   const { companyName, companyId } = route.params;
+  const navigation = useNavigation<CardListNavigationProp>(); // useNavigation에 타입 적용
 
-  // 회사 ID에 따라 필터링된 카드 목록
   const filteredCards = cardsData.filter((card) => card.companyId === companyId);
+
+  // 카드 터치 시 상세보기 화면으로 이동
+  const handleCardPress = (cardId: number) => {
+    navigation.navigate("CardDetail", { cardId }); // CardDetail로 cardId 전달
+  };
 
   return (
     <View style={styles.container}>
@@ -52,15 +58,17 @@ const StoreBenefitCardList = () => {
       <FlatList
         data={filteredCards}
         renderItem={({ item }) => (
-          <View style={styles.cardContainer}>
-            <Image source={item.image} style={styles.cardImage} />
-            <View style={styles.cardInfo}>
-              <Text style={styles.cardName}>{item.name}</Text>
+          <TouchableOpacity onPress={() => handleCardPress(item.id)}>
+            <View style={styles.cardContainer}>
+              <Image source={item.image} style={styles.cardImage} />
+              <View style={styles.cardInfo}>
+                <Text style={styles.cardName}>{item.name}</Text>
+              </View>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{item.benefit}</Text>
+              </View>
             </View>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{item.benefit}</Text>
-            </View>
-          </View>
+          </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id.toString()}
       />
@@ -89,7 +97,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderWidth: 1.5,
     borderColor: "#e6e6e6",
-    elevation: 1,
   },
   cardImage: {
     width: 60,

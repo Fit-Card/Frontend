@@ -16,4 +16,5 @@ export type StackParamList = {
   Notice: undefined;
   Noticedetail: { noticeId: string };
   StoreDetail: { storeName: string; storeImage: any };
+  CardDetail: { cardId: number };
 };
