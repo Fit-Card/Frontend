@@ -11,34 +11,63 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import common from "@/styles/Common";
 
+import { existingUsers } from "@/mock/userData";
+
+interface User {
+  loginId: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+  birthDate: string;
+  phoneNumber: string;
+}
+
 export default function SignUp() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   // State variables for form inputs
-  const [loginId, setLoginId] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [user, setUser] = useState<User>({
+    loginId: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
+    birthDate: "",
+    phoneNumber: "",
+  });
+
+  const [isDuplicate, setIsDuplicate] = useState<boolean | null>(null);
 
   const handleSignUp = () => {
     // 회원가입 로직을 이곳에 추가 (예: 입력 검증, 서버에 데이터 전송 등)
-    console.log("회원가입 정보:", {
-      loginId,
-      password,
-      name,
-      birthDate,
-      phoneNumber,
-    });
+    console.log("회원가입 정보:", user);
     // 회원가입 완료 후 로그인 화면으로 이동
     navigation.navigate("Login");
   };
 
   // 아이디 중복 확인 로직
   const handleCheckDuplicate = () => {
-    console.log("아이디 중복 확인:", loginId);
-    // 아이디 중복 확인 로직 추가
+    console.log("아이디 중복 확인:", user.loginId);
+
+    // existingUsers에서 중복된 아이디가 있는지 확인
+    const userExists = existingUsers.some(
+      (existingUser) => existingUser.loginId === user.loginId
+    );
+
+    if (userExists) {
+      setIsDuplicate(true); // 중복된 아이디가 있을 경우
+      console.log("이미 사용 중인 아이디입니다.");
+    } else {
+      setIsDuplicate(false); // 사용 가능한 아이디
+      console.log("사용 가능한 아이디입니다.");
+    }
+  };
+
+  // 입력 필드의 변화를 핸들링
+  const handleChange = (key: keyof User, value: string) => {
+    setUser({
+      ...user,
+      [key]: value,
+    });
   };
 
   return (
@@ -51,8 +80,8 @@ export default function SignUp() {
             style={[styles.input, styles.inputWithButton]}
             placeholder="아이디 (최대 20자)"
             maxLength={20}
-            value={loginId}
-            onChangeText={setLoginId}
+            value={user.loginId}
+            onChangeText={(text) => handleChange("loginId", text)}
           />
           <TouchableOpacity
             style={styles.duplicateCheckButton}
@@ -61,6 +90,13 @@ export default function SignUp() {
             <Text style={styles.duplicateCheckButtonText}>중복확인</Text>
           </TouchableOpacity>
         </View>
+        {/* 중복 체크 결과에 따른 메시지 표시 */}
+        {isDuplicate === true && (
+          <Text style={styles.errorText}>이미 사용 중인 아이디입니다.</Text>
+        )}
+        {isDuplicate === false && (
+          <Text style={styles.successText}>사용 가능한 아이디입니다.</Text>
+        )}
       </View>
 
       {/* 비밀번호 입력 */}
@@ -71,8 +107,8 @@ export default function SignUp() {
           placeholder="비밀번호"
           secureTextEntry
           maxLength={100}
-          value={password}
-          onChangeText={setPassword}
+          value={user.password}
+          onChangeText={(text) => handleChange("password", text)}
         />
 
         <TextInput
@@ -80,8 +116,8 @@ export default function SignUp() {
           placeholder="비밀번호 확인"
           secureTextEntry
           maxLength={100}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
+          value={user.confirmPassword}
+          onChangeText={(text) => handleChange("confirmPassword", text)}
         />
       </View>
 
@@ -92,8 +128,8 @@ export default function SignUp() {
           style={styles.input}
           placeholder="이름 (최대 10자)"
           maxLength={10}
-          value={name}
-          onChangeText={setName}
+          value={user.name}
+          onChangeText={(text) => handleChange("name", text)}
         />
       </View>
 
@@ -103,8 +139,8 @@ export default function SignUp() {
         <TextInput
           style={styles.input}
           placeholder="생년월일 (YYYY-MM-DD)"
-          value={birthDate}
-          onChangeText={setBirthDate}
+          value={user.birthDate}
+          onChangeText={(text) => handleChange("birthDate", text)}
         />
       </View>
 
@@ -116,8 +152,8 @@ export default function SignUp() {
           placeholder="전화번호 (예: 010-1234-5678)"
           maxLength={13}
           keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          value={user.phoneNumber}
+          onChangeText={(text) => handleChange("phoneNumber", text)}
         />
       </View>
 
@@ -184,6 +220,18 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontFamily: "SUITE-Bold",
+  },
+  errorText: {
+    color: "red",
+    marginTop: -10,
+    marginBottom: 10,
+    fontFamily: "SUITE-Regular",
+  },
+  successText: {
+    color: "green",
+    marginTop: -10,
+    marginBottom: 10,
+    fontFamily: "SUITE-Regular",
   },
   signUpButton: {
     backgroundColor: common.textBlue.color,
