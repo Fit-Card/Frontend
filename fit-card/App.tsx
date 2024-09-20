@@ -23,6 +23,7 @@ import SignUp from "@/pages/SignUp";
 
 import StoreDetail from "@/components/benefit/StoreDetail";
 import CardList from "./components/benefit/CardList";
+import PersonalInfoScreen from "./pages/PersonalInfo";
 
 // 스택 네비게이터 정의
 const Stack = createStackNavigator();
@@ -48,7 +49,6 @@ function SearchStackNavigator() {
         options={{ header: () => <HeaderComponent title="혜택 검색" /> }}
       />
     </Stack.Navigator>
-    
   );
 }
 
@@ -79,6 +79,11 @@ function MypageStackNavigator() {
         name="Noticedetail"
         component={NoticeDetailScreen}
         options={{ header: () => <HeaderComponent title="상세 보기" /> }}
+      />
+      <Stack.Screen
+        name="PersonalInfo"
+        component={PersonalInfoScreen}
+        options={{ header: () => <HeaderComponent title="사용자 정보 관리" /> }}
       />
     </Stack.Navigator>
   );
@@ -189,6 +194,11 @@ export default function App() {
           name="Noticedetail"
           component={NoticeDetailScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PersonalInfo"
+          component={PersonalInfoScreen}
+          options={{ header: () => <HeaderComponent title="사용자 정보 관리" /> }}
         />
         <Stack.Screen
           name="SignUp"

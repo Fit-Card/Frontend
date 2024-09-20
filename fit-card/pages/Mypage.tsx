@@ -70,7 +70,7 @@ export default function MypageScreen() {
         </View>
 
         {/* 사용자 정보 관리 */}
-        <TouchableOpacity style={mypageStyle.menuOption}>
+        <TouchableOpacity style={mypageStyle.menuOption} onPress={()=>{navigation.navigate("PersonalInfo")}}>
           <Image
             source={require("../assets/icons/icon_info.png")} // PNG 파일 경로
             style={mypageStyle.menuIcon} // 아이콘 스타일
