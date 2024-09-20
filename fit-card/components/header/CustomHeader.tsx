@@ -1,13 +1,19 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Icon } from "react-native-elements";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { StackParamList } from "../../navigationTypes";
+
 
 type HeaderProps = {
   title: string;
   backgroundColor?: string; // 배경색을 선택적으로 받을 수 있도록 설정
 };
 
+
 function HeaderComponent({ title, backgroundColor = "#fff" }: HeaderProps) {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   return (
     <View>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
@@ -23,9 +29,9 @@ function HeaderComponent({ title, backgroundColor = "#fff" }: HeaderProps) {
         </View>
 
         {/* Right Container */}
-        <View style={styles.rightContainer}>
+        <TouchableOpacity style={styles.rightContainer} onPress={() => navigation.navigate("Notice")}>
           <Icon name="notifications-none" type="material" size={30} color="#4D4D4D" />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

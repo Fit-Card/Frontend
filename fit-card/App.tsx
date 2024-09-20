@@ -20,10 +20,12 @@ import DeletecardScreen from "./pages/Deletecard";
 import NoticeScreen from "./pages/Notice";
 import NoticeDetailScreen from "./pages/NoticeDetail";
 import SignUp from "@/pages/SignUp";
+import Loading from "@/pages/Loading";
 
 import StoreDetail from "@/components/benefit/store/StoreDetail";
 import CardList from "@/components/benefit/card/CardList";
 import StoreBenefitCardList from "@/components/benefit/store/StoreBenefitCardList";
+import PersonalInfoScreen from "./pages/PersonalInfo";
 import CardDetailScreen from "@/pages/CardDetail";
 
 // 스택 네비게이터 정의
@@ -84,12 +86,17 @@ function MypageStackNavigator() {
       <Stack.Screen
         name="Notice"
         component={NoticeScreen}
-        options={{ header: () => <HeaderComponent title="공지 사항" /> }}
+        options={{ header: () => <HeaderComponent title="이벤트 알림" /> }}
       />
       <Stack.Screen
         name="Noticedetail"
         component={NoticeDetailScreen}
         options={{ header: () => <HeaderComponent title="상세 보기" /> }}
+      />
+      <Stack.Screen
+        name="PersonalInfo"
+        component={PersonalInfoScreen}
+        options={{ header: () => <HeaderComponent title="사용자 정보 관리" /> }}
       />
     </Stack.Navigator>
   );
@@ -129,7 +136,9 @@ function TabNavigator() {
       <Tab.Screen
         name="홈"
         component={MainScreen}
-        options={{ header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" /> }}
+        options={{
+          header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" />,
+        }}
       />
       <Tab.Screen
         name="혜택검색"
@@ -182,7 +191,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Loading">
+        <Stack.Screen name="Loading" component={Loading} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
@@ -200,6 +210,11 @@ export default function App() {
           name="Noticedetail"
           component={NoticeDetailScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PersonalInfo"
+          component={PersonalInfoScreen}
+          options={{ header: () => <HeaderComponent title="사용자 정보 관리" /> }}
         />
         <Stack.Screen
           name="SignUp"

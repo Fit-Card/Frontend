@@ -1,4 +1,5 @@
 export type StackParamList = {
+  Loading: undefined;
   Login: undefined;
   SignUp: undefined;
   Main: undefined;
@@ -16,5 +17,6 @@ export type StackParamList = {
   Notice: undefined;
   Noticedetail: { noticeId: string };
   StoreDetail: { storeName: string; storeImage: any };
+  PersonalInfo: undefined;
   CardDetail: { cardId: number };
 };
