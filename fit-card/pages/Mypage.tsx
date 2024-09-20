@@ -1,149 +1,158 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+} from "react-native-reanimated";
+import Carousel from "react-native-reanimated-carousel";
 import { StackParamList } from "../navigationTypes";
 import common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "@/styles/KeyColor";
 
 export default function MypageScreen() {
-  // NavigationProp 타입 지정
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const [modalVisible, setModalVisible] = useState<boolean>(false); // 모달 가시성 상태
+  const [currentCardIndex, setCurrentCardIndex] = useState(0); // 현재 카드 인덱스 상태
+  const cardData = [
+    { name: "신한 머시기 카드", image: require("../assets/images/temp-card.png") },
+    { name: "롯데 저시기 카드", image: require("../assets/images/temp-card.png") },
+    { name: "우리 어쩌구 카드", image: require("../assets/images/temp-card.png") },
+  ];
 
-  const handleLogout = () => {
-    alert("로그아웃 로직!");
-    navigation.navigate("Login");
-  }
+  const scrollValue = useSharedValue(0); // 캐러셀의 스크롤 상태를 관리
 
-  const handleCancel = () => {
-    setModalVisible(false);
-  }
+  const handleSnapToItem = (index: number) => {
+    setCurrentCardIndex(index);
+  };
+
+  // 곡선 애니메이션 스타일 정의
+  const animatedCarouselStyle = useAnimatedStyle(() => {
+    // interpolate를 사용하여 X축 이동에 따라 Y축 곡선 이동 설정
+    const translateX = interpolate(
+      scrollValue.value,
+      [-1, 0, 1],
+      [-150, 0, 150], // 카드가 이동할 X축 범위
+      Extrapolate.CLAMP
+    );
+    const translateY = interpolate(
+      scrollValue.value,
+      [-1, 0, 1],
+      [50, 0, 50], // 카드가 이동할 Y축 범위 (곡선 효과)
+      Extrapolate.CLAMP
+    );
+
+    return {
+      transform: [{ translateX: translateX }, { translateY: translateY }],
+    };
+  });
+
+  const renderCarouselItem = ({ item }: { item: { name: string; image: any } }) => (
+    <TouchableOpacity style={[mypageStyle.carouselImageContainer]}>
+      <Image source={item.image} style={[mypageStyle.carouselImage]} />
+    </TouchableOpacity>
+  );
 
   return (
     <View>
       <ScrollView style={[mypageStyle.container]}>
-      {/* 인삿말 */}
-      <View style={[mypageStyle.helloContainer]}>
-        <Text style={[common.textBlue, common.textLarge, common.textBold]}>
-          윤싸피
-          <Text style={[common.textGray, common.textMedium, common.textBold]}>님, 반갑습니다.</Text>
-        </Text>
-      </View>
-
-      {/* 카드 Carousel */}
-      <View style={[mypageStyle.carouselContainer]}>
-        <Text>요기에 Carousel</Text>
-      </View>
-
-      {/* 퀵메뉴 내용들 */}
-      <View style={[mypageStyle.menuContainer]}>
-        <View style={[mypageStyle.menuTitle]}>
-          <Text style={[common.textBold, common.textGray]}>카드 관리</Text>
+        {/* 인삿말 */}
+        <View style={[mypageStyle.helloContainer]}>
+          <Text style={[common.textBlue, common.textLarge, common.textBold]}>
+            윤싸피
+            <Text style={[common.textGray, common.textMedium, common.textBold]}>
+              님, 반갑습니다.
+            </Text>
+          </Text>
         </View>
 
-        {/* 카드 갱신 */}
-        <TouchableOpacity
-          style={[mypageStyle.menuOption]}
-          onPress={() => navigation.navigate("Addcard")}
-        >
-          <Image
-            source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
-            style={mypageStyle.menuIcon} // 아이콘 스타일
+        {/* 카드 Carousel */}
+        <View style={[mypageStyle.carouselContainer]}>
+          <Carousel
+            width={300}
+            height={120}
+            data={cardData}
+            scrollAnimationDuration={400}
+            onProgressChange={(offsetProgress) => {
+              scrollValue.value = offsetProgress;
+            }} // 스크롤 상태 업데이트
+            onSnapToItem={handleSnapToItem} // 카드 변경 시 트리거
+            renderItem={renderCarouselItem}
+            style={[mypageStyle.cardCarousel]}
           />
-          <Text style={[mypageStyle.menuText]}>카드 갱신</Text>
-        </TouchableOpacity>
-
-        {/* 카드 삭제 */}
-        <TouchableOpacity 
-          style={mypageStyle.menuOption}
-          onPress={() => navigation.navigate("Deletecard")}
-        >
-          <Image
-            source={require("../assets/icons/icon_delete.png")} // PNG 파일 경로
-            style={mypageStyle.menuIcon} // 아이콘 스타일
-          />
-          <Text style={mypageStyle.menuText}>카드 삭제</Text>
-        </TouchableOpacity>
-
-        <View style={mypageStyle.menuTitle}>
-          <Text style={[common.textGray, common.textBold]}>사용자 설정</Text>
+          <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
+            {cardData[currentCardIndex].name}
+          </Text>
+          <Animated.View style={[mypageStyle.animatedCard, animatedCarouselStyle]} />
         </View>
 
-        {/* 사용자 정보 관리 */}
-        <TouchableOpacity style={mypageStyle.menuOption} onPress={()=>{navigation.navigate("PersonalInfo")}}>
-          <Image
-            source={require("../assets/icons/icon_info.png")} // PNG 파일 경로
-            style={mypageStyle.menuIcon} // 아이콘 스타일
-          />
-          <Text style={mypageStyle.menuText}>사용자 정보 관리</Text>
-        </TouchableOpacity>
-
-        {/* 로그아웃 */}
-        <TouchableOpacity style={mypageStyle.menuOption} onPress={()=>{setModalVisible(true)}}>
-          <Image
-            source={require("../assets/icons/icon_signout.png")} // PNG 파일 경로
-            style={mypageStyle.menuIcon} // 아이콘 스타일
-          />
-          <Text style={mypageStyle.menuText}>로그아웃</Text>
-        </TouchableOpacity>
-
-        {/* 회원 탈퇴 */}
-        <TouchableOpacity style={mypageStyle.menuOption}>
-          <Image
-            source={require("../assets/icons/icon_no_red.png")} // PNG 파일 경로
-            style={mypageStyle.menuIcon} // 아이콘 스타일
-          />
-          <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
-        </TouchableOpacity>
-      </View>
-      
-    </ScrollView>
-    {/* 카드 삭제 모달 */}
-    <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={mypageStyle.modalBackground}>
-          <View style={mypageStyle.modalContainer}>
-                <View style={mypageStyle.modalImageContainer}>
-                  <Image
-                    source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
-                    style={mypageStyle.modalImage} // 아이콘 스타일
-                    resizeMode="contain"
-                  />
-                </View>
-
-                <View style={mypageStyle.modalButtonContainer}>
-                  <TouchableOpacity
-                    style={[
-                      mypageStyle.cancelButton,
-                      mypageStyle.modalButton,
-                    ]}
-                    onPress={handleCancel}
-                  >
-                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>
-                      취소
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      mypageStyle.deleteButton,
-                      mypageStyle.modalButton,
-                    ]}
-                    onPress={handleLogout}
-                  >
-                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>
-                      로그아웃
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+        {/* 퀵메뉴 내용들 */}
+        <View style={[mypageStyle.menuContainer]}>
+          <View style={[mypageStyle.menuTitle]}>
+            <Text style={[common.textBold, common.textGray]}>카드 관리</Text>
           </View>
+
+          <TouchableOpacity
+            style={[mypageStyle.menuOption]}
+            onPress={() => navigation.navigate("Addcard")}
+          >
+            <Image
+              source={require("../assets/icons/icon_creditcard.png")}
+              style={mypageStyle.menuIcon}
+            />
+            <Text style={[mypageStyle.menuText]}>카드 갱신</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={mypageStyle.menuOption}
+            onPress={() => navigation.navigate("Deletecard")}
+          >
+            <Image
+              source={require("../assets/icons/icon_delete.png")}
+              style={mypageStyle.menuIcon}
+            />
+            <Text style={mypageStyle.menuText}>카드 삭제</Text>
+          </TouchableOpacity>
+
+          <View style={mypageStyle.menuTitle}>
+            <Text style={[common.textGray, common.textBold]}>사용자 설정</Text>
+          </View>
+
+          <TouchableOpacity
+            style={mypageStyle.menuOption}
+            onPress={() => {
+              navigation.navigate("PersonalInfo");
+            }}
+          >
+            <Image source={require("../assets/icons/icon_info.png")} style={mypageStyle.menuIcon} />
+            <Text style={[mypageStyle.menuText]}>사용자 정보 관리</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={mypageStyle.menuOption}
+            onPress={() => {
+              // 로그아웃 로직
+            }}
+          >
+            <Image
+              source={require("../assets/icons/icon_signout.png")}
+              style={mypageStyle.menuIcon}
+            />
+            <Text style={mypageStyle.menuText}>로그아웃</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={mypageStyle.menuOption}>
+            <Image
+              source={require("../assets/icons/icon_no_red.png")}
+              style={mypageStyle.menuIcon}
+            />
+            <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </ScrollView>
     </View>
-    
   );
 }
 
@@ -161,13 +170,39 @@ const mypageStyle = StyleSheet.create({
     justifyContent: "flex-start",
   },
   carouselContainer: {
-    backgroundColor: "#DBE1E7",
+    // backgroundColor: "#DBE1E7",
     width: "100%",
     height: 150,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
+  },
+  cardCarousel: {
+    // borderWidth: 1,
+    // borderColor: "red",
+  },
+  animatedCard: {
+    backgroundColor: "transparent", // 보이지 않도록 설정
+  },
+  carouselImageContainer: {
+    // borderWidth: 2,
+    // borderColor: "green",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  carouselImage: {
+    width: 200,
+    height: 80,
+    resizeMode: "contain",
+  },
+  cardNameText: {
+    paddingBottom: 5,
+    borderBottomWidth: 2,
+    borderBottomColor: KeyColors.blue,
   },
   menuContainer: {
     width: "100%",
@@ -198,56 +233,5 @@ const mypageStyle = StyleSheet.create({
     flex: 1,
     display: "flex",
     alignItems: "center",
-  },
-  modalBackground: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContainer: {
-    width: "80%",
-    borderRadius: 10,
-    padding: 10,
-    backgroundColor: "white",
-    display: "flex",
-    alignItems: "center",
-  },
-  modalButtonContainer: {
-    marginTop: 20,
-    width: "90%",
-  },
-  modalButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    margin: 2,
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancelButton: {
-    backgroundColor: KeyColors.black,
-  },
-  deleteButton: {
-    backgroundColor: KeyColors.blue,
-  },
-  modalImageContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "90%",
-    maxWidth: "90%",
-    minHeight: 200,
-    maxHeight: 200,
-    padding: 10,
-  },
-  modalImage: {
-    width: "90%",
-    height: "90%",
-    resizeMode: "contain",
   },
 });
