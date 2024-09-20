@@ -169,7 +169,11 @@ function TabNavigator() {
       <Tab.Screen
         name="카드추천"
         component={CardScreen}
-        options={{ header: () => <HeaderComponent title="카드 추천" /> }}
+        options={{
+          header: () => (
+            <HeaderComponent title="카드 추천" backgroundColor="#F7F7F7" />
+          ),
+        }}
       />
       <Tab.Screen name="My" component={MypageStackNavigator} options={{ headerShown: false }} />
     </Tab.Navigator>
