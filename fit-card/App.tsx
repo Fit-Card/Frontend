@@ -21,8 +21,9 @@ import NoticeScreen from "./pages/Notice";
 import NoticeDetailScreen from "./pages/NoticeDetail";
 import SignUp from "@/pages/SignUp";
 
-import StoreDetail from "@/components/benefit/StoreDetail";
-import CardList from "./components/benefit/CardList";
+import StoreDetail from "@/components/benefit/store/StoreDetail";
+import CardList from "@/components/benefit/card/CardList";
+import StoreBenefitCardList from "@/components/benefit/store/StoreBenefitCardList";
 
 // 스택 네비게이터 정의
 const Stack = createStackNavigator();
@@ -46,6 +47,11 @@ function SearchStackNavigator() {
         name="StoreDetail"
         component={StoreDetail}
         options={{ header: () => <HeaderComponent title="혜택 검색" /> }}
+      />
+      <Stack.Screen
+        name="StoreBenefitCardList"
+        component={StoreBenefitCardList}
+        options={{ header: () => <HeaderComponent title="카드 목록" /> }}
       />
     </Stack.Navigator>
   );

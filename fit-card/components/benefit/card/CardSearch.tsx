@@ -18,15 +18,15 @@ interface CardCompany {
 }
 
 const cardCompanies: CardCompany[] = [
-  { id: 1, name: "신한", image: require("../../assets/images/logo.png") },
-  { id: 2, name: "우리", image: require("../../assets/images/logo.png") },
-  { id: 3, name: "하나", image: require("../../assets/images/logo.png") },
-  { id: 4, name: "삼성", image: require("../../assets/images/logo.png") },
-  { id: 5, name: "국민", image: require("../../assets/images/logo.png") },
-  { id: 6, name: "기업", image: require("../../assets/images/logo.png") },
-  { id: 7, name: "농협", image: require("../../assets/images/logo.png") },
-  { id: 8, name: "우리", image: require("../../assets/images/logo.png") },
-  { id: 9, name: "기업", image: require("../../assets/images/logo.png") },
+  { id: 1, name: "신한", image: require("@/assets/images/logo.png") },
+  { id: 2, name: "우리", image: require("@/assets/images/logo.png") },
+  { id: 3, name: "하나", image: require("@/assets/images/logo.png") },
+  { id: 4, name: "삼성", image: require("@/assets/images/logo.png") },
+  { id: 5, name: "국민", image: require("@/assets/images/logo.png") },
+  { id: 6, name: "기업", image: require("@/assets/images/logo.png") },
+  { id: 7, name: "농협", image: require("@/assets/images/logo.png") },
+  { id: 8, name: "우리", image: require("@/assets/images/logo.png") },
+  { id: 9, name: "기업", image: require("@/assets/images/logo.png") },
 ];
 
 interface CardCompanyItemProps {

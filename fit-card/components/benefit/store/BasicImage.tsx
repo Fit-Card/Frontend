@@ -7,7 +7,7 @@ const BasicImage = () => {
   return (
     <View style={styles.basicContainer}>
       <Image
-        source={require("../../assets/images/benefit-search-basic-icon.png")}
+        source={require("@/assets/images/benefit-search-basic-icon.png")}
         style={{ width: 170, height: 170, marginBottom: 20 }}
       />
       <Text style={styles.titleText}>숨은 혜택 찾기</Text>

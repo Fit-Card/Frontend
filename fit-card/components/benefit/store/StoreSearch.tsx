@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "@/navigationTypes"; // StackParamList 경로 수정
 import SearchInput from "@/components/benefit/TextInputBox";
-import BasicImage from "@/components/benefit/BasicImage";
+import BasicImage from "@/components/benefit/store/BasicImage";
 
 // Navigation 타입 정의
 type SearchScreenNavigationProp = StackNavigationProp<StackParamList, "StoreDetail">;
@@ -16,9 +16,9 @@ interface Theater {
 }
 
 const theaters: Theater[] = [
-  { id: 1, name: "롯데시네마", image: require("../../assets/images/logo.png") },
-  { id: 2, name: "CGV", image: require("../../assets/images/logo.png") },
-  { id: 3, name: "롯데시네마2", image: require("../../assets/images/logo.png") },
+  { id: 1, name: "롯데시네마", image: require("@/assets/images/logo.png") },
+  { id: 2, name: "CGV", image: require("@/assets/images/logo.png") },
+  { id: 3, name: "롯데시네마2", image: require("@/assets/images/logo.png") },
 ];
 
 export default function StoreSearch() {

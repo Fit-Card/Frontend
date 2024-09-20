@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import ToggleButton from "@/components/benefit/ToggleButton";
-import StoreSearch from "@/components/benefit/StoreSearch";
-import CardSearch from "@/components/benefit/CardSearch";
+import StoreSearch from "@/components/benefit/store/StoreSearch";
+import CardSearch from "@/components/benefit/card/CardSearch";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../navigationTypes";

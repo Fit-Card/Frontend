@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, Image, StyleSheet, Switch, ScrollView } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { StackParamList } from "@/navigationTypes";
-import CardCarousel from "./CardCarousel"; // 추가된 부분
+import CardCarousel from "./CardCarousel";
+import BankCardList from "@/components/benefit/store/BankCardList";
 
 type StoreDetailRouteProp = RouteProp<StackParamList, "StoreDetail">;
 
@@ -12,21 +13,21 @@ const cardData = [
     name: "신한카드 Mr.Life",
     discount: "영화 10% 할인",
     details: "공과금 10% 할인\n마트, 편의점 10% 할인\n식음료 10% 할인",
-    image: require("../../assets/images/temp-card.png"),
+    image: require("@/assets/images/temp-card.png"),
   },
   {
     id: 2,
     name: "신한카드 Love",
     discount: "영화 8% 할인",
     details: "온라인 쇼핑 5% 할인\n카페 10% 할인",
-    image: require("../../assets/images/temp-card.png"),
+    image: require("@/assets/images/temp-card.png"),
   },
   {
     id: 3,
     name: "삼성카드 어쩌구",
     discount: "영화 7% 할인",
     details: "마트 5% 할인\n편의점 3% 할인",
-    image: require("../../assets/images/temp-card.png"),
+    image: require("@/assets/images/temp-card.png"),
   },
 ];
 
@@ -49,10 +50,8 @@ export default function StoreDetail() {
       </View>
 
       {/* 캐로셀 컴포넌트 추가 */}
-      <View style={styles.carouselContainer}>
-        <CardCarousel cardData={cardData} />
-        <CardCarousel cardData={cardData} />
-        <CardCarousel cardData={cardData} />
+      <View style={styles.BankCardContainer}>
+        <BankCardList />
       </View>
     </ScrollView>
   );
@@ -70,7 +69,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderRadius: 20,
-    backgroundColor: "#EDEDED",
+    backgroundColor: "#fff",
+    borderWidth: 2.5,
+    borderColor: "#5253F0",
   },
   storeImage: {
     width: 70,
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     fontFamily: "SUITE-Bold",
     marginRight: 10,
   },
-  carouselContainer: {
-    marginBottom: 50
-  }
+  BankCardContainer: {
+    marginBottom: 50,
+  },
 });
