@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import common from "@/styles/Common";
@@ -38,9 +31,7 @@ export default function SignUp() {
   const [isDuplicate, setIsDuplicate] = useState<boolean | null>(null);
   const [isLoginIdEmpty, setIsLoginIdEmpty] = useState<boolean | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [confirmPasswordError, setConfirmPasswordError] = useState<
-    string | null
-  >(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
 
   const handleSignUp = () => {
     // 회원가입 로직을 이곳에 추가 (예: 입력 검증, 서버에 데이터 전송 등)
@@ -61,9 +52,7 @@ export default function SignUp() {
     }
 
     // existingUsers에서 중복된 아이디가 있는지 확인
-    const userExists = existingUsers.some(
-      (existingUser) => existingUser.loginId === user.loginId
-    );
+    const userExists = existingUsers.some((existingUser) => existingUser.loginId === user.loginId);
 
     if (userExists) {
       setIsDuplicate(true); // 중복된 아이디가 있을 경우
@@ -93,10 +82,7 @@ export default function SignUp() {
             value={user.loginId}
             onChangeText={(text) => handleChange("loginId", text)}
           />
-          <TouchableOpacity
-            style={styles.duplicateCheckButton}
-            onPress={handleCheckDuplicate}
-          >
+          <TouchableOpacity style={styles.duplicateCheckButton} onPress={handleCheckDuplicate}>
             <Text style={styles.duplicateCheckButtonText}>중복확인</Text>
           </TouchableOpacity>
         </View>
@@ -107,9 +93,7 @@ export default function SignUp() {
         {isLoginIdEmpty === false && isDuplicate === false && (
           <Text style={styles.successText}>사용 가능한 아이디입니다.</Text>
         )}
-        {isLoginIdEmpty === true && (
-          <Text style={styles.errorText}>아이디를 입력해주세요.</Text>
-        )}
+        {isLoginIdEmpty === true && <Text style={styles.errorText}>아이디를 입력해주세요.</Text>}
       </View>
 
       {/* 비밀번호 입력 */}
