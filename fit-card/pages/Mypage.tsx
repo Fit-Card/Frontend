@@ -98,7 +98,7 @@ export default function MypageScreen() {
         {/* 인삿말 */}
         <View style={[mypageStyle.helloContainer]}>
           <Text style={[common.textBlue, common.textLarge, common.textBold]}>
-            윤싸피
+            {user!.name}
             <Text style={[common.textGray, common.textMedium, common.textBold]}>
               님, 반갑습니다.
             </Text>
