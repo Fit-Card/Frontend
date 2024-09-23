@@ -5,18 +5,16 @@ import { StackParamList } from "@/navigationTypes";
 import CardUsage from "@/components/main/cardUsage";
 import Benefit from "@/components/main/cardBenefit";
 
+import { useSelector } from "react-redux"; // Redux의 useSelector 사용
+import { RootState } from "@/store"; // RootState 타입
+import { mockCardInfo } from "@/mock/mockUser";
+
 export default function MainScreen() {
   // NavigationProp 타입 지정
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-  // 더미 데이터
-  const dummyUser = {
-    name: "현경찬",
-    cardImage: require("@/assets/images/temp-card.png"), // 이미지 경로
-    cardName: "Fit Card 어쩌구저쩌구",
-    currentUsage: 202115,
-    goalUsage: 300000,
-  };
+  // Redux 스토어에서 user 정보 가져오기
+  const user = useSelector((state: RootState) => state.user.user);
 
   // 더미 혜택
   const dummyBenefit = {
@@ -36,13 +34,9 @@ export default function MainScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        <CardUsage {...dummyUser} />
+        {user && <CardUsage {...user} {...mockCardInfo} />}
         <Benefit {...dummyBenefit} />
       </View>
-
-      {/* <View style={styles.buttonContainer}>
-        <Button title="로그인 화면 이동" onPress={() => navigation.navigate("Login")} />
-      </View> */}
     </View>
   );
 }

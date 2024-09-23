@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
@@ -15,9 +16,37 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import common from "@/styles/Common";
 
+import { useDispatch } from "react-redux"; // Redux 사용
+import { login } from "@/store/userSlice"; // User slice의 로그인 액션
+import { mockLogin } from "@/mock/mockLogin"; // mockLogin 함수 불러오기
+import { LoginRequest } from "@/interfaces/LoginRequest"; // LoginRequest 타입 불러오기
+
 export default function LoginScreen() {
-  // NavigationProp 타입 지정
+  const [loginId, setLoginId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const dispatch = useDispatch();
+
+  // 로그인 처리 함수
+  const handleLogin = async () => {
+    const loginRequest: LoginRequest = {
+      loginId,
+      password,
+    };
+
+    try {
+      console.log(loginRequest);
+      // mockLogin을 통해 비동기적으로 로그인 검증
+      const userData = await mockLogin(loginRequest);
+      // 성공 시 사용자 정보를 store에 저장
+      dispatch(login(userData));
+      // 메인 화면으로 이동
+      navigation.navigate("Main");
+    } catch (error: any) {
+      // 실패 시 에러 메시지 출력
+      Alert.alert("로그인 실패", error.message);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -36,7 +65,12 @@ export default function LoginScreen() {
                 color={common.textBlue.color}
               />
             </View>
-            <TextInput style={[styles.input]} placeholder="아이디 입력" />
+            <TextInput
+              style={[styles.input]}
+              placeholder="아이디 입력"
+              value={loginId}
+              onChangeText={setLoginId}
+            />
           </View>
           <View style={styles.inputWrapper}>
             <View style={styles.iconContainer}>
@@ -50,12 +84,14 @@ export default function LoginScreen() {
               style={styles.input}
               placeholder="영문자, 숫자, 특수문자 혼용(8~15자)"
               secureTextEntry
+              value={password}
+              onChangeText={setPassword}
             />
           </View>
         </View>
 
         <View style={styles.buttonContainer}>
-          <LoginButton onPress={() => navigation.navigate("Main")} />
+          <LoginButton onPress={handleLogin} />
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
