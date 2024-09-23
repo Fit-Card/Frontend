@@ -91,7 +91,7 @@ export default function MypageScreen() {
         {/* 퀵메뉴 내용들 */}
         <View style={[mypageStyle.menuContainer]}>
           <View style={[mypageStyle.menuTitle]}>
-            <Text style={[common.textBold, common.textGray]}>카드 관리</Text>
+            <Text style={[common.textBold, common.textGray]}>카드 정보</Text>
           </View>
 
           <TouchableOpacity
@@ -114,6 +114,17 @@ export default function MypageScreen() {
               style={mypageStyle.menuIcon}
             />
             <Text style={mypageStyle.menuText}>카드 삭제</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[mypageStyle.menuOption]}
+            onPress={() => navigation.navigate("Notice")}
+          >
+            <Image
+              source={require("../assets/icons/icon_notice.png")}
+              style={mypageStyle.menuIcon}
+            />
+            <Text style={[mypageStyle.menuText]}>이벤트 알림</Text>
           </TouchableOpacity>
 
           <View style={mypageStyle.menuTitle}>
