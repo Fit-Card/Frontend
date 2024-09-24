@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { StyleSheet, View, Alert, TouchableOpacity, Text, ActivityIndicator } from "react-native";
+import { View, Alert, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -10,6 +10,7 @@ import GpsButton from "@/components/map/GpsButton";
 import SearchResultList from "@/components/map/SearchResultList";
 import BottomSheetContent from "@/components/map/BottomSheetContent";
 import StoreDummy from "@/components/map/StoreDummy";
+import styles from "@/components/map/MapComponentStyle";
 
 type LocationType = {
   id: string;
@@ -19,19 +20,34 @@ type LocationType = {
   longitude: number;
 };
 
+// 두 좌표 사이의 거리를 계산하는 함수 (하버사인 공식)
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371e3; // 지구의 반지름 (단위: 미터)
+  const rad = (x: number) => (x * Math.PI) / 180; // 라디안으로 변환
+
+  const dLat = rad(lat2 - lat1);
+  const dLon = rad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; // 두 좌표 간의 거리 (단위: 미터)
+};
+
 const MapComponent = () => {
   const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [latitude, setLatitude] = useState<number | null>(null); // 현재 위도 상태
-  const [longitude, setLongitude] = useState<number | null>(null); // 현재 경도 상태
   const [selectedButton, setSelectedButton] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null);
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
-  const [filteredStores, setFilteredStores] = useState<LocationType[]>([]); // 초기값 빈 배열
-  const [region, setRegion] = useState<Region | null>(null); // 사용자가 보고 있는 지도 영역
+  const [filteredStores, setFilteredStores] = useState<LocationType[]>([]);
+  const [region, setRegion] = useState<Region | null>(null); // 현재 지도 중심값
+  const [previousRegion, setPreviousRegion] = useState<Region | null>(null); // 이전 지도 중심값
   const [isRegionChanged, setIsRegionChanged] = useState<boolean>(false); // 지도 이동 감지
   const [isLoading, setIsLoading] = useState(true);
 
@@ -46,16 +62,16 @@ const MapComponent = () => {
 
         let currentLocation = await Location.getCurrentPositionAsync({});
         setLocation(currentLocation);
-        setLatitude(currentLocation.coords.latitude); // 위도 설정
-        setLongitude(currentLocation.coords.longitude); // 경도 설정
 
-        // 지도 중심을 현재 위치로 설정
-        setRegion({
+        // 초기 위치를 region에 저장
+        const initialRegion = {
           latitude: currentLocation.coords.latitude,
           longitude: currentLocation.coords.longitude,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
-        });
+        };
+        setRegion(initialRegion);
+        setPreviousRegion(initialRegion); // 처음 위치를 previousRegion에 저장
       } catch (error) {
         Alert.alert("Error fetching location data");
       } finally {
@@ -66,14 +82,38 @@ const MapComponent = () => {
 
   // 사용자가 보고 있는 지도 범위를 업데이트하는 함수
   const onRegionChangeComplete = (newRegion: Region) => {
-    setRegion(newRegion); // 현재 보고 있는 지도 범위를 저장
-    setIsRegionChanged(true); // 지도가 이동되었음을 표시
+    if (previousRegion) {
+      // 두 좌표 사이의 거리를 계산
+      const distance = calculateDistance(
+        previousRegion.latitude,
+        previousRegion.longitude,
+        newRegion.latitude,
+        newRegion.longitude
+      );
+
+      // 100m 이상 차이가 나는 경우에만 '이 지역 재검색' 버튼을 표시
+      if (distance > 100) {
+        setIsRegionChanged(true);
+      }
+    }
+
+    setRegion(newRegion); // 새로운 지도 범위를 저장
   };
 
   // 카테고리 버튼 클릭 시 필터링된 마커를 업데이트
   const handleButtonPress = (categoryId: number) => {
     setSelectedButton(categoryId);
     filterStoresByCategoryAndRegion(region, categoryId);
+
+    if (
+      previousRegion &&
+      (previousRegion.latitude !== region?.latitude ||
+        previousRegion.longitude !== region?.longitude)
+    ) {
+      setPreviousRegion(region); // 현재 보고 있는 위치를 previousRegion으로 업데이트
+    }
+
+    setIsRegionChanged(false); // 카테고리 선택 후 지도 이동이 없으므로 버튼 숨김
   };
 
   // 현재 지도 영역과 카테고리에 따른 스토어 필터링 함수
@@ -93,25 +133,21 @@ const MapComponent = () => {
       return isWithinLatitude && isWithinLongitude && isWithinCategory;
     });
 
-    setFilteredStores(filteredData); // 필터링된 스토어들만 저장
-    setIsRegionChanged(false); // 재검색 후 버튼 숨기기
+    setFilteredStores(filteredData);
+  };
 
-    // 필터링된 마커들이 화면 중앙에 오도록 지도 설정
-    if (filteredData.length > 0 && mapRef.current) {
-      const coordinates = filteredData.map((store) => ({
-        latitude: store.latitude,
-        longitude: store.longitude,
-      }));
+  // "이 지역 재검색" 버튼을 눌렀을 때 호출되는 함수
+  const handleRegionSearch = () => {
+    if (region && selectedButton !== null) {
+      filterStoresByCategoryAndRegion(region, selectedButton);
 
-      mapRef.current.fitToCoordinates(coordinates, {
-        edgePadding: { top: 100, right: 100, bottom: 100, left: 70 }, // 여백 설정
-        animated: true, // 애니메이션 적용
-      });
+      // '이 지역 재검색' 버튼을 숨기고 현재 region을 previousRegion으로 저장
+      setIsRegionChanged(false);
+      setPreviousRegion(region); // 현재 region을 저장하여 이후 비교에 사용
     }
   };
 
   if (isLoading) {
-    // 로딩 중일 때 ActivityIndicator 표시
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#5253F0" />
@@ -133,8 +169,6 @@ const MapComponent = () => {
   const handleGpsButtonPress = async () => {
     let currentLocation = await Location.getCurrentPositionAsync({});
     setLocation(currentLocation);
-    setLatitude(currentLocation.coords.latitude); // GPS 버튼 클릭 시 위도 업데이트
-    setLongitude(currentLocation.coords.longitude); // GPS 버튼 클릭 시 경도 업데이트
 
     if (mapRef.current && currentLocation) {
       const { latitude, longitude } = currentLocation.coords;
@@ -179,60 +213,15 @@ const MapComponent = () => {
     setSelectedLocation({ id, name, address, latitude, longitude });
 
     if (sheetRef.current) {
-      sheetRef.current.expand(); // 마커 클릭 시 바텀시트 확장
+      sheetRef.current.expand();
     }
   };
 
   const handleClearSearch = () => {
     setSearchQuery("");
     if (sheetRef.current) {
-      sheetRef.current.close(); // 바텀시트를 닫음
+      sheetRef.current.close();
     }
-  };
-
-  // "이 지역 재검색" 버튼을 눌렀을 때 호출되는 함수
-  const handleRegionSearch = () => {
-    if (region && selectedButton !== null) {
-      const filteredData = StoreDummy.filter((store) => {
-        const isWithinLatitude =
-          store.latitude >= region.latitude - region.latitudeDelta / 2 &&
-          store.latitude <= region.latitude + region.latitudeDelta / 2;
-        const isWithinLongitude =
-          store.longitude >= region.longitude - region.longitudeDelta / 2 &&
-          store.longitude <= region.longitude + region.longitudeDelta / 2;
-
-        const isWithinCategory = store.category === selectedButton;
-
-        return isWithinLatitude && isWithinLongitude && isWithinCategory;
-      });
-
-      // 필터링된 스토어들의 중앙 좌표를 계산
-      if (filteredData.length > 0) {
-        const totalLatitude = filteredData.reduce((sum, store) => sum + store.latitude, 0);
-        const totalLongitude = filteredData.reduce((sum, store) => sum + store.longitude, 0);
-        const averageLatitude = totalLatitude / filteredData.length;
-        const averageLongitude = totalLongitude / filteredData.length;
-
-        // 계산된 중앙 좌표로 설정
-        setLatitude(averageLatitude);
-        setLongitude(averageLongitude);
-
-        // 지도 이동
-        if (mapRef.current) {
-          const newRegion: Region = {
-            latitude: averageLatitude,
-            longitude: averageLongitude,
-            latitudeDelta: region.latitudeDelta,
-            longitudeDelta: region.longitudeDelta,
-          };
-          mapRef.current.animateToRegion(newRegion, 1000);
-        }
-      }
-
-      setFilteredStores(filteredData); // 필터링된 데이터를 상태로 저장
-    }
-
-    setIsRegionChanged(false); // 재검색 후 버튼 숨기기
   };
 
   return (
@@ -273,8 +262,8 @@ const MapComponent = () => {
         provider="google"
         showsUserLocation={true}
         followsUserLocation={true}
-        region={region || undefined} // null 대신 undefined로 처리하여 null 값 회피
-        onRegionChangeComplete={onRegionChangeComplete} // 지도 범위 변경 시 호출
+        region={region || undefined}
+        onRegionChangeComplete={onRegionChangeComplete}
       >
         {/* 필터링된 스토어들에 마커 표시 */}
         {filteredStores.map((store) => (
@@ -307,73 +296,3 @@ const MapComponent = () => {
 };
 
 export default MapComponent;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  map: {
-    flex: 1,
-  },
-  searchContainer: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-    right: 10,
-    zIndex: 10,
-  },
-  locationTextContainer: {
-    position: "absolute",
-    top: 50,
-    left: 10,
-    right: 10,
-    zIndex: 10,
-  },
-  locationText: {
-    fontSize: 14,
-    color: "#333",
-    textAlign: "center",
-  },
-  buttonContainer: {
-    position: "absolute",
-    top: 50,
-    left: 10,
-    right: 10,
-    zIndex: 10,
-  },
-  regionSearchButtonContainer: {
-    position: "absolute",
-    top: 90,
-    alignSelf: "center",
-    zIndex: 10,
-  },
-  regionSearchButton: {
-    backgroundColor: "#fff", // 원하는 색상
-    paddingVertical: 7,
-    paddingHorizontal: 12,
-    borderRadius: 30, // 둥근 모서리
-    elevation: 5, // 그림자 (Android)
-  },
-  regionSearchButtonText: {
-    color: "#5253F0",
-    fontSize: 13,
-    textAlign: "center",
-    fontFamily: "SUITE-Bold",
-  },
-  resultContainer: {
-    position: "absolute",
-    top: 200,
-    left: 10,
-    right: 10,
-    zIndex: 10,
-    backgroundColor: "white",
-    borderRadius: 10,
-    elevation: 5,
-    padding: 10,
-  },
-});
