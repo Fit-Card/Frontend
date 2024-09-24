@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     width: "90%", // 상자의 너비 (화면의 90%)
     backgroundColor: "#FFFFFF", // 상자의 배경색
     padding: 20, // 상자 내부 여백
+    paddingBottom: 15,
     borderRadius: 10, // 상자 모서리 둥글게
     shadowColor: "#000", // 그림자 효과
     shadowOffset: { width: 0, height: 2 }, // 그림자 위치
