@@ -6,11 +6,16 @@ import { User } from "@/interfaces/User";
 function ConsumptionPattern({ user }: { user: User }) {
   // 각 카테고리별 비율 (식비, 교통, 쇼핑, 기타)
   const expenseData = [
-    { label: "식비", percentage: 0.46, color: "#7292FF" }, // 40%
-    { label: "카페", percentage: 0.14, color: "#FAE9BD" }, // 30%
-    { label: "쇼핑", percentage: 0.3, color: "#FF8F68" }, // 20%
-    { label: "기타", percentage: 0.1, color: "#D9D9D9" }, // 10% 기타 항목
+    { label: "식비", percentage: 0.3, color: "#7292FF" },
+    { label: "카페", percentage: 0.25, color: "#FAE9BD" },
+    { label: "쇼핑", percentage: 0.2, color: "#FF8F68" },
+    { label: "교통", percentage: 0.05, color: "#FF6B6B" },
+    { label: "영화", percentage: 0.1, color: "#FFB74D" },
+    { label: "기타", percentage: 0.1, color: "#D9D9D9" },
   ];
+
+  const leftLabels = expenseData.slice(0, 3);
+  const rightLabels = expenseData.slice(3, 6);
 
   return (
     <View style={styles.container}>
@@ -32,33 +37,36 @@ function ConsumptionPattern({ user }: { user: User }) {
               {
                 width: `${item.percentage * 100}%`,
                 backgroundColor: item.color,
-                // borderTopLeftRadius: index === 0 ? 10 : 0,
-                // borderBottomLeftRadius: index === 0 ? 10 : 0,
-                // borderTopRightRadius: index === expenseData.length - 1 ? 0 : 10,
-                // borderBottomRightRadius:
-                //   index === expenseData.length - 1 ? 0 : 10,
               },
             ]}
           />
         ))}
       </View>
 
-      {/* 라벨 표시 */}
-      <View style={styles.labelContainer}>
-        {expenseData.map((item, index) => (
-          <View key={index} style={styles.labelItem}>
-            <View
-              style={[styles.labelColorBox, { backgroundColor: item.color }]}
-            />
-            <Text style={styles.labelText}>
-              {item.label}
-              <Text style={styles.percentageText}>
-                {" "}
-                {Math.round(item.percentage * 100)}%
+      {/* 라벨 표시 - 왼쪽과 오른쪽 3개씩 나누어서 표시 */}
+      <View style={styles.labelWrapper}>
+        <View style={styles.labelContainer}>
+          {leftLabels.map((item, index) => (
+            <View key={index} style={styles.labelItem}>
+              <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
+              <Text style={styles.labelText}>
+                {item.label}
+                <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
               </Text>
-            </Text>
-          </View>
-        ))}
+            </View>
+          ))}
+        </View>
+        <View style={styles.labelContainer}>
+          {rightLabels.map((item, index) => (
+            <View key={index} style={styles.labelItem}>
+              <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
+              <Text style={styles.labelText}>
+                {item.label}
+                <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
+              </Text>
+            </View>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -94,10 +102,16 @@ const styles = StyleSheet.create({
   progressBar: {
     height: "100%",
   },
+  labelWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
   labelContainer: {
     flexDirection: "column",
-    marginTop: 15,
-    justifyContent: "flex-start",
+    flex: 1,
+    // marginTop: 15,
+    // justifyContent: "space-between",
   },
   labelItem: {
     flexDirection: "row",
