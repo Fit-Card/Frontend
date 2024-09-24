@@ -1,15 +1,19 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import ConsumptionPattern from "@/components/recommend/ConsumptionPattern";
 import RecommendedCard from "@/components/recommend/RecommendedCard";
 import AgeGroupCard from "@/components/recommend/AgeGroupCard";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function CardScreen() {
+  const user = useSelector((state: RootState) => state.user.user);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 소비패턴 Component */}
       <View style={styles.inner}>
-        <ConsumptionPattern />
+        <ConsumptionPattern user={user!} />
       </View>
 
       {/* 추천 카드 Component */}

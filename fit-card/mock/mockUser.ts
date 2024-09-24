@@ -12,7 +12,7 @@ export const mockUser = {
 // 카드 정보 (card 정보)
 export const mockCardInfo = {
   cardImage: require("@/assets/images/temp-card.png"), // 카드 이미지
-  cardName: "삼오카드 Fit Card", // 카드 이름
-  currentUsage: 207234, // 현재 사용 금액
+  cardName: "싸피카드 Fit Card", // 카드 이름
+  currentUsage: 187234, // 현재 사용 금액
   goalUsage: 300000, // 목표 사용 금액
 };
