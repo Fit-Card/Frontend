@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: 80,
-    height: 50,
+    height: 45,
     resizeMode: "contain",
     marginRight: 25, // 이미지와 텍스트 간의 간격
   },
