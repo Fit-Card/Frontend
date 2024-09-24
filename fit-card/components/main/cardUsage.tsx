@@ -1,16 +1,11 @@
+// @/components/main/cardUsage.tsx
+
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import * as Progress from "react-native-progress"; // ProgressBar 라이브러리
+import { CardUser } from "@/interfaces/User";
 
-type User = {
-  name: string;
-  cardImage: any;
-  cardName: string;
-  currentUsage: number;
-  goalUsage: number;
-};
-
-const CardUsage = (user: User) => {
+const CardUsage = (user: CardUser) => {
   const [containerWidth, setContainerWidth] = useState(0);
 
   // 실적 퍼센티지 계산

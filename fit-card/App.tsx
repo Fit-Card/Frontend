@@ -28,6 +28,9 @@ import StoreBenefitCardList from "@/components/benefit/store/StoreBenefitCardLis
 import PersonalInfoScreen from "./pages/PersonalInfo";
 import CardDetailScreen from "@/pages/CardDetail";
 
+import { Provider } from "react-redux";
+import store from "@/store";
+
 // 스택 네비게이터 정의
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -122,7 +125,9 @@ function TabNavigator() {
           } else if (route.name === "My") {
             iconName = focused ? "person-circle" : "person-circle-outline";
           }
-          return <Icon name={iconName} type={iconType} size={size} color={color} />;
+          return (
+            <Icon name={iconName} type={iconType} size={size} color={color} />
+          );
         },
         tabBarActiveTintColor: "#5253F0",
         tabBarInactiveTintColor: "#4D4D4D",
@@ -137,7 +142,9 @@ function TabNavigator() {
         name="홈"
         component={MainScreen}
         options={{
-          header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" />,
+          header: () => (
+            <HeaderComponent title="홈" backgroundColor="#EDEDED" />
+          ),
         }}
       />
       <Tab.Screen
@@ -155,7 +162,11 @@ function TabNavigator() {
         component={CardScreen}
         options={{ header: () => <HeaderComponent title="카드 추천" /> }}
       />
-      <Tab.Screen name="My" component={MypageStackNavigator} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="My"
+        component={MypageStackNavigator}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
 }
@@ -190,39 +201,79 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Loading">
-        <Stack.Screen name="Loading" component={Loading} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Card" component={CardScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Mypage" component={MypageScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="Deletecard"
-          component={DeletecardScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="Notice" component={NoticeScreen} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="Noticedetail"
-          component={NoticeDetailScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="PersonalInfo"
-          component={PersonalInfoScreen}
-          options={{ header: () => <HeaderComponent title="사용자 정보 관리" /> }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{ header: () => <SignUpHeader title="회원가입" /> }}
-        />
-      </Stack.Navigator>
-      <StatusBar style="auto" />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Loading">
+          <Stack.Screen
+            name="Loading"
+            component={Loading}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Main"
+            component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Search"
+            component={SearchScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Map"
+            component={MapScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Card"
+            component={CardScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Mypage"
+            component={MypageScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Addcard"
+            component={AddcardScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Deletecard"
+            component={DeletecardScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Notice"
+            component={NoticeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Noticedetail"
+            component={NoticeDetailScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="PersonalInfo"
+            component={PersonalInfoScreen}
+            options={{
+              header: () => <HeaderComponent title="사용자 정보 관리" />,
+            }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{ header: () => <SignUpHeader title="회원가입" /> }}
+          />
+        </Stack.Navigator>
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </Provider>
   );
 }

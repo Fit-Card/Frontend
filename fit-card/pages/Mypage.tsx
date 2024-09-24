@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import Animated, {
   Easing,
@@ -13,13 +21,25 @@ import { StackParamList } from "../navigationTypes";
 import common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "@/styles/KeyColor";
 
+import { useSelector } from "react-redux"; // Redux의 useSelector 사용
+import { RootState } from "@/store"; // Redux 스토어 타입 가져오기
+
 export default function MypageScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [currentCardIndex, setCurrentCardIndex] = useState(0); // 현재 카드 인덱스 상태
   const cardData = [
-    { name: "신한 머시기 카드", image: require("../assets/images/temp-card.png") },
-    { name: "롯데 저시기 카드", image: require("../assets/images/temp-card.png") },
-    { name: "우리 어쩌구 카드", image: require("../assets/images/temp-card.png") },
+    {
+      name: "신한 머시기 카드",
+      image: require("../assets/images/temp-card.png"),
+    },
+    {
+      name: "롯데 저시기 카드",
+      image: require("../assets/images/temp-card.png"),
+    },
+    {
+      name: "우리 어쩌구 카드",
+      image: require("../assets/images/temp-card.png"),
+    },
   ];
 
   const scrollValue = useSharedValue(0); // 캐러셀의 스크롤 상태를 관리
@@ -49,11 +69,28 @@ export default function MypageScreen() {
     };
   });
 
-  const renderCarouselItem = ({ item }: { item: { name: string; image: any } }) => (
+  const renderCarouselItem = ({
+    item,
+  }: {
+    item: { name: string; image: any };
+  }) => (
     <TouchableOpacity style={[mypageStyle.carouselImageContainer]}>
       <Image source={item.image} style={[mypageStyle.carouselImage]} />
     </TouchableOpacity>
   );
+  const [modalVisible, setModalVisible] = useState<boolean>(false); // 모달 가시성 상태
+
+  // Redux 스토어에서 user 정보 가져오기
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const handleLogout = () => {
+    alert("로그아웃 로직!");
+    navigation.navigate("Login");
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
 
   return (
     <View>
@@ -61,7 +98,7 @@ export default function MypageScreen() {
         {/* 인삿말 */}
         <View style={[mypageStyle.helloContainer]}>
           <Text style={[common.textBlue, common.textLarge, common.textBold]}>
-            윤싸피
+            {user!.name}
             <Text style={[common.textGray, common.textMedium, common.textBold]}>
               님, 반갑습니다.
             </Text>
@@ -82,16 +119,20 @@ export default function MypageScreen() {
             renderItem={renderCarouselItem}
             style={[mypageStyle.cardCarousel]}
           />
-          <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
+          <Text
+            style={[mypageStyle.cardNameText, common.textGray, common.textBold]}
+          >
             {cardData[currentCardIndex].name}
           </Text>
-          <Animated.View style={[mypageStyle.animatedCard, animatedCarouselStyle]} />
+          <Animated.View
+            style={[mypageStyle.animatedCard, animatedCarouselStyle]}
+          />
         </View>
 
         {/* 퀵메뉴 내용들 */}
         <View style={[mypageStyle.menuContainer]}>
           <View style={[mypageStyle.menuTitle]}>
-            <Text style={[common.textBold, common.textGray]}>카드 관리</Text>
+            <Text style={[common.textBold, common.textGray]}>카드 정보</Text>
           </View>
 
           <TouchableOpacity
@@ -116,6 +157,17 @@ export default function MypageScreen() {
             <Text style={mypageStyle.menuText}>카드 삭제</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={[mypageStyle.menuOption]}
+            onPress={() => navigation.navigate("Notice")}
+          >
+            <Image
+              source={require("../assets/icons/icon_notice.png")}
+              style={mypageStyle.menuIcon}
+            />
+            <Text style={[mypageStyle.menuText]}>이벤트 알림</Text>
+          </TouchableOpacity>
+
           <View style={mypageStyle.menuTitle}>
             <Text style={[common.textGray, common.textBold]}>사용자 설정</Text>
           </View>
@@ -126,7 +178,10 @@ export default function MypageScreen() {
               navigation.navigate("PersonalInfo");
             }}
           >
-            <Image source={require("../assets/icons/icon_info.png")} style={mypageStyle.menuIcon} />
+            <Image
+              source={require("../assets/icons/icon_info.png")}
+              style={mypageStyle.menuIcon}
+            />
             <Text style={[mypageStyle.menuText]}>사용자 정보 관리</Text>
           </TouchableOpacity>
 
@@ -148,7 +203,9 @@ export default function MypageScreen() {
               source={require("../assets/icons/icon_no_red.png")}
               style={mypageStyle.menuIcon}
             />
-            <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
+            <Text style={[mypageStyle.menuText, common.textRed]}>
+              회원 탈퇴
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
