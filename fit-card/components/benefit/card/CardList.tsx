@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, FlatList, Image, StyleSheet } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { Icon } from "react-native-elements";
 import { StackParamList } from "@/navigationTypes";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const cardsData = [
   {
@@ -55,13 +56,22 @@ const cardsData = [
   },
 ];
 
+// StackNavigationProp 정의
+type CardListNavigationProp = StackNavigationProp<StackParamList, "CardDetail">;
 type CardListRouteProp = RouteProp<StackParamList, "CardList">;
 
 const CardListScreen = () => {
   const route = useRoute<CardListRouteProp>();
+  const navigation = useNavigation<CardListNavigationProp>();
   const { companyName, companyId } = route.params;
 
+  // 회사에 맞는 카드 필터링
   const filteredCards = cardsData.filter((card) => card.companyId === companyId);
+
+  // 카드 클릭 시 상세 페이지로 이동
+  const handleCardPress = (cardId: number) => {
+    navigation.navigate("CardDetail", { cardId }); // CardDetail로 cardId 전달
+  };
 
   return (
     <View style={styles.container}>
@@ -70,10 +80,12 @@ const CardListScreen = () => {
       <FlatList
         data={filteredCards}
         renderItem={({ item }) => (
-          <View style={styles.cardContainer}>
-            <Image source={item.image} style={styles.cardImage} />
-            <Text style={styles.cardName}>{item.name}</Text>
-          </View>
+          <TouchableOpacity onPress={() => handleCardPress(item.id)}>
+            <View style={styles.cardContainer}>
+              <Image source={item.image} style={styles.cardImage} />
+              <Text style={styles.cardName}>{item.name}</Text>
+            </View>
+          </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id.toString()}
       />

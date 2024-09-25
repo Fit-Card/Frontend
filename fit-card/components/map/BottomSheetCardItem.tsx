@@ -1,21 +1,24 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 interface CardItemProps {
   image: any;
   name: string;
   description: string;
+  onPress: () => void; // 클릭 이벤트를 받을 프롭 추가
 }
 
-const CardItem = ({ image, name, description }: CardItemProps) => {
+const CardItem = ({ image, name, description, onPress }: CardItemProps) => {
   return (
-    <View style={styles.cardContainer}>
-      <Image source={image} style={styles.cardImage} />
-      <View style={styles.cardInfo}>
-        <Text style={styles.cardName}>{name}</Text>
-        <Text style={styles.cardDescription}>{description}</Text>
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.cardContainer}>
+        <Image source={image} style={styles.cardImage} />
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardName}>{name}</Text>
+          <Text style={styles.cardDescription}>{description}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
