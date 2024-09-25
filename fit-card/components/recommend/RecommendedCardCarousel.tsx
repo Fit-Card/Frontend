@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Card } from "@/interfaces/Card";
+import { mockCardInfo } from "@/mock/mockUser";
 
 interface RecommendedCardCarouselProps {
   cards: Card[];
@@ -17,15 +18,33 @@ const RecommendedCardCarousel = ({ cards }: RecommendedCardCarouselProps) => {
         height={200} // Adjust based on your card size
         data={cards}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={item.cardImage} style={styles.cardImage} />
-            <Text style={styles.cardTitle}>{item.cardName}</Text>
-            <View>
-              {item.CardBenefit.map((benefit, index) => (
-                <Text key={index} style={styles.cardBenefit}>
-                  {benefit}
-                </Text>
-              ))}
+          <View style={styles.carouselInner}>
+            {/* 내 카드 */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>[ 내 카드 ]</Text>
+              <Image source={mockCardInfo.cardImage} style={styles.cardImage} />
+              <Text style={styles.cardTitle}>{mockCardInfo.cardName}</Text>
+              <View>
+                {mockCardInfo.cardBenefit.map((benefit, index) => (
+                  <Text key={index} style={styles.cardBenefit}>
+                    {benefit}
+                  </Text>
+                ))}
+              </View>
+            </View>
+
+            {/* 추천 카드 */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>[ 추천 카드 ]</Text>
+              <Image source={item.cardImage} style={styles.cardImage} />
+              <Text style={styles.cardTitle}>{item.cardName}</Text>
+              <View>
+                {item.CardBenefit.map((benefit, index) => (
+                  <Text key={index} style={styles.cardBenefit}>
+                    {benefit}
+                  </Text>
+                ))}
+              </View>
             </View>
           </View>
         )}
@@ -48,8 +67,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
   },
-  card: {
+  carouselInner: {
     width: "100%",
+    flexDirection: "row",
+    alignContent: "space-between",
+  },
+  card: {
+    width: "50%",
     height: 180,
     justifyContent: "center",
     alignItems: "center",
@@ -61,13 +85,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+    // fontSize: 14,
+    // fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
     marginBottom: 5,
   },
   cardBenefit: {
     fontSize: 14,
     color: "#555",
+    fontFamily: "SUITE-Bold",
   },
 });
 
