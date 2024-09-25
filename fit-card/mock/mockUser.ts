@@ -15,4 +15,5 @@ export const mockCardInfo = {
   cardName: "싸피카드 Fit Card", // 카드 이름
   currentUsage: 187234, // 현재 사용 금액
   goalUsage: 300000, // 목표 사용 금액
+  cardBenefit: ["혜    택: 10만원", "연회비: 3만원"], // 카드 혜택 정보
 };

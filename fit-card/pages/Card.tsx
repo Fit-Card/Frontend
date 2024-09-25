@@ -21,7 +21,7 @@ export default function CardScreen() {
 
       {/* 추천 카드 Component */}
       <View style={styles.componentWrapper}>
-        <Text style={styles.headText}>{user!.name}님의 카드 vs AI 추천 카드</Text>
+        <Text style={styles.headText}>{user!.name}님의 카드 vs 추천 카드</Text>
         <View style={styles.carouselInner}>
           <RecommendedCardCarousel cards={recommendedCards} />
         </View>
