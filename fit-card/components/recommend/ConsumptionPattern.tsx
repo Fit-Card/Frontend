@@ -18,11 +18,12 @@ function ConsumptionPattern({ user }: { user: User }) {
   const rightLabels = expenseData.slice(3, 6);
 
   return (
-    <View style={styles.container}>
+    <View>
       {/* 사용자 이름과 소비 패턴 텍스트 표시 */}
       <Text style={styles.textContainer}>
         <Text style={styles.userName}>{user.name}</Text>
-        <Text style={{ fontFamily: "SUITE-Bold" }}>님의 소비 패턴</Text>
+        <Text style={{ fontFamily: "SUITE-Bold" }}>님의 소비 패턴{"\n"}</Text>
+        <Text style={styles.smallText}>전체 합산 지출 내역입니다.</Text>
       </Text>
 
       <Text style={styles.headerText}>9월 지출 내역</Text>
@@ -46,26 +47,30 @@ function ConsumptionPattern({ user }: { user: User }) {
       {/* 라벨 표시 - 왼쪽과 오른쪽 3개씩 나누어서 표시 */}
       <View style={styles.labelWrapper}>
         <View style={styles.labelContainer}>
-          {leftLabels.map((item, index) => (
-            <View key={index} style={styles.labelItem}>
-              <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
-              <Text style={styles.labelText}>
-                {item.label}
-                <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
-              </Text>
-            </View>
-          ))}
+          <View style={styles.labelInnerContainer}>
+            {leftLabels.map((item, index) => (
+              <View key={index} style={styles.labelItem}>
+                <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
+                <Text style={styles.labelText}>
+                  {item.label}
+                  <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
         <View style={styles.labelContainer}>
-          {rightLabels.map((item, index) => (
-            <View key={index} style={styles.labelItem}>
-              <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
-              <Text style={styles.labelText}>
-                {item.label}
-                <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
-              </Text>
-            </View>
-          ))}
+          <View style={styles.labelInnerContainer}>
+            {rightLabels.map((item, index) => (
+              <View key={index} style={styles.labelItem}>
+                <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
+                <Text style={styles.labelText}>
+                  {item.label}
+                  <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
       </View>
     </View>
@@ -75,7 +80,7 @@ function ConsumptionPattern({ user }: { user: User }) {
 export default ConsumptionPattern;
 
 const styles = StyleSheet.create({
-  container: {},
+  // container: {},
   textContainer: {
     fontSize: 16,
     marginBottom: 20,
@@ -86,10 +91,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#5253F0",
   },
+  smallText: {
+    fontFamily: "SUITE-Bold",
+    color: "#555",
+    fontSize: 10,
+  },
   headerText: {
     fontFamily: "SUITE-Bold", // 폰트 적용
-    fontSize: 14,
-    marginBottom: 5, // marginBottom 적용
+    fontSize: 16,
+    marginVertical: 7, // marginBottom 적용
   },
   barContainer: {
     flexDirection: "row",
@@ -104,14 +114,16 @@ const styles = StyleSheet.create({
   },
   labelWrapper: {
     flexDirection: "row",
-    justifyContent: "space-between",
     marginTop: 15,
   },
   labelContainer: {
     flexDirection: "column",
     flex: 1,
-    // marginTop: 15,
-    // justifyContent: "space-between",
+    alignItems: "center",
+    // paddingLeft: 20,
+  },
+  labelInnerContainer: {
+    flexDirection: "column",
   },
   labelItem: {
     flexDirection: "row",
