@@ -1,5 +1,4 @@
 // @/mock/mockLogin.ts
-
 import { LoginRequest } from "@/interfaces/LoginRequest";
 import { mockUser } from "@/mock/mockUser";
 
