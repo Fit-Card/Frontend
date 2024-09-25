@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Alert, TouchableOpacity, Text, ActivityIndicator } from "react-native";
+import { View, Alert, TouchableOpacity, Text, ActivityIndicator, Image } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -11,6 +11,8 @@ import SearchResultList from "@/components/map/SearchResultList";
 import BottomSheetContent from "@/components/map/BottomSheetContent";
 import StoreDummy from "@/components/map/StoreDummy";
 import styles from "@/components/map/MapComponentStyle";
+
+const ITEMS_PER_PAGE = 5;
 
 type LocationType = {
   id: string;
@@ -44,12 +46,15 @@ const MapComponent = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null);
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
-
+  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [filteredStores, setFilteredStores] = useState<LocationType[]>([]);
   const [region, setRegion] = useState<Region | null>(null); // 현재 지도 중심값
   const [previousRegion, setPreviousRegion] = useState<Region | null>(null); // 이전 지도 중심값
   const [isRegionChanged, setIsRegionChanged] = useState<boolean>(false); // 지도 이동 감지
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadMoreVisible, setIsLoadMoreVisible] = useState<boolean>(false); // '결과 더보기' 버튼 표시 여부
+  const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
+  const [isLoadMoreDisabled, setIsLoadMoreDisabled] = useState<boolean>(false); // '결과 더보기' 버튼 비활성화 상태
 
   useEffect(() => {
     (async () => {
@@ -103,6 +108,7 @@ const MapComponent = () => {
   // 카테고리 버튼 클릭 시 필터링된 마커를 업데이트
   const handleButtonPress = (categoryId: number) => {
     setSelectedButton(categoryId);
+    setCurrentPage(1); // 페이지 초기화
     filterStoresByCategoryAndRegion(region, categoryId);
 
     if (
@@ -134,26 +140,38 @@ const MapComponent = () => {
     });
 
     setFilteredStores(filteredData);
+
+    // 검색 결과가 5개 이상일 경우 '더보기' 버튼 표시
+    if (filteredData.length > ITEMS_PER_PAGE) {
+      setIsLoadMoreVisible(true);
+    } else {
+      setIsLoadMoreVisible(false);
+    }
   };
 
   // "이 지역 재검색" 버튼을 눌렀을 때 호출되는 함수
   const handleRegionSearch = () => {
     if (region && selectedButton !== null) {
-      filterStoresByCategoryAndRegion(region, selectedButton);
+      // 마커를 모두 지우기 위해 필터링된 스토어를 초기화
+      setFilteredStores([]);
 
-      // '이 지역 재검색' 버튼을 숨기고 현재 region을 previousRegion으로 저장
-      setIsRegionChanged(false);
+      filterStoresByCategoryAndRegion(region, selectedButton);
+      setCurrentPage(1);
+      // 현재 region을 previousRegion으로 저장
       setPreviousRegion(region); // 현재 region을 저장하여 이후 비교에 사용
+
+      setIsRegionChanged(false); // '이 지역 재검색' 버튼을 숨김
     }
   };
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#5253F0" />
-      </View>
-    );
-  }
+  // '결과 더보기' 버튼을 클릭하면 5개씩 더 표시
+  const handleLoadMore = () => {
+    if (currentPage * ITEMS_PER_PAGE >= filteredStores.length) {
+      setIsLoadMoreDisabled(true); // 더 로드할 항목이 없을 경우 비활성화
+      return;
+    }
+    setCurrentPage((prevPage) => prevPage + 1);
+    setIsLoadMoreDisabled(false); // 더 로드 가능 시 다시 활성화
+  };
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
@@ -167,18 +185,29 @@ const MapComponent = () => {
   };
 
   const handleGpsButtonPress = async () => {
-    let currentLocation = await Location.getCurrentPositionAsync({});
-    setLocation(currentLocation);
+    try {
+      // 현재 위치를 얻어옴
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      console.log("Current location:", currentLocation); // 위치 정보 출력
+      // 위치 상태를 업데이트
+      setLocation(currentLocation);
 
-    if (mapRef.current && currentLocation) {
-      const { latitude, longitude } = currentLocation.coords;
-      const newRegion: Region = {
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      };
-      mapRef.current.animateToRegion(newRegion, 1000);
+      // 맵의 참조(mapRef)가 존재하고 현재 위치 정보가 있다면
+      if (mapRef.current && currentLocation) {
+        const { latitude, longitude } = currentLocation.coords;
+        const newRegion: Region = {
+          latitude,
+          longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        };
+
+        // 맵의 위치를 애니메이션을 통해 새로운 위치로 이동
+        mapRef.current.animateToRegion(newRegion, 1000);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to retrieve GPS location");
+      console.error("Error fetching GPS location: ", error);
     }
   };
 
@@ -210,6 +239,8 @@ const MapComponent = () => {
     latitude: number,
     longitude: number
   ) => {
+    setSelectedMarker(id); // 클릭한 마커의 id를 저장하여 선택된 마커 추적
+
     setSelectedLocation({ id, name, address, latitude, longitude });
 
     if (sheetRef.current) {
@@ -224,6 +255,9 @@ const MapComponent = () => {
     }
   };
 
+  // 현재 페이지에 맞는 스토어 목록을 계산
+  const displayedStores = filteredStores.slice(0, currentPage * ITEMS_PER_PAGE);
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -234,16 +268,28 @@ const MapComponent = () => {
           onClear={handleClearSearch}
         />
       </View>
-
       <View style={styles.buttonContainer}>
         <CategoryButtonGroup selectedButton={selectedButton} onButtonPress={handleButtonPress} />
       </View>
-
       {/* "이 지역 재검색" 버튼 */}
       {selectedButton !== null && isRegionChanged && (
         <View style={styles.regionSearchButtonContainer}>
           <TouchableOpacity style={styles.regionSearchButton} onPress={handleRegionSearch}>
             <Text style={styles.regionSearchButtonText}>이 지역 재검색</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {/* 검색 결과가 많을 때 "결과 더보기" 버튼 표시 */}
+      {isLoadMoreVisible && !isRegionChanged && (
+        <View style={styles.regionSearchButtonContainer}>
+          <TouchableOpacity
+            style={styles.regionSearchButton}
+            onPress={handleLoadMore}
+            disabled={isLoadMoreDisabled} // 버튼 비활성화 여부 결정
+          >
+            <Text style={styles.regionSearchButtonText}>
+              결과 더보기 ({currentPage}/{Math.ceil(filteredStores.length / ITEMS_PER_PAGE)})
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -253,7 +299,6 @@ const MapComponent = () => {
           <SearchResultList searchQuery={searchQuery} onSelectLocation={handleLocationSelect} />
         </View>
       )}
-
       <GpsButton onPress={handleGpsButtonPress} />
 
       <MapView
@@ -265,8 +310,7 @@ const MapComponent = () => {
         region={region || undefined}
         onRegionChangeComplete={onRegionChangeComplete}
       >
-        {/* 필터링된 스토어들에 마커 표시 */}
-        {filteredStores.map((store) => (
+        {displayedStores.map((store) => (
           <Marker
             key={store.id}
             coordinate={{
@@ -282,11 +326,23 @@ const MapComponent = () => {
                 store.longitude
               )
             }
-          />
+          >
+            <Image
+              source={
+                selectedMarker === store.id
+                  ? require("@/assets/images/normal-marker.png") // 선택된 마커의 아이콘
+                  : require("@/assets/images/active-marker.png") // 기본 마커의 아이콘
+              }
+              style={{
+                width: selectedMarker === store.id ? 40 : 40, // 선택된 마커는 더 크게, 기본 마커는 작게
+                height: selectedMarker === store.id ? 40 : 40, // 이미지 크기를 조절
+              }}
+              resizeMode="contain" // 이미지 비율 유지
+            />
+          </Marker>
         ))}
       </MapView>
-
-      <BottomSheet ref={sheetRef} snapPoints={[350]} index={-1} enablePanDownToClose={true}>
+      <BottomSheet ref={sheetRef} snapPoints={[250]} index={-1} enablePanDownToClose={true}>
         <BottomSheetScrollView>
           <BottomSheetContent selectedLocation={selectedLocation} />
         </BottomSheetScrollView>
