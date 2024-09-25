@@ -23,7 +23,7 @@ const Loading = ({ navigation }: { navigation: any }) => {
         // 로그인 실패 시 로그인 화면으로 이동
         navigation.replace("Login");
       }
-    }, 2500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [dispatch, navigation]);
@@ -44,16 +44,10 @@ const Loading = ({ navigation }: { navigation: any }) => {
       end={{ x: 0, y: 1 }}
     >
       <View style={styles.logoContainer}>
-        <Image
-          source={require("@/assets/images/splash-logo.png")}
-          style={styles.logo}
-        />
+        <Image source={require("@/assets/images/splash-logo.png")} style={styles.logo} />
         <Text style={styles.text}> 혜택부터 추천까지 </Text>
       </View>
-      <Image
-        source={require("@/assets/images/splash-image.png")}
-        style={styles.image}
-      />
+      <Image source={require("@/assets/images/splash-image.png")} style={styles.image} />
     </LinearGradient>
   );
 };
