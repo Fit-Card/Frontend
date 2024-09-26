@@ -3,23 +3,20 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import common from "@/styles/Common";
-
-import { existingUsers } from "@/mock/userData";
-
-interface User {
-  loginId: string;
-  password: string;
-  confirmPassword: string;
-  name: string;
-  birthDate: string;
-  phoneNumber: string;
-}
+import { SignupUser } from "@/interfaces/User";
+import {
+  handleChange,
+  handleCheckDuplicate,
+  handleBirthDateChange,
+  handleDigitChange,
+} from "@/handlers/SingUpHandlers";
 
 export default function SignUp() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   // State variables for form inputs
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<SignupUser>({
+    id: "",
     loginId: "",
     password: "",
     confirmPassword: "",
@@ -65,35 +62,6 @@ export default function SignUp() {
     }
   };
 
-  // 아이디 중복 확인 로직
-  const handleCheckDuplicate = () => {
-    console.log("아이디 중복 확인:", user.loginId);
-
-    if (!user.loginId) {
-      setIsLoginIdEmpty(true);
-      return;
-    } else {
-      setIsLoginIdEmpty(false);
-    }
-
-    // existingUsers에서 중복된 아이디가 있는지 확인
-    const userExists = existingUsers.some((existingUser) => existingUser.loginId === user.loginId);
-
-    if (userExists) {
-      setIsDuplicate(true); // 중복된 아이디가 있을 경우
-    } else {
-      setIsDuplicate(false); // 사용 가능한 아이디
-    }
-  };
-
-  // 입력 필드의 변화를 핸들링
-  const handleChange = (key: keyof User, value: string) => {
-    setUser({
-      ...user,
-      [key]: value,
-    });
-  };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 아이디 입력 */}
@@ -105,9 +73,12 @@ export default function SignUp() {
             placeholder="아이디 (최대 20자)"
             maxLength={20}
             value={user.loginId}
-            onChangeText={(text) => handleChange("loginId", text)}
+            onChangeText={(text) => handleChange("loginId", text, user, setUser)}
           />
-          <TouchableOpacity style={styles.duplicateCheckButton} onPress={handleCheckDuplicate}>
+          <TouchableOpacity
+            style={styles.duplicateCheckButton}
+            onPress={() => handleCheckDuplicate(user, setIsLoginIdEmpty, setIsDuplicate)}
+          >
             <Text style={styles.duplicateCheckButtonText}>중복확인</Text>
           </TouchableOpacity>
         </View>
@@ -130,7 +101,7 @@ export default function SignUp() {
           secureTextEntry
           maxLength={100}
           value={user.password}
-          onChangeText={(text) => handleChange("password", text)}
+          onChangeText={(text) => handleChange("password", text, user, setUser)}
         />
         {isPasswordEmpty === true && <Text style={styles.errorText}>비밀번호 입력해주세요.</Text>}
 
@@ -140,7 +111,7 @@ export default function SignUp() {
           secureTextEntry
           maxLength={100}
           value={user.confirmPassword}
-          onChangeText={(text) => handleChange("confirmPassword", text)}
+          onChangeText={(text) => handleChange("confirmPassword", text, user, setUser)}
         />
         {isConfirmPasswordEmpty === true && (
           <Text style={styles.errorText}>비밀번호 확인을 입력해주세요.</Text>
@@ -155,7 +126,7 @@ export default function SignUp() {
           placeholder="이름 (최대 10자)"
           maxLength={10}
           value={user.name}
-          onChangeText={(text) => handleChange("name", text)}
+          onChangeText={(text) => handleChange("name", text, user, setUser)}
         />
         {isNameEmpty === true && <Text style={styles.errorText}>이름을 입력해주세요.</Text>}
       </View>
@@ -167,7 +138,7 @@ export default function SignUp() {
           style={styles.input}
           placeholder="생년월일 (YYYY-MM-DD)"
           value={user.birthDate}
-          onChangeText={(text) => handleChange("birthDate", text)}
+          onChangeText={(text) => handleBirthDateChange(text, user, setUser)}
         />
         {isBirthDateEmpty === true && (
           <Text style={styles.errorText}>생년월일을 입력해주세요.</Text>
@@ -179,11 +150,11 @@ export default function SignUp() {
         <Text style={styles.label}>전화번호</Text>
         <TextInput
           style={styles.input}
-          placeholder="전화번호 (예: 010-1234-5678)"
+          placeholder="숫자만 입력해주세요."
           maxLength={13}
           keyboardType="phone-pad"
           value={user.phoneNumber}
-          onChangeText={(text) => handleChange("phoneNumber", text)}
+          onChangeText={(text) => handleDigitChange(text, user, setUser)}
         />
         {isBirthDateEmpty === true && (
           <Text style={styles.errorText}>전화번호를 입력해주세요.</Text>
