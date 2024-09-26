@@ -3,10 +3,12 @@
 export const mockUser = {
   id: "1",
   loginId: "test",
-  password: "1234",
+  password: "test",
   name: "핏카츄",
   birthDate: "1990-01-01",
   phoneNumber: "010-1234-5678",
+  token:
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTIzIiwiaWF0IjoxNzI3MzI5NDQ2LCJleHAiOjE3Mzc0MzMwNDZ9.7PkVXB6f5rROVQzo9n3Ji5F0t9UVGZw2FkJ5BDxQfeY",
 };
 
 // 카드 정보 (card 정보)

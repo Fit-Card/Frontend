@@ -13,7 +13,7 @@ const Loading = ({ navigation }: { navigation: any }) => {
     const timer = setTimeout(async () => {
       try {
         // mockLogin을 통해 비동기적으로 로그인 검증 및 mockUser 정보 반환
-        const userData = await mockLogin({ loginId: "test", password: "1234" });
+        const userData = await mockLogin({ loginId: "test", password: "test" });
         // 성공 시 사용자 정보를 store에 저장
         dispatch(login(userData));
         // 메인 화면으로 이동
