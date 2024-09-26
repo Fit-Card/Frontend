@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import common from "@/styles/Common";
@@ -37,16 +30,39 @@ export default function SignUp() {
 
   const [isDuplicate, setIsDuplicate] = useState<boolean | null>(null);
   const [isLoginIdEmpty, setIsLoginIdEmpty] = useState<boolean | null>(null);
+  const [isPasswordEmpty, setIsPasswordEmpty] = useState<boolean | null>(null);
+  const [isConfirmPasswordEmpty, setIsConfirmPasswordEmpty] = useState<boolean | null>(null);
+  const [isNameEmpty, setIsNameEmpty] = useState<boolean | null>(null);
+  const [isBirthDateEmpty, setIsBirthDateEmpty] = useState<boolean | null>(null);
+  const [isPhoneNumberEmpty, setIsPhoneNumberEmpty] = useState<boolean | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [confirmPasswordError, setConfirmPasswordError] = useState<
-    string | null
-  >(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
 
+  // 회원가입
   const handleSignUp = () => {
     // 회원가입 로직을 이곳에 추가 (예: 입력 검증, 서버에 데이터 전송 등)
-    console.log("회원가입 정보:", user);
-    // 회원가입 완료 후 로그인 화면으로 이동
-    navigation.navigate("Login");
+    // 각 필드가 비어있는지 확인
+    setIsLoginIdEmpty(!user.loginId);
+    setIsPasswordEmpty(!user.password);
+    setIsConfirmPasswordEmpty(!user.confirmPassword);
+    setIsNameEmpty(!user.name);
+    setIsBirthDateEmpty(!user.birthDate);
+    setIsPhoneNumberEmpty(!user.phoneNumber);
+
+    if (
+      user.loginId &&
+      user.password &&
+      user.confirmPassword &&
+      user.name &&
+      user.birthDate &&
+      user.phoneNumber
+    ) {
+      console.log("회원가입 정보:", user);
+      // 회원가입 정보 전송
+
+      // 회원가입 완료 후 로그인 화면으로 이동
+      navigation.navigate("Login");
+    }
   };
 
   // 아이디 중복 확인 로직
@@ -61,9 +77,7 @@ export default function SignUp() {
     }
 
     // existingUsers에서 중복된 아이디가 있는지 확인
-    const userExists = existingUsers.some(
-      (existingUser) => existingUser.loginId === user.loginId
-    );
+    const userExists = existingUsers.some((existingUser) => existingUser.loginId === user.loginId);
 
     if (userExists) {
       setIsDuplicate(true); // 중복된 아이디가 있을 경우
@@ -93,10 +107,7 @@ export default function SignUp() {
             value={user.loginId}
             onChangeText={(text) => handleChange("loginId", text)}
           />
-          <TouchableOpacity
-            style={styles.duplicateCheckButton}
-            onPress={handleCheckDuplicate}
-          >
+          <TouchableOpacity style={styles.duplicateCheckButton} onPress={handleCheckDuplicate}>
             <Text style={styles.duplicateCheckButtonText}>중복확인</Text>
           </TouchableOpacity>
         </View>
@@ -107,9 +118,7 @@ export default function SignUp() {
         {isLoginIdEmpty === false && isDuplicate === false && (
           <Text style={styles.successText}>사용 가능한 아이디입니다.</Text>
         )}
-        {isLoginIdEmpty === true && (
-          <Text style={styles.errorText}>아이디를 입력해주세요.</Text>
-        )}
+        {isLoginIdEmpty === true && <Text style={styles.errorText}>아이디를 입력해주세요.</Text>}
       </View>
 
       {/* 비밀번호 입력 */}
@@ -123,6 +132,7 @@ export default function SignUp() {
           value={user.password}
           onChangeText={(text) => handleChange("password", text)}
         />
+        {isPasswordEmpty === true && <Text style={styles.errorText}>비밀번호 입력해주세요.</Text>}
 
         <TextInput
           style={styles.input}
@@ -132,6 +142,9 @@ export default function SignUp() {
           value={user.confirmPassword}
           onChangeText={(text) => handleChange("confirmPassword", text)}
         />
+        {isConfirmPasswordEmpty === true && (
+          <Text style={styles.errorText}>비밀번호 확인을 입력해주세요.</Text>
+        )}
       </View>
 
       {/* 이름 입력 */}
@@ -144,6 +157,7 @@ export default function SignUp() {
           value={user.name}
           onChangeText={(text) => handleChange("name", text)}
         />
+        {isNameEmpty === true && <Text style={styles.errorText}>이름을 입력해주세요.</Text>}
       </View>
 
       {/* 생년월일 입력 */}
@@ -155,6 +169,9 @@ export default function SignUp() {
           value={user.birthDate}
           onChangeText={(text) => handleChange("birthDate", text)}
         />
+        {isBirthDateEmpty === true && (
+          <Text style={styles.errorText}>생년월일을 입력해주세요.</Text>
+        )}
       </View>
 
       {/* 전화번호 입력 */}
@@ -168,6 +185,9 @@ export default function SignUp() {
           value={user.phoneNumber}
           onChangeText={(text) => handleChange("phoneNumber", text)}
         />
+        {isBirthDateEmpty === true && (
+          <Text style={styles.errorText}>전화번호를 입력해주세요.</Text>
+        )}
       </View>
 
       {/* 회원가입 버튼 */}
