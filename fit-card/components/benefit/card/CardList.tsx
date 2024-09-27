@@ -1,88 +1,76 @@
-import React from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import { TouchableOpacity, View, Text, FlatList, Image, StyleSheet } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { Icon } from "react-native-elements";
 import { StackParamList } from "@/navigationTypes";
 import { StackNavigationProp } from "@react-navigation/stack";
+import axios from "axios";
+import { mockUser } from "@/mock/mockUser";
 
-const cardsData = [
-  {
-    id: 1,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 2,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 3,
-    name: "우리카드 혜택",
-    companyId: 2,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 4,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 5,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 6,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 7,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-  {
-    id: 8,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-  },
-];
-
-// StackNavigationProp 정의
 type CardListNavigationProp = StackNavigationProp<StackParamList, "CardDetail">;
 type CardListRouteProp = RouteProp<StackParamList, "CardList">;
+
+interface CardInfo {
+  id: number;
+  name: string;
+  image: string;
+}
 
 const CardListScreen = () => {
   const route = useRoute<CardListRouteProp>();
   const navigation = useNavigation<CardListNavigationProp>();
   const { companyName, companyId } = route.params;
+  const [cardsData, setCardsData] = useState<CardInfo[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // 회사에 맞는 카드 필터링
-  const filteredCards = cardsData.filter((card) => card.companyId === companyId);
-
-  // 카드 클릭 시 상세 페이지로 이동
   const handleCardPress = (cardId: number) => {
-    navigation.navigate("CardDetail", { cardId }); // CardDetail로 cardId 전달
+    navigation.navigate("CardDetail", { cardId });
   };
+
+  useEffect(() => {
+    const fetchCardListData = async () => {
+      try {
+        setLoading(true);
+
+        const response = await axios.post(
+          `http://j11a405.p.ssafy.io:8081/cards/get/${companyId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${mockUser.token}`,
+              "Content-Type": "application/json",
+              Accept: "*/*",
+            },
+          }
+        );
+
+        const cardList = response.data.data.cardInfoGetResponses.map((card: any) => ({
+          id: card.cardId,
+          name: card.cardName,
+          image: card.cardImageUrl,
+        }));
+
+        setCardsData(cardList);
+      } catch (error) {
+        console.error("Error fetching card companies:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCardListData();
+  }, [companyId]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>{companyName}</Text>
 
       <FlatList
-        data={filteredCards}
+        data={cardsData}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleCardPress(item.id)}>
             <View style={styles.cardContainer}>
-              <Image source={item.image} style={styles.cardImage} />
+              <Image source={{ uri: item.image }} style={styles.cardImage} />
               <Text style={styles.cardName}>{item.name}</Text>
             </View>
           </TouchableOpacity>
@@ -119,6 +107,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 40,
     marginRight: 16,
+    borderRadius: 3,
   },
   cardName: {
     fontSize: 15,

@@ -1,60 +1,87 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
-  Image,
   FlatList,
+  ActivityIndicator,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Text,
+  Image,
 } from "react-native";
+import axios from "axios";
+import { mockUser } from "@/mock/mockUser";
 
 const screenWidth = Dimensions.get("window").width;
 
 interface CardCompany {
   id: number;
   name: string;
-  image: any;
+  image: string;
 }
-
-const cardCompanies: CardCompany[] = [
-  { id: 1, name: "신한", image: require("@/assets/images/logo.png") },
-  { id: 2, name: "우리", image: require("@/assets/images/logo.png") },
-  { id: 3, name: "하나", image: require("@/assets/images/logo.png") },
-  { id: 4, name: "삼성", image: require("@/assets/images/logo.png") },
-  { id: 5, name: "국민", image: require("@/assets/images/logo.png") },
-  { id: 6, name: "기업", image: require("@/assets/images/logo.png") },
-  { id: 7, name: "농협", image: require("@/assets/images/logo.png") },
-  { id: 8, name: "우리", image: require("@/assets/images/logo.png") },
-  { id: 9, name: "기업", image: require("@/assets/images/logo.png") },
-];
-
-interface CardCompanyItemProps {
-  item: CardCompany;
-  onCardPress: (companyId: number, companyName: string) => void;
-}
-
-const CardCompanyItem = ({ item, onCardPress }: CardCompanyItemProps) => {
-  return (
-    <TouchableOpacity onPress={() => onCardPress(item.id, item.name)}>
-      <View style={styles.cardContainer}>
-        <Image source={item.image} style={styles.cardImage} />
-        <Text style={styles.cardText}>{item.name}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
 
 const CardSearch = ({
   onCardPress,
 }: {
   onCardPress: (companyId: number, companyName: string) => void;
 }) => {
+  const [cardCompanies, setCardCompanies] = useState<CardCompany[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchCardCompanies = async () => {
+      try {
+        setLoading(true);
+
+        const response = await axios.post(
+          "http://j11a405.p.ssafy.io:8081/cards/companies/get/all",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${mockUser.token}`,
+              "Content-Type": "application/json",
+              Accept: "*/*",
+            },
+          }
+        );
+
+        const companies = response.data.data.cardCompanyGetResponses.map((company: any) => ({
+          id: company.companyId,
+          name: company.companyName,
+          image: company.companyImageUrl,
+        }));
+
+        setCardCompanies(companies);
+      } catch (error) {
+        console.error("Error fetching card companies:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCardCompanies();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={cardCompanies}
-        renderItem={({ item }) => <CardCompanyItem item={item} onCardPress={onCardPress} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => onCardPress(item.id, item.name)}>
+            <View style={styles.cardContainer}>
+              <Image source={{ uri: item.image }} style={styles.cardImage} />
+              <Text style={styles.cardText}>{item.name}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
         keyExtractor={(item) => item.id.toString()}
         numColumns={3}
         contentContainerStyle={styles.grid}
@@ -70,6 +97,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 15,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   grid: {
     justifyContent: "center",

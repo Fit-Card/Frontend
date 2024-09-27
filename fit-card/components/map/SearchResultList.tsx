@@ -18,7 +18,7 @@ type SearchResultListProps = {
 const dummyData: StoreItem[] = [
   {
     id: "1",
-    name: "바나프레소 역삼점",
+    name: "s바나프레소 역삼점",
     address: "서울특별시 강남구 논현로94길 13",
     distance: "0.3km",
     latitude: 37.499979,
@@ -26,7 +26,7 @@ const dummyData: StoreItem[] = [
   },
   {
     id: "2",
-    name: "바나프레소 신논현역점",
+    name: "s바나프레소 신논현역점",
     address: "서울특별시 서초구 서초4동 사평대로 364",
     distance: "0.8km",
     latitude: 37.505358,
@@ -34,7 +34,7 @@ const dummyData: StoreItem[] = [
   },
   {
     id: "3",
-    name: "바나프레소 강남점",
+    name: "s바나프레소 강남점",
     address: "서울특별시 강남구 테헤란로4길 46",
     distance: "1.3km",
     latitude: 37.498087,
@@ -42,7 +42,7 @@ const dummyData: StoreItem[] = [
   },
   {
     id: "4",
-    name: "바나프레소 선릉역사거리점",
+    name: "s바나프레소 선릉역사거리점",
     address: "서울특별시 강남구 역삼동 705-19",
     distance: "2.0km",
     latitude: 37.504347,
