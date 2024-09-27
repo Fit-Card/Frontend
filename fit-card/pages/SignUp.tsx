@@ -23,6 +23,7 @@ import {
   isValidBirthDate,
 } from "@/handlers/validationHandlers";
 import { handleVerifyOtp } from "@/handlers/otpHandlers";
+import { register } from "@/api/auth";
 
 export default function SignUp() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -58,7 +59,7 @@ export default function SignUp() {
 
   // 생년월일 입력 처리
   const handleBirthDateValidation = (text: string) => {
-    if (text.length === 6 && isValidBirthDate(text)) {
+    if (text.length === 8 && isValidBirthDate(text)) {
       setIsBirthDateEmpty(false);
     } else {
       setIsBirthDateEmpty(true);
@@ -67,7 +68,7 @@ export default function SignUp() {
   };
 
   // 회원가입
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     // 회원가입 로직을 이곳에 추가 (예: 입력 검증, 서버에 데이터 전송 등)
     // 각 필드가 비어있는지 확인
     setIsLoginIdEmpty(!user.loginId);
@@ -85,14 +86,22 @@ export default function SignUp() {
       user.birthDate &&
       user.phoneNumber &&
       isDuplicate === false &&
-      isValidOtpRequest === true &&
-      isValidBirthDate(user.birthDate)
+      isValidOtpRequest === true
+      // && isValidBirthDate(user.birthDate)
     ) {
-      console.log("회원가입 정보:", user);
       // 회원가입 정보 전송
 
-      // 회원가입 완료 후 로그인 화면으로 이동
-      navigation.navigate("Login");
+      try {
+        // 회원가입 정보 전송
+        console.log(user);
+        const response = await register(user);
+        console.log("Registration successful:", response);
+
+        // 회원가입 완료 후 로그인 화면으로 이동
+        navigation.navigate("Login");
+      } catch (error) {
+        console.error("Registration failed:", error);
+      }
     }
   };
 
@@ -296,8 +305,8 @@ export default function SignUp() {
         <Text style={styles.label}>생년월일</Text>
         <TextInput
           style={styles.input}
-          placeholder="생년월일 (YYMMDD)"
-          maxLength={6}
+          placeholder="생년월일 (YYYYMMDD)"
+          maxLength={8}
           value={user.birthDate}
           onChangeText={handleBirthDateValidation}
         />

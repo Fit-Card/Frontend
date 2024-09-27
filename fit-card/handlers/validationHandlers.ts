@@ -1,9 +1,10 @@
 // @/handlers/validationHandlers.ts
 import { SignupUser } from "@/interfaces/User";
-import { existingUsers } from "@/mock/userData";
+import { checkid } from "@/api/auth";
+import { formatDate } from "./inputHandlers";
 
 // 아이디 중복 확인 로직
-export const handleCheckDuplicate = (
+export const handleCheckDuplicate = async (
   user: SignupUser,
   setIsLoginIdEmpty: React.Dispatch<React.SetStateAction<boolean | null>>,
   setIsDuplicate: React.Dispatch<React.SetStateAction<boolean | null>>
@@ -17,12 +18,13 @@ export const handleCheckDuplicate = (
     setIsLoginIdEmpty(false);
   }
 
-  const userExists = existingUsers.some((existingUser) => existingUser.loginId === user.loginId);
-
-  if (userExists) {
-    setIsDuplicate(true);
-  } else {
-    setIsDuplicate(false);
+  try {
+    // 서버에 아이디 중복 확인 요청
+    const isDuplicate = await checkid(user.loginId);
+    setIsDuplicate(isDuplicate); // 서버로부터 받은 중복 결과 설정
+    console.log(isDuplicate);
+  } catch (error) {
+    console.error("아이디 중복 확인 중 오류 발생:", error);
   }
 };
 
@@ -51,16 +53,8 @@ export const isValidPassword = (password: string, confirmPassword: string): bool
 
 // 18세 이상, 120세 미만 검증 함수
 export const isValidBirthDate = (birthDate: string): boolean => {
-  // YYMMDD 형식에 맞게 날짜를 변환
   const currentDate = new Date();
-  const year = parseInt(birthDate.slice(0, 2), 10);
-  const month = parseInt(birthDate.slice(2, 4), 10);
-  const day = parseInt(birthDate.slice(4, 6), 10);
-
-  const fullYear =
-    year > parseInt(currentDate.getFullYear().toString().slice(-2)) ? 1900 + year : 2000 + year;
-
-  const inputDate = new Date(`${fullYear}-${month}-${day}`);
+  const inputDate = new Date(formatDate(birthDate));
 
   // 나이 계산
   const age = currentDate.getFullYear() - inputDate.getFullYear();
