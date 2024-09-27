@@ -1,18 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ButtonComponent from "@/components/category/ButtonComponent";
 import { View, Text, StyleSheet } from "react-native";
 
-type Benefit = {
-  index: number;
-  category: string[]; // 음식점, 카페, 편의점, 문화, 주유소
-  logo: any;
-  franchiseName: string;
-  info: string[][]; // 각 카테고리별 혜택 리스트
+type BenefitProps = {
+  benefit: {
+    index: number;
+    category: string[]; // 음식점, 카페, 편의점, 문화, 주유소
+    logo: any;
+    franchiseName: string;
+    info: string[][]; // 각 카테고리별 혜택 리스트
+  };
+  refreshBenefit: () => void;
 };
 
-const CardBenefit = (benefit: Benefit) => {
+const CardBenefit = ({ benefit, refreshBenefit }: BenefitProps) => {
   // 활성화된 탭을 관리하는 state
   const [activeTab, setActiveTab] = useState(benefit.index);
+
+  useEffect(() => {
+    setActiveTab(benefit.index);
+  }, [benefit.index]);
 
   return (
     <View style={styles.cardContainer}>

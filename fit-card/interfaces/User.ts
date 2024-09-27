@@ -8,6 +8,11 @@ export interface User {
   phoneNumber: string;
 }
 
+export interface SignupUser extends User {
+  password: string;
+  confirmPassword: string;
+}
+
 export interface CardUser extends User {
   cardImage: any; // 카드 이미지
   cardName: string; // 카드 이름

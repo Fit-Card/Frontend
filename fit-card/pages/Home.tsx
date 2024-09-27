@@ -1,43 +1,55 @@
-import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { StackParamList } from "@/navigationTypes";
+import React, { useState } from "react";
+import { View, ScrollView, StyleSheet, RefreshControl } from "react-native";
 import CardUsage from "@/components/main/cardUsage";
 import Benefit from "@/components/main/cardBenefit";
-
 import { useSelector } from "react-redux"; // Redux의 useSelector 사용
 import { RootState } from "@/store"; // RootState 타입
 import { mockCardInfo } from "@/mock/mockUser";
+import { dummyBenefit } from "@/mock/mockData";
 
 export default function MainScreen() {
-  // NavigationProp 타입 지정
-  const navigation = useNavigation<NavigationProp<StackParamList>>();
-
   // Redux 스토어에서 user 정보 가져오기
   const user = useSelector((state: RootState) => state.user.user);
+  const [benefitData, setBenefitData] = useState(dummyBenefit);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // 더미 혜택
-  const dummyBenefit = {
-    index: 0,
-    category: ["음식점", "카페", "편의점", "문화", "주유소"],
-    logo: null,
-    franchiseName: "프랜차이즈 이름",
-    info: [
-      ["음식점 혜택 1", "음식점 혜택 2", "음식점 혜택 3"], // 음식점 혜택
-      ["카페 혜택 1", "카페 혜택 2", "카페 혜택 3"], // 카페 혜택
-      ["편의점 혜택 1", "편의점 혜택 2", "편의점 혜택 3"], // 편의점 혜택
-      ["문화 혜택 1", "문화 혜택 2", "문화 혜택 3"], // 문화 혜택
-      ["주유소 혜택 1", "주유소 혜택 2", "주유소 혜택 3"], // 주유소 혜택
-    ],
+  // 새로고침 동작 처리
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Simulate fetching new data
+    setTimeout(() => {
+      refreshBenefit(); // Trigger the refresh in CardBenefit
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  let previousIndex = benefitData.index;
+
+  // Simulated refresh function that changes the benefit index
+  const refreshBenefit = () => {
+    let randomIndex = Math.floor(Math.random() * benefitData.category.length);
+
+    while (randomIndex === previousIndex) {
+      randomIndex = Math.floor(Math.random() * benefitData.category.length);
+    }
+
+    console.log(randomIndex);
+    setBenefitData((prevBenefit) => ({
+      ...prevBenefit,
+      index: randomIndex, // Update index with new random value
+    }));
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <View style={styles.innerContainer}>
         {user && <CardUsage {...user} {...mockCardInfo} />}
-        <Benefit {...dummyBenefit} />
+        <Benefit benefit={benefitData} refreshBenefit={refreshBenefit} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
