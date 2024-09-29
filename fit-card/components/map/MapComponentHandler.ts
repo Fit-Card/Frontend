@@ -10,11 +10,13 @@ import StoreDummy from "@/components/map/StoreDummy";
 const ITEMS_PER_PAGE = 5;
 
 type LocationType = {
-  id: string;
+  id: number;
   name: string;
   address: string;
+  distance: number;
   latitude: number;
   longitude: number;
+  kakaoUrl: string;
 };
 
 // 두 좌표 사이의 거리를 계산하는 함수 (하버사인 공식)

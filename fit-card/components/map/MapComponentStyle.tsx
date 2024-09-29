@@ -17,7 +17,7 @@ const mapStyles = StyleSheet.create({
     top: 10,
     left: 10,
     right: 10,
-    zIndex: 10,
+    zIndex: 20,
   },
   locationTextContainer: {
     position: "absolute",
@@ -59,14 +59,16 @@ const mapStyles = StyleSheet.create({
   },
   resultContainer: {
     position: "absolute",
-    top: 200,
+    top: 55,
     left: 10,
     right: 10,
-    zIndex: 10,
+    zIndex: 15,
     backgroundColor: "white",
     borderRadius: 10,
     elevation: 5,
     padding: 10,
+    maxHeight: 300, // 원하는 최대 높이 설정 (예: 200)
+    overflow: "hidden", // 넘치는 부분 숨기기
   },
 });
 

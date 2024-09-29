@@ -10,6 +10,7 @@ import GpsButton from "@/components/map/GpsButton";
 import SearchResultList from "@/components/map/SearchResultList";
 import BottomSheetContent from "@/components/map/BottomSheetContent";
 import styles from "@/components/map/MapComponentStyle";
+import SearchComponent from "@/components/map/SingleSearch";
 
 import {
   getLocationAsync,
@@ -22,11 +23,13 @@ import {
 const ITEMS_PER_PAGE = 5;
 
 type LocationType = {
-  id: string;
+  id: number;
   name: string;
   address: string;
+  distance: number;
   latitude: number;
   longitude: number;
+  kakaoUrl: string;
 };
 
 const MapComponent = () => {
@@ -36,8 +39,7 @@ const MapComponent = () => {
   const [selectedButton, setSelectedButton] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null);
-  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
-  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
+  const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [filteredStores, setFilteredStores] = useState<LocationType[]>([]);
   const [region, setRegion] = useState<Region | null>(null); // 현재 지도 중심값
   const [previousRegion, setPreviousRegion] = useState<Region | null>(null); // 이전 지도 중심값
@@ -46,6 +48,10 @@ const MapComponent = () => {
   const [isLoadMoreVisible, setIsLoadMoreVisible] = useState<boolean>(false); // '결과 더보기' 버튼 표시 여부
   const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
   const [isLoadMoreDisabled, setIsLoadMoreDisabled] = useState<boolean>(false); // '결과 더보기' 버튼 비활성화 상태
+  const [searchResults, setSearchResults] = useState<LocationType[]>([]);
+
+  const [pageNo, setPageNo] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   // 초기 위치 얻기
   useEffect(() => {
@@ -95,31 +101,65 @@ const MapComponent = () => {
   };
 
   const handleMarkerPress = (
-    id: string,
+    id: number,
     name: string,
     address: string,
+    distance: number,
     latitude: number,
-    longitude: number
+    longitude: number,
+    kakaoUrl: string
   ) => {
     setSelectedMarker(id); // 클릭한 마커의 id를 저장하여 선택된 마커 추적
-    setSelectedLocation({ id, name, address, latitude, longitude });
+    setSelectedLocation({ id, name, address, distance, latitude, longitude, kakaoUrl });
 
     if (sheetRef.current) {
       sheetRef.current.expand(); // BottomSheet 확장
     }
   };
 
+  const handleSearchResults = (results: any[]) => {
+    const parsedResults = results.map((item) => ({
+      id: item.merchantBranchId,
+      name: item.branchName,
+      address: item.branchAddress,
+      distance: item.distance,
+      latitude: item.latitude,
+      longitude: item.longitude,
+      kakaoUrl: item.kakaoUrl,
+    }));
+    setSearchResults(parsedResults);
+  };
+
   // 현재 페이지에 맞는 스토어 목록을 계산
   const displayedStores = filteredStores.slice(0, currentPage * ITEMS_PER_PAGE);
+  const handleSearchSubmit = (results: any[], page: number) => {
+    if (page === 1) {
+      setSearchResults(results); // 첫 페이지는 새로 고침
+    } else {
+      setSearchResults((prevResults) => [...prevResults, ...results]); // 다음 페이지는 추가
+    }
+
+    // 추가 데이터를 더 이상 로드할 필요가 없는 경우
+    if (results.length < ITEMS_PER_PAGE) {
+      // ITEMS_PER_PAGE 미만이면 더 이상 데이터 없음
+      setHasMore(false);
+    }
+  };
+
+  const handleSearchMore = () => {
+    if (hasMore) {
+      const nextPage = pageNo + 1; // 다음 페이지 번호
+      setPageNo(nextPage); // 페이지 번호 업데이트
+      handleSearchSubmit([], nextPage); // 다음 페이지에 대한 데이터 요청
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <SearchInput
-          onSubmit={(query) => {
-            setSearchQuery(query);
-            setShowSearchResults(true);
-          }}
+        <SearchComponent
+          location={location} // 현재 위치는 부모에서 관리
+          mapRef={mapRef}
         />
       </View>
       <View style={styles.buttonContainer}>
@@ -149,15 +189,6 @@ const MapComponent = () => {
           </TouchableOpacity>
         </View>
       )}
-      {showSearchResults && (
-        <View style={styles.resultContainer}>
-          <SearchResultList
-            searchQuery={searchQuery}
-            mapRef={mapRef} // mapRef를 전달
-            setShowSearchResults={setShowSearchResults} // 검색 결과 숨김 처리 함수 전달
-          />
-        </View>
-      )}
       <GpsButton onPress={() => handleGpsButtonPress(setLocation, mapRef, setRegion)} />
       {/* 지도 */}
       <MapView
@@ -181,8 +212,10 @@ const MapComponent = () => {
                 store.id,
                 store.name,
                 store.address,
+                store.distance,
                 store.latitude,
-                store.longitude
+                store.longitude,
+                store.kakaoUrl
               )
             }
           >
