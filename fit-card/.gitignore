@@ -37,5 +37,11 @@ yarn-error.*
 # app config
 app.json
 
+# eas config
+eas.json
+
+# package json
+package.json
+
 # package lock json
 package-lock.json
