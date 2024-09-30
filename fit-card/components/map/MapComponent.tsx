@@ -50,9 +50,6 @@ const MapComponent = () => {
   const [isLoadMoreDisabled, setIsLoadMoreDisabled] = useState<boolean>(false); // '결과 더보기' 버튼 비활성화 상태
   const [searchResults, setSearchResults] = useState<LocationType[]>([]);
 
-  const [pageNo, setPageNo] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-
   // 초기 위치 얻기
   useEffect(() => {
     getLocationAsync(setLocation, setRegion, setPreviousRegion, setIsLoading);
@@ -132,35 +129,19 @@ const MapComponent = () => {
 
   // 현재 페이지에 맞는 스토어 목록을 계산
   const displayedStores = filteredStores.slice(0, currentPage * ITEMS_PER_PAGE);
-  const handleSearchSubmit = (results: any[], page: number) => {
-    if (page === 1) {
-      setSearchResults(results); // 첫 페이지는 새로 고침
-    } else {
-      setSearchResults((prevResults) => [...prevResults, ...results]); // 다음 페이지는 추가
-    }
-
-    // 추가 데이터를 더 이상 로드할 필요가 없는 경우
-    if (results.length < ITEMS_PER_PAGE) {
-      // ITEMS_PER_PAGE 미만이면 더 이상 데이터 없음
-      setHasMore(false);
-    }
-  };
-
-  const handleSearchMore = () => {
-    if (hasMore) {
-      const nextPage = pageNo + 1; // 다음 페이지 번호
-      setPageNo(nextPage); // 페이지 번호 업데이트
-      handleSearchSubmit([], nextPage); // 다음 페이지에 대한 데이터 요청
-    }
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <SearchComponent
-          location={location} // 현재 위치는 부모에서 관리
-          mapRef={mapRef}
-        />
+        {location && (
+          <SearchComponent
+            location={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+            mapRef={mapRef}
+          />
+        )}
       </View>
       <View style={styles.buttonContainer}>
         <CategoryButtonGroup selectedButton={selectedButton} onButtonPress={handleButtonPress} />

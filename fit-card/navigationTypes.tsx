@@ -19,4 +19,5 @@ export type StackParamList = {
   StoreDetail: { storeName: string; storeImage: any };
   PersonalInfo: undefined;
   CardDetail: { cardId: number };
+  SearchPage: { latitude: number; longitude: number };
 };

@@ -27,6 +27,7 @@ import CardList from "@/components/benefit/card/CardList";
 import StoreBenefitCardList from "@/components/benefit/store/StoreBenefitCardList";
 import PersonalInfoScreen from "./pages/PersonalInfo";
 import CardDetailScreen from "@/pages/CardDetail";
+import SearchPage from "@/pages/SearchPage";
 
 import { Provider } from "react-redux";
 import store from "@/store";
@@ -117,6 +118,11 @@ function MapStackNavigator() {
         name="CardDetail"
         component={CardDetailScreen}
         options={{ header: () => <HeaderComponent title="카드 상세" /> }}
+      />
+      <Stack.Screen
+        name="SearchPage"
+        component={SearchPage}
+        options={{ header: () => <HeaderComponent title="지도 검색" /> }}
       />
     </Stack.Navigator>
   );
