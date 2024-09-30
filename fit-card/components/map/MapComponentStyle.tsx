@@ -14,7 +14,7 @@ const mapStyles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: 10,
+    top: 3,
     left: 10,
     right: 10,
     zIndex: 20,

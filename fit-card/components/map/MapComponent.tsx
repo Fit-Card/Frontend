@@ -1,16 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, Image } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
+import { useRoute, RouteProp } from "@react-navigation/native"; // useRoute 추가
 import * as Location from "expo-location";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import SearchInput from "@/components/map/SearchBox";
 import CategoryButtonGroup from "@/components/category/CategoryButtonGroup";
 import GpsButton from "@/components/map/GpsButton";
-import SearchResultList from "@/components/map/SearchResultList";
 import BottomSheetContent from "@/components/map/BottomSheetContent";
 import styles from "@/components/map/MapComponentStyle";
 import SearchComponent from "@/components/map/SingleSearch";
+import { StackParamList } from "@/navigationTypes";
+import { LocationType } from "@/components/map/LocationType";
 
 import {
   getLocationAsync,
@@ -22,22 +23,11 @@ import {
 
 const ITEMS_PER_PAGE = 5;
 
-type LocationType = {
-  id: number;
-  name: string;
-  address: string;
-  distance: number;
-  latitude: number;
-  longitude: number;
-  kakaoUrl: string;
-};
-
 const MapComponent = () => {
   const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [selectedButton, setSelectedButton] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [filteredStores, setFilteredStores] = useState<LocationType[]>([]);
@@ -48,10 +38,10 @@ const MapComponent = () => {
   const [isLoadMoreVisible, setIsLoadMoreVisible] = useState<boolean>(false); // '결과 더보기' 버튼 표시 여부
   const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
   const [isLoadMoreDisabled, setIsLoadMoreDisabled] = useState<boolean>(false); // '결과 더보기' 버튼 비활성화 상태
-  const [searchResults, setSearchResults] = useState<LocationType[]>([]);
 
-  const [pageNo, setPageNo] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  // Route에서 전달된 값 받아오기 (위도, 경도)
+  const route = useRoute<RouteProp<StackParamList, "Map">>();
+  const { store } = route.params || {}; // 전달된 위도, 경도 값 받기
 
   // 초기 위치 얻기
   useEffect(() => {
@@ -63,32 +53,20 @@ const MapComponent = () => {
     onRegionChangeCompleteHandler(newRegion, previousRegion, setIsRegionChanged, setRegion);
   };
 
-  // 카테고리 버튼 클릭 시 호출
-  const handleButtonPress = (categoryId: number) => {
-    handleButtonPressHandler(
-      categoryId,
-      region,
-      setSelectedButton,
-      (region, categoryId) =>
-        filterStoresByCategoryAndRegion(region, categoryId, setFilteredStores, setIsLoadMoreVisible) // 상태 추가
-    );
-  };
-
-  // '이 지역 재검색' 버튼을 눌렀을 때 호출되는 함수
-  const handleRegionSearch = () => {
-    if (region && selectedButton !== null) {
-      setFilteredStores([]);
-      filterStoresByCategoryAndRegion(
-        region,
-        selectedButton,
-        setFilteredStores,
-        setIsLoadMoreVisible
-      ); // 상태 추가
-      setCurrentPage(1);
-      setPreviousRegion(region); // 현재 region을 저장하여 이후 비교에 사용
-      setIsRegionChanged(false); // '이 지역 재검색' 버튼을 숨김
+  // 전달된 위도, 경도가 있을 때 지도 이동
+  useEffect(() => {
+    if (store) {
+      const initialRegion = {
+        latitude: store.latitude,
+        longitude: store.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+      mapRef.current?.animateToRegion(initialRegion, 1000);
+      setSelectedLocation(store); // 넘겨받은 store 데이터를 선택된 위치로 설정
+      setSelectedMarker(store.id); // 넘겨받은 store의 ID를 마커로 설정
     }
-  };
+  }, [store]);
 
   // '결과 더보기' 버튼을 클릭하면 5개씩 더 표시
   const handleLoadMore = () => {
@@ -100,6 +78,7 @@ const MapComponent = () => {
     setIsLoadMoreDisabled(false); // 더 로드 가능 시 다시 활성화
   };
 
+  // 마커 선택 시 이벤트
   const handleMarkerPress = (
     id: number,
     name: string,
@@ -117,63 +96,25 @@ const MapComponent = () => {
     }
   };
 
-  const handleSearchResults = (results: any[]) => {
-    const parsedResults = results.map((item) => ({
-      id: item.merchantBranchId,
-      name: item.branchName,
-      address: item.branchAddress,
-      distance: item.distance,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      kakaoUrl: item.kakaoUrl,
-    }));
-    setSearchResults(parsedResults);
-  };
-
   // 현재 페이지에 맞는 스토어 목록을 계산
   const displayedStores = filteredStores.slice(0, currentPage * ITEMS_PER_PAGE);
-  const handleSearchSubmit = (results: any[], page: number) => {
-    if (page === 1) {
-      setSearchResults(results); // 첫 페이지는 새로 고침
-    } else {
-      setSearchResults((prevResults) => [...prevResults, ...results]); // 다음 페이지는 추가
-    }
-
-    // 추가 데이터를 더 이상 로드할 필요가 없는 경우
-    if (results.length < ITEMS_PER_PAGE) {
-      // ITEMS_PER_PAGE 미만이면 더 이상 데이터 없음
-      setHasMore(false);
-    }
-  };
-
-  const handleSearchMore = () => {
-    if (hasMore) {
-      const nextPage = pageNo + 1; // 다음 페이지 번호
-      setPageNo(nextPage); // 페이지 번호 업데이트
-      handleSearchSubmit([], nextPage); // 다음 페이지에 대한 데이터 요청
-    }
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <SearchComponent
-          location={location} // 현재 위치는 부모에서 관리
-          mapRef={mapRef}
-        />
+        {location && (
+          <SearchComponent
+            location={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+            mapRef={mapRef}
+          />
+        )}
       </View>
       <View style={styles.buttonContainer}>
-        <CategoryButtonGroup selectedButton={selectedButton} onButtonPress={handleButtonPress} />
+        {/* <CategoryButtonGroup selectedButton={selectedButton} onButtonPress={handleButtonPress} /> */}
       </View>
-
-      {/* "이 지역 재검색" 버튼 */}
-      {selectedButton !== null && isRegionChanged && (
-        <View style={styles.regionSearchButtonContainer}>
-          <TouchableOpacity style={styles.regionSearchButton} onPress={handleRegionSearch}>
-            <Text style={styles.regionSearchButtonText}>이 지역 재검색</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       {/* 검색 결과가 많을 때 "결과 더보기" 버튼 표시 */}
       {isLoadMoreVisible && !isRegionChanged && (
@@ -233,6 +174,30 @@ const MapComponent = () => {
             />
           </Marker>
         ))}
+
+        {/* 선택된 위치 마커 */}
+        {store && store.latitude && store.longitude && (
+          <Marker
+            coordinate={{ latitude: store.latitude, longitude: store.longitude }}
+            onPress={() =>
+              handleMarkerPress(
+                store.id,
+                store.name,
+                store.address,
+                store.distance,
+                store.latitude,
+                store.longitude,
+                store.kakaoUrl
+              )
+            }
+          >
+            <Image
+              source={require("@/assets/images/normal-marker.png")} // 선택된 위치 아이콘
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
+          </Marker>
+        )}
       </MapView>
 
       <BottomSheet ref={sheetRef} snapPoints={[250]} index={-1} enablePanDownToClose={true}>
