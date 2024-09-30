@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import Animated, {
   Easing,
@@ -69,11 +61,7 @@ export default function MypageScreen() {
     };
   });
 
-  const renderCarouselItem = ({
-    item,
-  }: {
-    item: { name: string; image: any };
-  }) => (
+  const renderCarouselItem = ({ item }: { item: { name: string; image: any } }) => (
     <TouchableOpacity style={[mypageStyle.carouselImageContainer]}>
       <Image source={item.image} style={[mypageStyle.carouselImage]} />
     </TouchableOpacity>
@@ -119,14 +107,10 @@ export default function MypageScreen() {
             renderItem={renderCarouselItem}
             style={[mypageStyle.cardCarousel]}
           />
-          <Text
-            style={[mypageStyle.cardNameText, common.textGray, common.textBold]}
-          >
+          <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
             {cardData[currentCardIndex].name}
           </Text>
-          <Animated.View
-            style={[mypageStyle.animatedCard, animatedCarouselStyle]}
-          />
+          <Animated.View style={[mypageStyle.animatedCard, animatedCarouselStyle]} />
         </View>
 
         {/* 퀵메뉴 내용들 */}
@@ -178,10 +162,7 @@ export default function MypageScreen() {
               navigation.navigate("PersonalInfo");
             }}
           >
-            <Image
-              source={require("../assets/icons/icon_info.png")}
-              style={mypageStyle.menuIcon}
-            />
+            <Image source={require("../assets/icons/icon_info.png")} style={mypageStyle.menuIcon} />
             <Text style={[mypageStyle.menuText]}>사용자 정보 관리</Text>
           </TouchableOpacity>
 
@@ -203,9 +184,7 @@ export default function MypageScreen() {
               source={require("../assets/icons/icon_no_red.png")}
               style={mypageStyle.menuIcon}
             />
-            <Text style={[mypageStyle.menuText, common.textRed]}>
-              회원 탈퇴
-            </Text>
+            <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

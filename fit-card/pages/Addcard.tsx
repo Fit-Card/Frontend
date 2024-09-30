@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   View,
@@ -14,26 +14,54 @@ import { StackParamList } from "../navigationTypes";
 import Common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "../styles/KeyColor";
 
+import { mockUser } from "@/mock/mockUser";
+import axios from "axios";
+
 export default function AddcardScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const [selectedCardIds, setSelectedCardIds] = useState<number[]>([]);
-
   // 카드 데이터
-  const cardData = [
-    { id: 1, name: "카드1" },
-    { id: 2, name: "카드2" },
-    { id: 3, name: "카드3" },
-    { id: 4, name: "카드4" },
-    { id: 5, name: "카드5" },
-  ];
+  const [cardData, setCardData] = useState<Card[]>([]);
+
+  interface Card {
+    cardCode: string;
+    cardName: string;
+    cardCompanyId: number;
+    cardCompanyName: string;
+    cardImageUrl: string;
+    expiredDate: string;
+    financialUserCardId: number;
+  }
+
+  const fetchCards = async () => {
+    try {
+      const response = await axios.post(
+        `http://j11a405.p.ssafy.io:8081/members/cards/get/renewal`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+          },
+        }
+      );
+      console.log(response.data.data.memberCardRenewals);
+      setCardData(response.data.data.memberCardRenewals);
+    } catch (error) {
+      console.error("카드 가져오기 오류 발생 : ", error);
+    }
+  }; //fetchCards 끝
 
   const handleSubmit = () => {
     if (selectedCardIds.length > 0) {
       alert(`총 ${selectedCardIds.length}개의 카드를 등록했습니다.`);
       navigation.navigate("Mypage");
     }
-  };
+  }; //handleSubmit 끝
+
+  useEffect(() => {
+    fetchCards();
+  }, []);
 
   return (
     <View style={AddcardStyle.container}>
@@ -49,39 +77,41 @@ export default function AddcardScreen() {
         <View style={AddcardStyle.cardListContainer}>
           {cardData.map((card) => (
             <TouchableOpacity
-              key={card.id}
+              key={card.financialUserCardId}
               style={[
                 AddcardStyle.card,
                 {
-                  borderColor: selectedCardIds.includes(card.id) ? KeyColors.blue : "#FFFFFF",
-                  borderWidth: selectedCardIds.includes(card.id) ? 2 : 2,
+                  borderColor: selectedCardIds.includes(card.financialUserCardId)
+                    ? KeyColors.blue
+                    : "#FFFFFF",
+                  borderWidth: selectedCardIds.includes(card.financialUserCardId) ? 2 : 2,
                 },
               ]}
               onPress={() => {
                 const newSelectedCardIds = [...selectedCardIds];
-                const index = newSelectedCardIds.indexOf(card.id);
+                const index = newSelectedCardIds.indexOf(card.financialUserCardId);
                 if (index !== -1) {
                   // 카드가 이미 선택되어있을 경우 : 제거
                   newSelectedCardIds.splice(index, 1);
                 } else {
                   // 카드가 새로 선택된 경우 : 추가
-                  newSelectedCardIds.push(card.id);
+                  newSelectedCardIds.push(card.financialUserCardId);
                 }
                 setSelectedCardIds(newSelectedCardIds);
               }}
             >
               <View style={AddcardStyle.cardImageContainer}>
                 <Image
-                  source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
+                  source={{ uri: card.cardImageUrl }} // PNG 파일 경로
                   style={AddcardStyle.cardImage} // 아이콘 스타일
                   resizeMode="contain"
                 />
               </View>
 
               <View style={AddcardStyle.cardTextContainer}>
-                <Text style={[Common.textBold, Common.textBlack]}>{card.name}</Text>
+                <Text style={[Common.textBold, Common.textBlack]}>{card.cardName}</Text>
 
-                {selectedCardIds.includes(card.id) ? (
+                {selectedCardIds.includes(card.financialUserCardId) ? (
                   <Text style={[AddcardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
                 ) : null}
               </View>
@@ -210,7 +240,10 @@ const AddcardStyle = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cardImage: {},
+  cardImage: {
+    width: 80,
+    height: 80,
+  },
   cardTextContainer: {
     height: "100%",
     flex: 1,

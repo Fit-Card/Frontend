@@ -8,7 +8,7 @@ export const mockUser = {
   birthDate: "1990-01-01",
   phoneNumber: "010-1234-5678",
   token:
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTIzIiwiaWF0IjoxNzI3MzI5NDQ2LCJleHAiOjE3Mzc0MzMwNDZ9.7PkVXB6f5rROVQzo9n3Ji5F0t9UVGZw2FkJ5BDxQfeY",
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwibWVtYmVySWQiOiIzIiwiaWF0IjoxNzI3MzM1MTgyLCJleHAiOjE3MzczMzg3ODJ9.DQCrqiRDmF5qtBdadizEIxOgF0Bz_Om9-u3l0vJC1UI",
 };
 
 // 카드 정보 (card 정보)
