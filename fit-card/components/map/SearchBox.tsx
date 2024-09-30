@@ -1,25 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInput, StyleSheet, View, TouchableOpacity, Image } from "react-native";
 
 type SearchBoxProps = {
-  value: string;
-  onChangeText: (text: string) => void;
-  onSubmit: () => void;
-  onClear: () => void;
+  onSubmit: (query: string) => void; // 검색어가 제출될 때 실행되는 함수
 };
 
-const SearchBox = ({ value, onChangeText, onSubmit, onClear }: SearchBoxProps) => {
+const SearchBox = ({ onSubmit }: SearchBoxProps) => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = (text: string) => {
+    setSearchQuery(text);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchQuery.length > 0) {
+      onSubmit(searchQuery);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.searchInput}
         placeholder="검색어를 입력하세요."
-        value={value}
-        onChangeText={onChangeText}
-        onSubmitEditing={onSubmit}
+        value={searchQuery}
+        onChangeText={handleSearchChange}
+        onSubmitEditing={handleSearchSubmit}
       />
-      {value.length > 0 && (
-        <TouchableOpacity onPress={onClear} style={styles.clearButton}>
+      {searchQuery.length > 0 && (
+        <TouchableOpacity onPress={handleClearSearch} style={styles.clearButton}>
           <Image
             source={require("../../assets/images/x-icon.png")}
             style={{ width: 16, height: 16 }}

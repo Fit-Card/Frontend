@@ -8,11 +8,13 @@ type StoreItem = {
   distance: string;
   latitude: number;
   longitude: number;
+  kakaoUrl: string;
 };
 
 type SearchResultListProps = {
   searchQuery: string;
-  onSelectLocation: (latitude: number, longitude: number, name: string, address: string) => void; // 인자를 추가
+  mapRef: React.RefObject<any>; // mapRef를 props로 전달
+  setShowSearchResults: (show: boolean) => void; // 검색 결과 숨기기 위한 함수 전달
 };
 
 const dummyData: StoreItem[] = [
@@ -23,6 +25,7 @@ const dummyData: StoreItem[] = [
     distance: "0.3km",
     latitude: 37.499979,
     longitude: 127.03735,
+    kakaoUrl: "dfssdfsdsd",
   },
   {
     id: "2",
@@ -31,6 +34,7 @@ const dummyData: StoreItem[] = [
     distance: "0.8km",
     latitude: 37.505358,
     longitude: 127.025104,
+    kakaoUrl: "dfssdfsdsd",
   },
   {
     id: "3",
@@ -39,6 +43,7 @@ const dummyData: StoreItem[] = [
     distance: "1.3km",
     latitude: 37.498087,
     longitude: 127.028577,
+    kakaoUrl: "dfssdfsdsd",
   },
   {
     id: "4",
@@ -47,41 +52,55 @@ const dummyData: StoreItem[] = [
     distance: "2.0km",
     latitude: 37.504347,
     longitude: 127.049046,
+    kakaoUrl: "dfssdfsdsd",
   },
 ];
 
-const renderItem = ({
-  item,
-  onSelectLocation,
-}: {
-  item: StoreItem;
-  onSelectLocation: (latitude: number, longitude: number, name: string, address: string) => void;
-}) => (
-  <TouchableOpacity
-    onPress={() => onSelectLocation(item.latitude, item.longitude, item.name, item.address)}
-  >
-    <View style={styles.itemContainer}>
-      <View style={styles.iconAndDistanceContainer}>
-        <Image source={require("../../assets/images/distance-icon.png")} style={styles.icon} />
-        <Text style={styles.distance}>{item.distance}</Text>
-      </View>
-
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.address}>{item.address}</Text>
-      </View>
-    </View>
-  </TouchableOpacity>
-);
-
-const SearchResultList = ({ searchQuery, onSelectLocation }: SearchResultListProps) => {
+const SearchResultList = ({ searchQuery, mapRef, setShowSearchResults }: SearchResultListProps) => {
   const filteredData = dummyData.filter((item) => item.name.includes(searchQuery));
+
+  const handleLocationSelect = (
+    latitude: number,
+    longitude: number,
+    name: string,
+    address: string
+  ) => {
+    if (mapRef.current) {
+      const newRegion = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.05, // 필요에 맞게 값 설정
+        longitudeDelta: 0.05,
+      };
+      mapRef.current.animateToRegion(newRegion, 1000);
+    }
+
+    setShowSearchResults(false); // 검색 결과 창 닫기
+  };
+
+  const renderItem = ({ item }: { item: StoreItem }) => (
+    <TouchableOpacity
+      onPress={() => handleLocationSelect(item.latitude, item.longitude, item.name, item.address)}
+    >
+      <View style={styles.itemContainer}>
+        <View style={styles.iconAndDistanceContainer}>
+          <Image source={require("../../assets/images/distance-icon.png")} style={styles.icon} />
+          <Text style={styles.distance}>{item.distance}</Text>
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.address}>{item.address}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <FlatList
       data={filteredData}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => renderItem({ item, onSelectLocation })}
+      renderItem={({ item }) => renderItem({ item })}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
   );

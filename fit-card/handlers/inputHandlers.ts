@@ -30,3 +30,22 @@ export const handleDigitChange = (
 
   setUser({ ...user, phoneNumber: formattedText });
 };
+
+export const formatDate = (birthDate: string): string => {
+  const isValidFormat = /^\d{8}$/.test(birthDate);
+  if (!isValidFormat) {
+    throw new Error("Invalid birthDate format. It should be YYYYMMDD.");
+  }
+
+  const year = parseInt(birthDate.slice(0, 4), 10);
+  const month = parseInt(birthDate.slice(4, 6), 10);
+  const day = parseInt(birthDate.slice(6, 8), 10);
+
+  const formattedMonth = month.toString().padStart(2, "0");
+  const formattedDay = day.toString().padStart(2, "0");
+
+  const formatDate = `${year}-${formattedMonth}-${formattedDay}`;
+  console.log(formatDate);
+
+  return formatDate;
+};
