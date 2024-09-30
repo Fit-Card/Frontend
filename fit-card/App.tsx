@@ -27,6 +27,7 @@ import CardList from "@/components/benefit/card/CardList";
 import StoreBenefitCardList from "@/components/benefit/store/StoreBenefitCardList";
 import PersonalInfoScreen from "./pages/PersonalInfo";
 import CardDetailScreen from "@/pages/CardDetail";
+import SearchPage from "@/pages/SearchPage";
 
 import { Provider } from "react-redux";
 import store from "@/store";
@@ -117,6 +118,11 @@ function MapStackNavigator() {
         name="CardDetail"
         component={CardDetailScreen}
         options={{ header: () => <HeaderComponent title="카드 상세" /> }}
+      />
+      <Stack.Screen
+        name="SearchPage"
+        component={SearchPage}
+        options={{ header: () => <HeaderComponent title="지도 검색" /> }}
       />
     </Stack.Navigator>
   );
@@ -215,7 +221,11 @@ export default function App() {
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Map"
+            component={MapScreen}
+            options={{ header: () => <HeaderComponent title="혜택 지도" /> }}
+          />
           <Stack.Screen name="Card" component={CardScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Mypage" component={MypageScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />
