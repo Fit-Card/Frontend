@@ -1,23 +1,19 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import ButtonComponent from "./ButtonComponent";
-
-type Category = {
-  id: number;
-  title: string;
-};
+import ButtonComponent from "@/components/category/ButtonComponent";
+import { Category } from "@/components/map/LocationType";
 
 type CategoryButtonGroupProps = {
-  selectedButton: number | null;
-  onButtonPress: (id: number) => void;
+  selectedButton: string | null;
+  onButtonPress: (id: string) => void;
 };
 
-const categories: Category[] = [
-  { id: 0, title: "음식점" },
-  { id: 1, title: "카페" },
-  { id: 2, title: "편의점" },
-  { id: 3, title: "문화" },
-  { id: 4, title: "주유소" },
+export const categories: Category[] = [
+  { id: 0, title: "음식점", code: "FD6" },
+  { id: 1, title: "카페", code: "CE7" },
+  { id: 2, title: "편의점", code: "CS2" },
+  { id: 3, title: "문화시설", code: "CT1" },
+  { id: 4, title: "주유소", code: "OL7" },
 ];
 
 const CategoryButtonGroup = ({ selectedButton, onButtonPress }: CategoryButtonGroupProps) => {
@@ -27,8 +23,8 @@ const CategoryButtonGroup = ({ selectedButton, onButtonPress }: CategoryButtonGr
         <ButtonComponent
           key={category.id}
           title={category.title}
-          isSelected={selectedButton === category.id}
-          onPress={() => onButtonPress(category.id)}
+          isSelected={selectedButton === category.code}
+          onPress={() => onButtonPress(category.code)}
         />
       ))}
     </View>

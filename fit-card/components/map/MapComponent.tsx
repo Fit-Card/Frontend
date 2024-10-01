@@ -11,7 +11,9 @@ import BottomSheetContent from "@/components/map/BottomSheetContent";
 import styles from "@/components/map/MapComponentStyle";
 import SearchComponent from "@/components/map/SingleSearch";
 import { StackParamList } from "@/navigationTypes";
-import { LocationType } from "@/components/map/LocationType";
+import { LocationType, SelectedLocationType } from "@/components/map/LocationType";
+import { mockUser } from "@/mock/mockUser";
+import axios from "axios";
 
 import {
   getLocationAsync,
@@ -21,13 +23,13 @@ import {
   handleGpsButtonPress,
 } from "@/components/map/MapComponentHandler";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const MapComponent = () => {
   const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [selectedButton, setSelectedButton] = useState<number | null>(null);
+  const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [filteredStores, setFilteredStores] = useState<LocationType[]>([]);
@@ -59,8 +61,8 @@ const MapComponent = () => {
       const initialRegion = {
         latitude: store.latitude,
         longitude: store.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
       };
       mapRef.current?.animateToRegion(initialRegion, 1000);
       setSelectedLocation(store); // 넘겨받은 store 데이터를 선택된 위치로 설정
@@ -94,8 +96,64 @@ const MapComponent = () => {
     if (sheetRef.current) {
       sheetRef.current.expand(); // BottomSheet 확장
     }
-  };
+  }; // GPS 버튼 눌렀을 때 현재 위치를 가져오고 지도를 해당 위치로 이동
+  const handleGpsPress = async () => {
+    const currentLocation = await Location.getCurrentPositionAsync({});
+    console.log(currentLocation); // 위치 값 확인
+    if (currentLocation) {
+      const { latitude, longitude } = currentLocation.coords;
+      const newRegion: Region = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+      setLocation(currentLocation);
 
+      // mapRef가 제대로 설정되었는지 확인
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(newRegion, 1000);
+        console.log(newRegion);
+      }
+    }
+  };
+  const handleCategorySelection = async (category: string, region: Region) => {
+    try {
+      const response = await axios.post(
+        "http://j11a405.p.ssafy.io:8081/branches/category-page?pageNo=1",
+        {
+          category: category, // 실제 선택된 카테고리 사용
+          leftLatitude: parseFloat((region.latitude + region.latitudeDelta / 2).toFixed(2)),
+          rightLatitude: parseFloat((region.latitude - region.latitudeDelta / 2).toFixed(2)),
+          leftLongitude: parseFloat((region.longitude - region.longitudeDelta / 2).toFixed(2)),
+          rightLongitude: parseFloat((region.longitude + region.longitudeDelta / 2).toFixed(2)),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`, // Replace with the actual token
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+        }
+      );
+
+      const branchResponses = response.data.data.branchResponses;
+      const mappedStores = branchResponses.map((branch: any) => ({
+        id: branch.merchantBranchId, // 응답의 필드명에 따라 맞춰줌
+        name: branch.branchName,
+        address: branch.branchAddress,
+        latitude: branch.latitude,
+        longitude: branch.longitude,
+        kakaoUrl: branch.kakaoUrl,
+        category: branch.category,
+      }));
+
+      setFilteredStores(mappedStores); // 매핑된 데이터를 저장
+      console.log(mappedStores);
+    } catch (error) {
+      console.error("API request failed:", error);
+    }
+  };
   // 현재 페이지에 맞는 스토어 목록을 계산
   const displayedStores = filteredStores.slice(0, currentPage * ITEMS_PER_PAGE);
 
@@ -113,7 +171,16 @@ const MapComponent = () => {
         )}
       </View>
       <View style={styles.buttonContainer}>
-        {/* <CategoryButtonGroup selectedButton={selectedButton} onButtonPress={handleButtonPress} /> */}
+        <CategoryButtonGroup
+          selectedButton={selectedButton}
+          onButtonPress={(categoryCode) => {
+            if (region) {
+              handleCategorySelection(categoryCode, region);
+            }
+
+            setSelectedButton(categoryCode); // Update the selected button based on the code
+          }}
+        />
       </View>
 
       {/* 검색 결과가 많을 때 "결과 더보기" 버튼 표시 */}
@@ -130,7 +197,7 @@ const MapComponent = () => {
           </TouchableOpacity>
         </View>
       )}
-      <GpsButton onPress={() => handleGpsButtonPress(setLocation, mapRef, setRegion)} />
+      <GpsButton onPress={handleGpsPress} />
       {/* 지도 */}
       <MapView
         ref={mapRef}
