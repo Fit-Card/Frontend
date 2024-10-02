@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import ButtonComponent from "@/components/category/ButtonComponent";
 import { View, Text, StyleSheet } from "react-native";
 
 type BenefitProps = {
   benefit: {
     index: number;
-    category: string[]; // 음식점, 카페, 편의점, 문화, 주유소
+    category: string[]; // 음식점, 카페, 편의점, 문화, 주유소, 기타
     logo: any;
     franchiseName: string;
     info: string[][]; // 각 카테고리별 혜택 리스트
@@ -13,7 +12,7 @@ type BenefitProps = {
   refreshBenefit: () => void;
 };
 
-const CardBenefit = ({ benefit, refreshBenefit }: BenefitProps) => {
+const CardBenefit = ({ benefit }: BenefitProps) => {
   // 활성화된 탭을 관리하는 state
   const [activeTab, setActiveTab] = useState(benefit.index);
 
@@ -24,19 +23,6 @@ const CardBenefit = ({ benefit, refreshBenefit }: BenefitProps) => {
   return (
     <View style={styles.cardContainer}>
       <Text style={styles.titleText}>이런 혜택은 어떠세요?</Text>
-
-      <View style={styles.tabContainer}>
-        {benefit.category.map((category, idx) => (
-          <ButtonComponent
-            key={idx}
-            title={category}
-            isSelected={activeTab === idx}
-            onPress={() => setActiveTab(idx)}
-            customStyle={styles.customButton} // 크기를 줄이는 스타일
-            textStyle={styles.customButtonText} // 텍스트 스타일도 전달
-          />
-        ))}
-      </View>
 
       {/* 선택된 탭에 해당하는 혜택 3개 */}
       <View style={styles.benefitContainer}>
