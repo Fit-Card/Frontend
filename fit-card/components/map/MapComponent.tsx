@@ -50,7 +50,12 @@ const MapComponent = () => {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         };
-        mapRef.current?.animateToRegion(initialRegion, 1000);
+
+        // 약간의 지연을 주어 맵이 제대로 렌더링되었을 때 animateToRegion을 호출
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(initialRegion, 1000);
+        }, 500);
+
         setSelectedLocation(store);
       }
 
@@ -90,6 +95,7 @@ const MapComponent = () => {
     longitude: number,
     kakaoUrl: string
   ) => {
+    setSelectedLocation(null);
     setSelectedLocation({ id, name, address, distance, latitude, longitude, kakaoUrl });
 
     if (sheetRef.current) {
@@ -135,6 +141,16 @@ const MapComponent = () => {
           },
         }
       );
+
+      const leftLatitude = region.latitude + region.latitudeDelta / 2;
+      const rightLatitude = region.latitude - region.latitudeDelta / 2;
+      const leftLongitude = region.longitude - region.longitudeDelta / 2;
+      const rightLongitude = region.longitude + region.longitudeDelta / 2;
+
+      console.log(leftLatitude);
+      console.log(rightLatitude);
+      console.log(leftLongitude);
+      console.log(rightLongitude);
 
       const branchResponses = response.data.data.branchResponses;
       const mappedStores = branchResponses.map((branch: any) => ({
@@ -288,11 +304,19 @@ const MapComponent = () => {
               )
             }
           >
-            <Image
-              source={require("@/assets/images/normal-marker.png")}
-              style={{ width: 40, height: 40 }}
-              resizeMode="contain"
-            />
+            {selectedLocation?.id === store.id ? (
+              <Image
+                source={require("@/assets/images/normal-marker.png")}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
+            ) : (
+              <Image
+                source={require("@/assets/images/active-marker.png")}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
+            )}
           </Marker>
         )}
       </MapView>
