@@ -1,6 +1,6 @@
 import React, { RefObject } from "react";
 import { TextInput, StyleSheet, View, TouchableOpacity, Image, FlatList, Text } from "react-native";
-import MapView from "react-native-maps"; // MapView를 import;
+import MapView from "react-native-maps"; // MapView를 import
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "@/navigationTypes";
@@ -54,15 +54,15 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   searchInput: {
-    height: 40,
-    width: "95%",
+    height: 35,
+    width: "100%",
     fontSize: 14,
     fontFamily: "SUITE-Bold",
-    paddingLeft: 5,
+    paddingLeft: 10,
   },
   searchIcon: {
-    width: 24,
-    height: 24,
+    width: 17,
+    height: 17,
   },
 });
 

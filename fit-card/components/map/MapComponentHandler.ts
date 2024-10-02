@@ -6,18 +6,8 @@ import { Alert } from "react-native";
 import * as Location from "expo-location";
 import { LocationObject } from "expo-location";
 import StoreDummy from "@/components/map/StoreDummy";
-
+import { LocationType } from "@/components/map/LocationType";
 const ITEMS_PER_PAGE = 5;
-
-type LocationType = {
-  id: number;
-  name: string;
-  address: string;
-  distance: number;
-  latitude: number;
-  longitude: number;
-  kakaoUrl: string;
-};
 
 // 두 좌표 사이의 거리를 계산하는 함수 (하버사인 공식)
 export const calculateDistance = (
@@ -44,7 +34,6 @@ export const calculateDistance = (
 export const getLocationAsync = async (
   setLocation: (location: LocationObject | null) => void,
   setRegion: (region: Region | null) => void,
-  setPreviousRegion: (region: Region | null) => void,
   setIsLoading: (loading: boolean) => void
 ) => {
   try {
@@ -64,7 +53,6 @@ export const getLocationAsync = async (
       longitudeDelta: 0.01,
     };
     setRegion(initialRegion);
-    setPreviousRegion(initialRegion); // 처음 위치를 previousRegion에 저장
   } catch (error) {
     Alert.alert("Error fetching location data");
   } finally {
@@ -93,78 +81,4 @@ export const onRegionChangeCompleteHandler = (
   }
 
   setRegion(newRegion); // 새로운 지도 범위 설정
-};
-
-// 카테고리 버튼 클릭 시 지도 필터링 함수
-export const handleButtonPressHandler = (
-  categoryId: number,
-  region: Region | null,
-  setSelectedButton: (id: number | null) => void,
-  filterStoresByCategoryAndRegion: (region: Region | null, categoryId: number | null) => void
-) => {
-  setSelectedButton(categoryId);
-  filterStoresByCategoryAndRegion(region, categoryId);
-};
-
-// 필터링된 가게 목록을 얻는 함수
-export const filterStoresByCategoryAndRegion = (
-  region: Region | null,
-  categoryId: number | null,
-  setFilteredStores: (stores: LocationType[]) => void,
-  setIsLoadMoreVisible: (visible: boolean) => void // isLoadMoreVisible 상태 추가
-) => {
-  if (!region) return;
-
-  const filteredData = StoreDummy.filter((store) => {
-    const isWithinLatitude =
-      store.latitude >= region.latitude - region.latitudeDelta / 2 &&
-      store.latitude <= region.latitude + region.latitudeDelta / 2;
-    const isWithinLongitude =
-      store.longitude >= region.longitude - region.longitudeDelta / 2 &&
-      store.longitude <= region.longitude + region.longitudeDelta / 2;
-
-    const isWithinCategory = categoryId !== null ? store.category === categoryId : true;
-
-    return isWithinLatitude && isWithinLongitude && isWithinCategory;
-  });
-
-  setFilteredStores(filteredData);
-
-  // 검색 결과가 5개 이상일 경우 '더보기' 버튼 표시
-  if (filteredData.length > ITEMS_PER_PAGE) {
-    setIsLoadMoreVisible(true);
-  } else {
-    setIsLoadMoreVisible(false);
-  }
-};
-
-export const handleGpsButtonPress = async (
-  setLocation: (location: Location.LocationObject | null) => void,
-  mapRef: React.RefObject<MapView>,
-  setRegion: (region: Region) => void
-) => {
-  try {
-    // 현재 위치를 얻어옴
-    let currentLocation = await Location.getCurrentPositionAsync({});
-    console.log("Current location:", currentLocation); // 위치 정보 출력
-    // 위치 상태를 업데이트
-    setLocation(currentLocation);
-
-    // 맵의 참조(mapRef)가 존재하고 현재 위치 정보가 있다면
-    if (mapRef.current && currentLocation) {
-      const { latitude, longitude } = currentLocation.coords;
-      const newRegion: Region = {
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      };
-
-      // 맵의 위치를 애니메이션을 통해 새로운 위치로 이동
-      mapRef.current.animateToRegion(newRegion, 1000);
-    }
-  } catch (error) {
-    Alert.alert("Error", "Failed to retrieve GPS location");
-    console.error("Error fetching GPS location: ", error);
-  }
 };

@@ -1,3 +1,6 @@
+import { LocationType } from "@/components/map/LocationType"; // Adjust the import path accordingly
+
+// Define StackParamList
 export type StackParamList = {
   Loading: undefined;
   Login: undefined;
@@ -9,7 +12,7 @@ export type StackParamList = {
   Deletecard: undefined;
   Search: undefined;
   Card: undefined;
-  Map: undefined;
+  Map: { store: LocationType } | undefined;
   StoreSearch: undefined;
   CardSearch: undefined;
   CardList: { companyId: number; companyName: string };

@@ -221,7 +221,11 @@ export default function App() {
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Map"
+            component={MapScreen}
+            options={{ header: () => <HeaderComponent title="혜택 지도" /> }}
+          />
           <Stack.Screen name="Card" component={CardScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Mypage" component={MypageScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Addcard" component={AddcardScreen} options={{ headerShown: false }} />

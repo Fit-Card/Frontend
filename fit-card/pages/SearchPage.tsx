@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
 import axios from "axios";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native"; // navigation 추가
 import { StackParamList } from "@/navigationTypes"; // StackParamList 타입 정의
 import { mockUser } from "@/mock/mockUser"; // 토큰 정보
+import { StackNavigationProp } from "@react-navigation/stack"; // navigation 타입 추가
+import { LocationType } from "@/components/map/LocationType";
 
 type SearchPageRouteProp = RouteProp<StackParamList, "SearchPage">;
-
-type StoreItem = {
-  id: number;
-  name: string;
-  address: string;
-  distance: number;
-  latitude: number;
-  longitude: number;
-};
 
 const SearchPage = () => {
   const route = useRoute<SearchPageRouteProp>();
   const { latitude, longitude } = route.params; // SearchComponent에서 받은 위치 정보
+  const navigation = useNavigation<StackNavigationProp<StackParamList>>(); // navigation 사용
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<StoreItem[]>([]);
+  const [searchResults, setSearchResults] = useState<LocationType[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true); // 추가 페이지 여부
@@ -60,7 +54,9 @@ const SearchPage = () => {
         distance: branch.distance,
         latitude: branch.latitude,
         longitude: branch.longitude,
+        kakaoUrl: branch.kakaoUrl,
       }));
+      console.log(response.data.data.branchResponses);
 
       if (pageNo === 1) {
         setSearchResults(results); // 처음에는 결과를 덮어씀
@@ -91,7 +87,12 @@ const SearchPage = () => {
     }
   };
 
-  // 스크롤이 끝에 도달했을 때 추가 로딩
+  // 스토어 선택 시 지도에 마커 추가하기 위해 MapComponent로 이동
+  const handleStoreSelect = (store: LocationType) => {
+    navigation.navigate("Map", {
+      store,
+    });
+  };
   const handleLoadMore = () => {
     if (!loading && hasMore) {
       const nextPage = page + 1;
@@ -100,8 +101,8 @@ const SearchPage = () => {
     }
   };
 
-  const renderItem = ({ item }: { item: StoreItem }) => (
-    <TouchableOpacity>
+  const renderItem = ({ item }: { item: LocationType }) => (
+    <TouchableOpacity onPress={() => handleStoreSelect(item)}>
       <View style={styles.itemContainer}>
         <View style={styles.iconAndDistanceContainer}>
           <Image source={require("@/assets/images/distance-icon.png")} style={styles.icon} />
@@ -122,6 +123,7 @@ const SearchPage = () => {
         placeholder="검색어를 입력하세요"
         value={searchQuery}
         onChangeText={handleSearchChange}
+        autoFocus={true}
       />
       {loading && page === 1 ? ( // 첫 페이지 로딩 중일 때 표시
         <Text>검색 중...</Text>
@@ -129,7 +131,7 @@ const SearchPage = () => {
         <FlatList
           data={searchResults}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           onEndReached={handleLoadMore} // 리스트의 끝에 도달했을 때 추가 로딩
           onEndReachedThreshold={0.3} // 리스트 끝에서 50% 남았을 때 handleLoadMore 호출
           ListFooterComponent={loading && page > 1 ? <Text>더 불러오는 중...</Text> : null} // 추가 페이지 로딩 중일 때 표시
@@ -147,12 +149,13 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 40,
-    paddingLeft: 10,
+    paddingLeft: 15,
     backgroundColor: "#fff",
     borderRadius: 20,
     marginBottom: 20,
     borderColor: "#d0d0d0",
     borderWidth: 2,
+    fontFamily: "SUITE-Bold",
   },
   itemContainer: {
     flexDirection: "row",
