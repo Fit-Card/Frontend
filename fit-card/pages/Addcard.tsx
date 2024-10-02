@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
   View,
@@ -7,8 +7,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 
 import Common from "../styles/Common"; // 스타일 파일 가져오기
@@ -34,7 +35,9 @@ export default function AddcardScreen() {
     financialUserCardId: number;
   }
 
+  //카드 불러오기
   const fetchCards = async () => {
+    // alert("갱신 가능 카드 불러오기");
     try {
       const response = await axios.post(
         `http://j11a405.p.ssafy.io:8081/members/cards/get/renewal`,
@@ -52,16 +55,45 @@ export default function AddcardScreen() {
     }
   }; //fetchCards 끝
 
-  const handleSubmit = () => {
-    if (selectedCardIds.length > 0) {
-      alert(`총 ${selectedCardIds.length}개의 카드를 등록했습니다.`);
+  // 카드 등록
+  const handleSubmit = async () => {
+    if (selectedCardIds.length === 0) {
+      Alert.alert("카드 선택", "선택된 카드가 없습니다.");
+      return;
+    }
+
+    const requestBody = {
+      financialUserCardIds: selectedCardIds,
+    };
+
+    try {
+      console.log("전송 시도...보내는 카드는");
+      console.log(selectedCardIds);
+      const response = await axios.post(
+        `http://j11a405.p.ssafy.io:8081/members/cards/post`,
+        requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("카드 등록 성공: ", response.data);
+      Alert.alert("카드 등록", `${selectedCardIds.length}개의 카드가 등록되었습니다.`);
       navigation.navigate("Mypage");
+    } catch (error) {
+      console.error("카드 등록 실패: ", error);
+      Alert.alert("카드 등록 실패", "카드 등록 중 오류가 발생했습니다.");
     }
   }; //handleSubmit 끝
 
-  useEffect(() => {
-    fetchCards();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchCards();
+    }, [])
+  );
 
   return (
     <View style={AddcardStyle.container}>
