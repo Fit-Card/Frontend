@@ -1,53 +1,89 @@
-import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons"; // 화살표 및 카테고리 아이콘 사용
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios"; // Import axios
+import { mockUser } from "@/mock/mockUser";
 
 import { StackParamList } from "@/navigationTypes";
 
-// 카드 데이터
-const cardsData: Array<{
-  id: number;
-  name: string;
-  image: any;
-  categories: Record<number, string>;
-}> = [
-  {
-    id: 1,
-    name: "신한카드 Mr.Life",
-    image: require("@/assets/images/temp-card.png"),
-    categories: {
-      0: "버거킹 10% 할인\n도미노피자 10% 할인\n엽기떡볶이 10% 할인",
-      1: "스타벅스 10% 할인\n이디야 5% 할인",
-      2: "CU 10% 할인\nGS25 5% 할인",
-      3: "CGV 10% 할인\n롯데시네마 5% 할인",
-      4: "SK 주유소 10% 적립\nGS 주유소 5% 적립",
-    },
-  },
-];
-
-// Route type 정의
 type CardDetailRouteProp = RouteProp<StackParamList, "CardDetail">;
 
 const CardDetailScreen = () => {
   const route = useRoute<CardDetailRouteProp>();
   const { cardId } = route.params;
 
-  const card = cardsData.find((item) => item.id === cardId);
-
-  // 카테고리별로 아코디언 상태를 관리하기 위한 상태
+  const [cardData, setCardData] = useState<any>(null);
+  const [cardDetailData, setCardDetailData] = useState<any[]>([]); // Ensure it's an array to hold categories
   const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
+  const [cardName, setCardName] = useState<string | null>(null);
+  const [cardImageUrl, setCardImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // Loading state
 
-  // 카테고리 목록과 아이콘
-  const categoriesWithIcons: Array<{ name: string; icon: keyof typeof Ionicons.glyphMap }> = [
-    { name: "음식점", icon: "restaurant-outline" },
-    { name: "카페", icon: "cafe-outline" },
-    { name: "편의점", icon: "cart-outline" },
-    { name: "문화", icon: "film-outline" },
-    { name: "주유소", icon: "car-outline" },
-  ];
+  const fetchData = async () => {
+    try {
+      const response = await axios.post(
+        "http://j11a405.p.ssafy.io:8081/cards/performance/get",
+        2278,
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+        }
+      );
+      setCardData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching card data: ", error);
+    }
+  };
 
-  // 아코디언 토글 함수
+  const fetchDetailData = async () => {
+    try {
+      const response = await axios.post(
+        "http://j11a405.p.ssafy.io:8081/cards/benefits/get",
+        {
+          cardId: 2278,
+          level: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+        }
+      );
+      console.log(response.data.data.categories);
+
+      setCardDetailData(response.data.data.categories); // Save categories from API response
+      setCardName(response.data.data.cardName);
+      setCardImageUrl(response.data.data.cardImage);
+    } catch (error) {
+      console.error("Error fetching card details: ", error);
+    }
+  };
+
+  // Fetch both data and detail data when the component mounts
+  useEffect(() => {
+    const fetchAllData = async () => {
+      await fetchData();
+      await fetchDetailData();
+      setLoading(false); // Set loading to false once both requests are complete
+    };
+    fetchAllData();
+  }, []);
+
   const toggleCategory = (index: number) => {
     if (expandedCategories.includes(index)) {
       setExpandedCategories(expandedCategories.filter((i) => i !== index));
@@ -56,25 +92,49 @@ const CardDetailScreen = () => {
     }
   };
 
-  if (!card) {
+  const renderButtons = () => {
+    if (!cardData || !cardData.data) {
+      return null;
+    }
+
+    return cardData.data.map((item: any, index: number) => (
+      <TouchableOpacity key={index} style={styles.button}>
+        <Text style={styles.buttonText}>{index + 1}</Text>
+      </TouchableOpacity>
+    ));
+  };
+
+  // If loading is true, show a loading indicator
+  if (loading) {
     return (
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text>카드 정보를 찾을 수 없습니다.</Text>
-      </ScrollView>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#5253F0" />
+        <Text>Loading data...</Text>
+      </View>
     );
   }
 
+  // Once loading is complete, render the actual content
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <Image source={card.image} style={styles.cardImage} />
-      <Text style={styles.cardName}>{card.name}</Text>
+      {/* Conditionally render the card image from the URL */}
+      {cardImageUrl ? (
+        <Image source={{ uri: cardImageUrl }} style={styles.cardImage} />
+      ) : (
+        <Image source={require("@/assets/images/temp-card.png")} style={styles.cardImage} />
+      )}
+
+      <Text style={styles.cardName}>{cardName || "Loading card name..."}</Text>
+
+      <View style={styles.buttonContainer}>{renderButtons()}</View>
 
       <View style={styles.accordionContainer}>
-        {categoriesWithIcons.map((category, index) => (
+        {cardDetailData.map((category: any, index: number) => (
           <View key={index} style={styles.accordionItem}>
             <TouchableOpacity onPress={() => toggleCategory(index)} style={styles.accordionHeader}>
               <View style={styles.categoryIconContainer}>
-                <Ionicons name={category.icon} size={20} color="#5253F0" style={styles.icon} />
+                {/* You can customize this icon based on the category */}
+                <Ionicons name="folder-outline" size={20} color="#5253F0" style={styles.icon} />
                 <Text style={styles.categoryTitle}>{category.name}</Text>
               </View>
               <Ionicons
@@ -87,7 +147,8 @@ const CardDetailScreen = () => {
             </TouchableOpacity>
             {expandedCategories.includes(index) && (
               <View style={styles.accordionContent}>
-                <Text style={styles.categoryDetails}>{card.categories[index]}</Text>
+                {/* Render the details of the category */}
+                <Text style={styles.categoryDetails}>{category.details}</Text>
               </View>
             )}
           </View>
@@ -99,10 +160,10 @@ const CardDetailScreen = () => {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    alignItems: "center", // 중앙 정렬
+    alignItems: "center",
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 30, // 스크롤 시 아래쪽 패딩 추가
+    paddingBottom: 30,
     backgroundColor: "#fff",
   },
   cardImage: {
@@ -115,6 +176,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "SUITE-Bold",
     marginBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+    justifyContent: "center",
+    flexWrap: "wrap",
+  },
+  button: {
+    padding: 10,
+    backgroundColor: "#5253F0",
+    margin: 5,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
   },
   accordionContainer: {
     width: "100%",
@@ -160,6 +237,11 @@ const styles = StyleSheet.create({
     color: "#666",
     fontFamily: "SUITE-Regular",
     lineHeight: 22,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
