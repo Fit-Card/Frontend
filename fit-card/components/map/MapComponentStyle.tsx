@@ -14,10 +14,11 @@ const mapStyles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: 10,
+    top: 3,
     left: 10,
     right: 10,
-    zIndex: 10,
+    zIndex: 25,
+    flexGrow: 1,
   },
   locationTextContainer: {
     position: "absolute",
@@ -56,17 +57,6 @@ const mapStyles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
     fontFamily: "SUITE-Bold",
-  },
-  resultContainer: {
-    position: "absolute",
-    top: 200,
-    left: 10,
-    right: 10,
-    zIndex: 10,
-    backgroundColor: "white",
-    borderRadius: 10,
-    elevation: 5,
-    padding: 10,
   },
 });
 

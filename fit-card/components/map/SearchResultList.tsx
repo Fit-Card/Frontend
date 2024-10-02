@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 type StoreItem = {
-  id: string;
+  id: number;
   name: string;
   address: string;
-  distance: string;
+  distance: number;
   latitude: number;
   longitude: number;
   kakaoUrl: string;
@@ -13,79 +13,51 @@ type StoreItem = {
 
 type SearchResultListProps = {
   searchQuery: string;
-  mapRef: React.RefObject<any>; // mapRef를 props로 전달
-  setShowSearchResults: (show: boolean) => void; // 검색 결과 숨기기 위한 함수 전달
+  searchResults: StoreItem[];
+  mapRef: React.RefObject<any> | null; // mapRef가 null을 허용
+  setShowSearchResults: (show: boolean) => void;
+  onLoadMore: () => void; // 추가된 props
+  hasMore: boolean; // 추가된 props
 };
 
-const dummyData: StoreItem[] = [
-  {
-    id: "1",
-    name: "s바나프레소 역삼점",
-    address: "서울특별시 강남구 논현로94길 13",
-    distance: "0.3km",
-    latitude: 37.499979,
-    longitude: 127.03735,
-    kakaoUrl: "dfssdfsdsd",
-  },
-  {
-    id: "2",
-    name: "s바나프레소 신논현역점",
-    address: "서울특별시 서초구 서초4동 사평대로 364",
-    distance: "0.8km",
-    latitude: 37.505358,
-    longitude: 127.025104,
-    kakaoUrl: "dfssdfsdsd",
-  },
-  {
-    id: "3",
-    name: "s바나프레소 강남점",
-    address: "서울특별시 강남구 테헤란로4길 46",
-    distance: "1.3km",
-    latitude: 37.498087,
-    longitude: 127.028577,
-    kakaoUrl: "dfssdfsdsd",
-  },
-  {
-    id: "4",
-    name: "s바나프레소 선릉역사거리점",
-    address: "서울특별시 강남구 역삼동 705-19",
-    distance: "2.0km",
-    latitude: 37.504347,
-    longitude: 127.049046,
-    kakaoUrl: "dfssdfsdsd",
-  },
-];
+const formatDistance = (distance: number): string => {
+  if (distance < 1000) {
+    return `${distance}m`;
+  } else {
+    return `${(distance / 1000).toFixed(1)}km`;
+  }
+};
 
-const SearchResultList = ({ searchQuery, mapRef, setShowSearchResults }: SearchResultListProps) => {
-  const filteredData = dummyData.filter((item) => item.name.includes(searchQuery));
-
-  const handleLocationSelect = (
-    latitude: number,
-    longitude: number,
-    name: string,
-    address: string
-  ) => {
-    if (mapRef.current) {
+const SearchResultList = ({
+  searchQuery,
+  searchResults,
+  mapRef,
+  setShowSearchResults,
+  onLoadMore, // onLoadMore prop을 사용
+  hasMore,
+}: SearchResultListProps) => {
+  const handleLocationSelect = (latitude: number, longitude: number) => {
+    if (mapRef && mapRef.current) {
+      // mapRef가 null이 아닐 때만 접근
       const newRegion = {
         latitude,
         longitude,
-        latitudeDelta: 0.05, // 필요에 맞게 값 설정
-        longitudeDelta: 0.05,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
       };
       mapRef.current.animateToRegion(newRegion, 1000);
+    } else {
+      console.warn("mapRef is null, cannot animate to region.");
     }
-
-    setShowSearchResults(false); // 검색 결과 창 닫기
+    setShowSearchResults(false);
   };
 
   const renderItem = ({ item }: { item: StoreItem }) => (
-    <TouchableOpacity
-      onPress={() => handleLocationSelect(item.latitude, item.longitude, item.name, item.address)}
-    >
+    <TouchableOpacity onPress={() => handleLocationSelect(item.latitude, item.longitude)}>
       <View style={styles.itemContainer}>
         <View style={styles.iconAndDistanceContainer}>
-          <Image source={require("../../assets/images/distance-icon.png")} style={styles.icon} />
-          <Text style={styles.distance}>{item.distance}</Text>
+          <Image source={require("@/assets/images/distance-icon.png")} style={styles.icon} />
+          <Text style={styles.distance}>{formatDistance(item.distance)}</Text>
         </View>
 
         <View style={styles.textContainer}>
@@ -98,10 +70,13 @@ const SearchResultList = ({ searchQuery, mapRef, setShowSearchResults }: SearchR
 
   return (
     <FlatList
-      data={filteredData}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => renderItem({ item })}
+      style={{ flex: 1 }}
+      data={searchResults}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={renderItem}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
+      onEndReached={hasMore ? onLoadMore : null} // 무한 스크롤을 위한 핸들러
+      onEndReachedThreshold={0.1} // 호출될 임계값
     />
   );
 };
@@ -110,17 +85,18 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
   },
   iconAndDistanceContainer: {
     alignItems: "center",
     justifyContent: "center",
     marginRight: 15,
-    marginLeft: 10,
   },
   icon: {
     width: 10,
     height: 15,
+    marginBottom: 5,
   },
   distance: {
     fontSize: 10,
@@ -133,16 +109,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontFamily: "SUITE-Bold",
+    color: "#333",
+    marginBottom: 5,
   },
   address: {
     fontSize: 14,
-    color: "#888",
+    color: "#555",
     fontFamily: "SUITE-Regular",
   },
   separator: {
     height: 1,
-    backgroundColor: "#ccc",
-    marginVertical: 5,
+    backgroundColor: "#ddd",
+    marginVertical: 10,
   },
 });
 
