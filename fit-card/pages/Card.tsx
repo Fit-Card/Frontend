@@ -1,4 +1,5 @@
-import React from "react";
+// @/pages/Card.tsx
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
 import ConsumptionPattern from "@/components/recommend/ConsumptionPattern";
 import RecommendedCardCarousel from "@/components/recommend/RecommendedCardCarousel";
@@ -6,9 +7,26 @@ import AgeGroupCard from "@/components/recommend/AgeGroupCard";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { recommendedCards } from "@/mock/mockData";
+import { getAgeSpecificCards } from "@/api/members";
 
 export default function CardScreen() {
   const user = useSelector((state: RootState) => state.user.user);
+  const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]); // 연령대별 카드 상태
+
+  // API 호출 및 데이터 설정
+  useEffect(() => {
+    const fetchAgeSpecificCards = async () => {
+      try {
+        const response = await getAgeSpecificCards(1); // size 1로 API 호출
+        console.log(response.data.memberCardGetByAgeSpecificResponses);
+        setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
+      } catch (error) {
+        console.error("Error fetching age-specific cards:", error);
+      }
+    };
+
+    fetchAgeSpecificCards();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -30,15 +48,21 @@ export default function CardScreen() {
       {/* 연령대의 카드 Component */}
       <View style={styles.componentWrapper}>
         <Text style={styles.headText}>{user!.name}님 나이대에서 많이 사용하는 카드</Text>
-        <View style={styles.ageGroup}>
-          <AgeGroupCard
-            imagePath={require("@/assets/images/temp-card-2.png")}
-            cardName="카드이름 들어가주세요 1"
-            benefits={["10% 할인", "적립 혜택"]}
-          />
-        </View>
+        {ageSpecificCards.length > 0 ? (
+          ageSpecificCards.map((card) => (
+            <View key={card.cardId} style={styles.ageGroup}>
+              <AgeGroupCard
+                imagePath={{ uri: card.cardImageUrl }} // cardImageUrl을 이미지 경로로 설정
+                cardName={card.cardName} // cardName 설정
+                benefits={[`${card.cardCompanyName} 카드`, "연령대별 인기 카드"]}
+              />
+            </View>
+          ))
+        ) : (
+          <Text>연령대별 카드를 불러오는 중입니다...</Text>
+        )}
       </View>
-      <View style={styles.componentWrapper}>
+      {/* <View style={styles.componentWrapper}>
         <View style={styles.ageGroup}>
           <AgeGroupCard
             imagePath={require("@/assets/images/temp-card-3.png")}
@@ -55,7 +79,7 @@ export default function CardScreen() {
             benefits={["캐시백 혜택", "쇼핑 할인"]}
           />
         </View>
-      </View>
+      </View> */}
     </ScrollView>
   );
 }
