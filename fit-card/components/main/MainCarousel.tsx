@@ -74,7 +74,7 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
       <Carousel
         ref={carouselRef}
         width={width}
-        height={250}
+        height={400}
         data={cards}
         renderItem={renderItem}
         mode="parallax"
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     paddingHorizontal: 10,
-    // height: 230,
+    height: "100%",
     // justifyContent: "center",
   },
   cardImage: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: "row",
     position: "absolute",
-    bottom: 10,
+    bottom: 0,
   },
   paginationDot: {
     width: 8,

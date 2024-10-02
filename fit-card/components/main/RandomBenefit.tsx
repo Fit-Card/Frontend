@@ -26,8 +26,14 @@ const RandomBenefit = ({ cardId }: RandomBenefitProps) => {
 
   return (
     <View style={styles.benefitContainer}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.cardName}> 이런 혜택은 어떠세요? </Text>
+      </View>
       <Text style={styles.cardName}>cardId: {cardId}</Text>
-      <Text style={styles.benefitTitle}>랜덤 혜택:</Text>
+      <Text style={styles.benefitTitle}>랜덤 혜택1:</Text>
+      <Text style={styles.benefitTitle}>랜덤 혜택2:</Text>
+      <Text style={styles.benefitTitle}>랜덤 혜택3:</Text>
+      <Text style={styles.benefitTitle}>카드 아이디로 랜덤 혜택 조회하려고 하고 있습니다.</Text>
       {benefits.map((benefit, index) => (
         <Text key={index} style={styles.benefitText}>
           {benefit}
@@ -41,21 +47,32 @@ const RandomBenefit = ({ cardId }: RandomBenefitProps) => {
 
 const styles = StyleSheet.create({
   benefitContainer: {
+    width: "100%",
     marginTop: 20,
     padding: 10,
+    alignItems: "center",
+  },
+  titleContainer: {
+    width: "110%",
+    fontSize: 25,
+    fontFamily: "SUITE-Bold",
+    justifyContent: "flex-start",
+    marginBottom: 5,
   },
   cardName: {
     fontSize: 18,
-    fontWeight: "bold",
     marginBottom: 10,
+    fontFamily: "SUITE-Bold",
   },
   benefitTitle: {
     fontSize: 16,
-    marginBottom: 5,
+    marginBottom: 10,
+    fontFamily: "SUITE-Bold",
   },
   benefitText: {
     fontSize: 14,
     marginBottom: 3,
+    fontFamily: "SUITE-Bold",
   },
 });
 
