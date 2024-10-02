@@ -32,6 +32,7 @@ const MapComponent = () => {
   const [isLoadMoreVisible, setIsLoadMoreVisible] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isRegionChanged, setIsRegionChanged] = useState<boolean>(false); // 지도 이동 감지 상태
+  const [pageInfo, setPageInfo] = useState<number>(0);
 
   // Route에서 전달된 값 받아오기 (위도, 경도)
   const route = useRoute<RouteProp<StackParamList, "Map">>();
@@ -121,10 +122,10 @@ const MapComponent = () => {
         `http://j11a405.p.ssafy.io:8081/branches/category-page?pageNo=${pageNo}`,
         {
           category: category,
-          leftLatitude: parseFloat((region.latitude + region.latitudeDelta / 2).toFixed(2)),
-          rightLatitude: parseFloat((region.latitude - region.latitudeDelta / 2).toFixed(2)),
-          leftLongitude: parseFloat((region.longitude - region.longitudeDelta / 2).toFixed(2)),
-          rightLongitude: parseFloat((region.longitude + region.longitudeDelta / 2).toFixed(2)),
+          leftLatitude: region.latitude + region.latitudeDelta / 2,
+          rightLatitude: region.latitude - region.latitudeDelta / 2,
+          leftLongitude: region.longitude - region.longitudeDelta / 2,
+          rightLongitude: region.longitude + region.longitudeDelta / 2,
         },
         {
           headers: {
@@ -156,6 +157,7 @@ const MapComponent = () => {
       setCurrentPage(pageNo);
       setIsLoadMoreVisible(pageNo < response.data.data.totalPages);
       setIsRegionChanged(false); // 재검색 후 "이 지역 재검색" 버튼 숨김
+      setPageInfo(response.data.data.totalPages);
     } catch (error) {
       console.error("API request failed:", error);
     }
@@ -163,6 +165,7 @@ const MapComponent = () => {
 
   const handleCategorySelection = (category: string) => {
     setSelectedButton(category);
+    setFilteredStores([]);
     if (region) {
       loadData(category, 1, region);
     }
@@ -219,7 +222,7 @@ const MapComponent = () => {
         <View style={styles.regionSearchButtonContainer}>
           <TouchableOpacity style={styles.regionSearchButton} onPress={handleLoadMore}>
             <Text style={styles.regionSearchButtonText}>
-              결과 더보기 ({currentPage}/{Math.ceil(filteredStores.length / ITEMS_PER_PAGE)})
+              결과 더보기 ({currentPage}/{pageInfo})
             </Text>
           </TouchableOpacity>
         </View>
