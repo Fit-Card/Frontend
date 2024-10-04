@@ -54,13 +54,12 @@ const CardDetailScreen = () => {
         }
       );
       setCardData(response.data);
-      console.log(response.data);
+      //console.log(response.data);
     } catch (error) {
       console.error("Error fetching card data: ", error);
     }
   };
 
-  // 'selectedButtonIndex'를 level로 사용하여 데이터를 동적으로 받아옴
   const fetchDetailData = async (level: number) => {
     try {
       const response = await axios.post(
@@ -77,9 +76,9 @@ const CardDetailScreen = () => {
           },
         }
       );
-      console.log(response.data.data.categories);
+      //console.log(response.data.data.categories);
 
-      setCardDetailData(response.data.data.categories); // Save categories from API response
+      setCardDetailData(response.data.data.categories);
       setCardName(response.data.data.cardName);
       setCardImageUrl(response.data.data.cardImage);
     } catch (error) {
@@ -87,15 +86,14 @@ const CardDetailScreen = () => {
     }
   };
 
-  // 'selectedButtonIndex' 변경 시 'fetchDetailData' 호출
   useEffect(() => {
     const fetchAllData = async () => {
       await fetchData();
-      await fetchDetailData(selectedButtonIndex + 1); // selectedButtonIndex에 따라 level 설정 (level은 1부터 시작한다고 가정)
+      await fetchDetailData(selectedButtonIndex + 1);
       setLoading(false);
     };
     fetchAllData();
-  }, [selectedButtonIndex]); // 'selectedButtonIndex'가 바뀔 때마다 실행
+  }, [selectedButtonIndex]);
 
   const toggleCategory = (index: number) => {
     if (expandedCategories.includes(index)) {
@@ -103,7 +101,7 @@ const CardDetailScreen = () => {
     } else {
       setExpandedCategories([...expandedCategories, index]);
     }
-  }; // 카테고리 아이콘과 타이틀을 매핑하는 함수
+  };
   const getCategoryIcon = (name: string) => {
     const category = categoriesWithIcons.find((cat) => cat.name === name);
     return category ? category.icon : "folder-outline";
@@ -111,7 +109,7 @@ const CardDetailScreen = () => {
 
   const getCategoryTitle = (name: string) => {
     const category = categoriesWithIcons.find((cat) => cat.name === name);
-    return category ? category.title : "알 수 없는 카테고리";
+    return category ? category.title : "기타";
   };
 
   const renderButtons = () => {
@@ -126,7 +124,7 @@ const CardDetailScreen = () => {
           styles.button,
           selectedButtonIndex === index ? styles.selectedButton : styles.unselectedButton,
         ]}
-        onPress={() => setSelectedButtonIndex(index)} // 버튼 선택 시 상태 업데이트
+        onPress={() => setSelectedButtonIndex(index)}
       >
         <Text style={styles.buttonText}>{index + 1}</Text>
       </TouchableOpacity>
@@ -191,11 +189,11 @@ const CardDetailScreen = () => {
 
             {expandedCategories.includes(index) && (
               <View style={styles.accordionContent}>
-                {/* 카테고리 내 혜택을 렌더링 */}
                 {category.benefits.map((benefit: any, benefitIndex: number) => (
                   <View key={benefitIndex} style={styles.benefitContainer}>
                     <Text style={styles.benefitTitle}>
-                      {benefit.merchantName} {benefit.discount}
+                      {benefit.merchantName === "기타" ? "모든 카테고리" : benefit.merchantName}{" "}
+                      {benefit.discount}
                     </Text>
 
                     <Text style={styles.benefitDetail}>
@@ -240,10 +238,10 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   cardName: {
-    fontSize: 18, // 글씨 크기를 키워서 강조
-    fontWeight: "bold", // 굵은 글씨체로 표시
-    marginVertical: 10, // 위아래 여백 추가
-    textAlign: "center", // 카드 이름 가운데 정렬
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -264,10 +262,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   selectedButton: {
-    backgroundColor: "#5253F0", // 선택된 버튼은 파란색
+    backgroundColor: "#5253F0",
   },
   unselectedButton: {
-    backgroundColor: "#CCCCCC", // 선택되지 않은 버튼은 회색
+    backgroundColor: "#CCCCCC",
   },
   accordionContainer: {
     width: "100%",
