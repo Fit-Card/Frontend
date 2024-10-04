@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios"; // Import axios
+import axios from "axios";
 import { mockUser } from "@/mock/mockUser";
 import { StackParamList } from "@/navigationTypes";
 
@@ -26,6 +26,7 @@ const CardDetailScreen = () => {
   const [cardName, setCardName] = useState<string | null>(null);
   const [cardImageUrl, setCardImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedButtonIndex, setSelectedButtonIndex] = useState<number>(0); // 선택된 버튼의 인덱스를 관리하는 상태
 
   const categoriesWithIcons: Array<{
     name: string;
@@ -43,7 +44,7 @@ const CardDetailScreen = () => {
     try {
       const response = await axios.post(
         "http://j11a405.p.ssafy.io:8081/cards/performance/get",
-        2278,
+        cardId,
         {
           headers: {
             Authorization: `Bearer ${mockUser.token}`,
@@ -59,13 +60,14 @@ const CardDetailScreen = () => {
     }
   };
 
-  const fetchDetailData = async () => {
+  // 'selectedButtonIndex'를 level로 사용하여 데이터를 동적으로 받아옴
+  const fetchDetailData = async (level: number) => {
     try {
       const response = await axios.post(
         "http://j11a405.p.ssafy.io:8081/cards/benefits/get",
         {
-          cardId: 1848,
-          level: 1,
+          cardId: cardId,
+          level: level,
         },
         {
           headers: {
@@ -84,25 +86,16 @@ const CardDetailScreen = () => {
       console.error("Error fetching card details: ", error);
     }
   };
-  // 카테고리 아이콘과 타이틀을 매핑하는 함수
-  const getCategoryIcon = (name: string) => {
-    const category = categoriesWithIcons.find((cat) => cat.name === name);
-    return category ? category.icon : "folder-outline"; // 아이콘이 없을 경우 기본 아이콘 반환
-  };
 
-  const getCategoryTitle = (name: string) => {
-    const category = categoriesWithIcons.find((cat) => cat.name === name);
-    return category ? category.title : "알 수 없는 카테고리"; // 타이틀이 없을 경우 기본 타이틀 반환
-  };
-  // Fetch both data and detail data when the component mounts
+  // 'selectedButtonIndex' 변경 시 'fetchDetailData' 호출
   useEffect(() => {
     const fetchAllData = async () => {
       await fetchData();
-      await fetchDetailData();
-      setLoading(false); // Set loading to false once both requests are complete
+      await fetchDetailData(selectedButtonIndex + 1); // selectedButtonIndex에 따라 level 설정 (level은 1부터 시작한다고 가정)
+      setLoading(false);
     };
     fetchAllData();
-  }, []);
+  }, [selectedButtonIndex]); // 'selectedButtonIndex'가 바뀔 때마다 실행
 
   const toggleCategory = (index: number) => {
     if (expandedCategories.includes(index)) {
@@ -110,6 +103,15 @@ const CardDetailScreen = () => {
     } else {
       setExpandedCategories([...expandedCategories, index]);
     }
+  }; // 카테고리 아이콘과 타이틀을 매핑하는 함수
+  const getCategoryIcon = (name: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.name === name);
+    return category ? category.icon : "folder-outline";
+  };
+
+  const getCategoryTitle = (name: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.name === name);
+    return category ? category.title : "알 수 없는 카테고리";
   };
 
   const renderButtons = () => {
@@ -118,7 +120,14 @@ const CardDetailScreen = () => {
     }
 
     return cardData.data.map((item: any, index: number) => (
-      <TouchableOpacity key={index} style={styles.button}>
+      <TouchableOpacity
+        key={index}
+        style={[
+          styles.button,
+          selectedButtonIndex === index ? styles.selectedButton : styles.unselectedButton,
+        ]}
+        onPress={() => setSelectedButtonIndex(index)} // 버튼 선택 시 상태 업데이트
+      >
         <Text style={styles.buttonText}>{index + 1}</Text>
       </TouchableOpacity>
     ));
@@ -145,6 +154,19 @@ const CardDetailScreen = () => {
 
       <View style={styles.buttonContainer}>{renderButtons()}</View>
 
+      <View>
+        <Text style={styles.partText}>
+          {cardData && cardData.data
+            ? `이용 금액 : ${cardData.data[selectedButtonIndex].amount.toLocaleString()}원 이상`
+            : "No amount available"}
+        </Text>
+        <Text style={styles.partText}>
+          {cardData && cardData.data
+            ? `할인 한도 : 월 ${cardData.data[selectedButtonIndex].benefitLimit.toLocaleString()}원`
+            : "No amount available"}
+        </Text>
+      </View>
+
       <View style={styles.accordionContainer}>
         {cardDetailData.map((category: any, index: number) => (
           <View key={index} style={styles.accordionItem}>
@@ -166,9 +188,34 @@ const CardDetailScreen = () => {
                 color="#333"
               />
             </TouchableOpacity>
+
             {expandedCategories.includes(index) && (
               <View style={styles.accordionContent}>
-                <Text style={styles.categoryDetails}>{category.details}</Text>
+                {/* 카테고리 내 혜택을 렌더링 */}
+                {category.benefits.map((benefit: any, benefitIndex: number) => (
+                  <View key={benefitIndex} style={styles.benefitContainer}>
+                    <Text style={styles.benefitTitle}>
+                      {benefit.merchantName} {benefit.discount}
+                    </Text>
+
+                    <Text style={styles.benefitDetail}>
+                      금액 한도: {benefit.amountLimit === "None" ? "없음" : benefit.amountLimit}
+                    </Text>
+                    <Text style={styles.benefitDetail}>
+                      횟수 한도: {benefit.countLimit === "None" ? "없음" : benefit.countLimit}
+                    </Text>
+                    <Text style={styles.benefitDetail}>
+                      최소 결제 금액:{" "}
+                      {benefit.minPayment > 0
+                        ? `${benefit.minPayment.toLocaleString()}원`
+                        : "제한 없음"}
+                    </Text>
+                    <Text style={styles.benefitDetail}>
+                      예외 사항:{" "}
+                      {benefit.exceptionTypes !== "None" ? benefit.exceptionTypes : "없음"}
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
           </View>
@@ -193,25 +240,34 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   cardName: {
-    fontSize: 20,
-    fontFamily: "SUITE-Bold",
-    marginBottom: 10,
+    fontSize: 18, // 글씨 크기를 키워서 강조
+    fontWeight: "bold", // 굵은 글씨체로 표시
+    marginVertical: 10, // 위아래 여백 추가
+    textAlign: "center", // 카드 이름 가운데 정렬
   },
   buttonContainer: {
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 10,
     justifyContent: "center",
     flexWrap: "wrap",
+    width: "100%",
   },
   button: {
-    padding: 10,
-    backgroundColor: "#5253F0",
+    padding: 5,
     margin: 5,
-    borderRadius: 5,
+    borderRadius: 20,
+    fontFamily: "SUITE-Bold",
+    paddingHorizontal: 30,
   },
   buttonText: {
     color: "#fff",
     fontSize: 14,
+  },
+  selectedButton: {
+    backgroundColor: "#5253F0", // 선택된 버튼은 파란색
+  },
+  unselectedButton: {
+    backgroundColor: "#CCCCCC", // 선택되지 않은 버튼은 회색
   },
   accordionContainer: {
     width: "100%",
@@ -252,16 +308,27 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#E1E5EB",
   },
-  categoryDetails: {
-    fontSize: 14,
-    color: "#666",
-    fontFamily: "SUITE-Regular",
-    lineHeight: 22,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  partText: {
+    fontFamily: "SUITE-Regular",
+    fontSize: 14,
+  },
+  benefitTitle: {
+    fontFamily: "SUITE-Bold",
+    fontSize: 14,
+    color: "#5250F0",
+  },
+  benefitDetail: {
+    fontFamily: "SUITE-Regular",
+    fontSize: 12,
+  },
+  benefitContainer: {
+    paddingLeft: 15,
+    marginBottom: 5,
   },
 });
 
