@@ -41,7 +41,7 @@ export const login = async (user: LoginRequest) => {
     });
     return response.data; // 서버에서 반환한 데이터
   } catch (error) {
-    console.error("Error register user:", error);
+    console.error("Error login user:", error);
     throw error;
   }
 };
