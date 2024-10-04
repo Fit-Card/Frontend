@@ -1,3 +1,4 @@
+// @/pages/Login.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -17,9 +18,11 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import common from "@/styles/Common";
 
 import { useDispatch } from "react-redux"; // Redux 사용
-import { login } from "@/store/userSlice"; // User slice의 로그인 액션
-import { mockLogin } from "@/mock/mockLogin"; // mockLogin 함수 불러오기
+import { login as loginAction } from "@/store/userSlice"; // User slice의 로그인 액션
+import { login } from "@/api/auth";
+import { getMember } from "@/api/member";
 import { LoginRequest } from "@/interfaces/LoginRequest"; // LoginRequest 타입 불러오기
+import { User } from "@/interfaces/User";
 
 export default function LoginScreen() {
   const [loginId, setLoginId] = useState<string>("");
@@ -36,10 +39,16 @@ export default function LoginScreen() {
 
     try {
       console.log(loginRequest);
-      // mockLogin을 통해 비동기적으로 로그인 검증
-      const userData = await mockLogin(loginRequest);
-      // 성공 시 사용자 정보를 store에 저장
-      dispatch(login(userData));
+      // 로그인 요청 보내기
+      const response = await login(loginRequest);
+
+      // accessToken과 refreshToken을 받아옴
+      const { accessToken, refreshToken } = response.data;
+
+      // accessToken으로 사용자 정보 요청 후 전역 상태 저장
+      const userData: User = await getMember(accessToken);
+      dispatch(loginAction({ user: userData, accessToken, refreshToken }));
+
       // 메인 화면으로 이동
       navigation.navigate("Main");
     } catch (error: any) {
@@ -51,10 +60,7 @@ export default function LoginScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.inner}>
-        <Image
-          source={require("@/assets/images/logo.png")}
-          style={styles.logo}
-        />
+        <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
 
         <View style={styles.inputContainer}>
           <View style={styles.inputWrapper}>

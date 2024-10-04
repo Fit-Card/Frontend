@@ -1,15 +1,14 @@
 // @/api/member.ts
 import axios from "axios";
-import { mockUser } from "@/mock/mockUser";
 
-export const getMember = async () => {
+export const getMember = async (accessToken: string) => {
   try {
     const response = await axios.post(
       `http://j11a405.p.ssafy.io:8081/member/get`,
       {},
       {
         headers: {
-          Authorization: `Bearer ${mockUser.token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
           Accept: "*/*",
         },
@@ -17,6 +16,7 @@ export const getMember = async () => {
     );
 
     console.log(response.data);
+    return response.data.data;
   } catch (error) {
     console.error("Get Member Error: ", error);
   }

@@ -1,11 +1,11 @@
 // @/interfaces/User.ts
 
 export interface User {
-  id: string;
   loginId: string;
   name: string;
-  birthDate: string;
   phoneNumber: string;
+  birthDate: string;
+  isCertifiedMydata: boolean;
 }
 
 export interface SignupUser extends User {

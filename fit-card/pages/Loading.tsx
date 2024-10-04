@@ -7,34 +7,34 @@ import { login } from "@/store/userSlice"; // User slice의 로그인 액션
 import { mockLogin } from "@/mock/mockLogin"; // mockLogin 함수 불러오기
 
 const Loading = ({ navigation }: { navigation: any }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      try {
-        // mockLogin을 통해 비동기적으로 로그인 검증 및 mockUser 정보 반환
-        const userData = await mockLogin({ loginId: "test", password: "test" });
-        // 성공 시 사용자 정보를 store에 저장
-        dispatch(login(userData));
-        // 메인 화면으로 이동
-        navigation.replace("Main");
-      } catch (error) {
-        console.error("자동 로그인 실패", error);
-        // 로그인 실패 시 로그인 화면으로 이동
-        navigation.replace("Login");
-      }
-    }, 1000);
+  // useEffect(() => {
+  //   const timer = setTimeout(async () => {
+  //     try {
+  //       // mockLogin을 통해 비동기적으로 로그인 검증 및 mockUser 정보 반환
+  //       const userData = await mockLogin({ loginId: "test", password: "test" });
+  //       // 성공 시 사용자 정보를 store에 저장
+  //       dispatch(login(userData));
+  //       // 메인 화면으로 이동
+  //       navigation.replace("Main");
+  //     } catch (error) {
+  //       console.error("자동 로그인 실패", error);
+  //       // 로그인 실패 시 로그인 화면으로 이동
+  //       navigation.replace("Login");
+  //     }
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [dispatch, navigation]);
+  //   return () => clearTimeout(timer);
+  // }, [dispatch, navigation]);
 
   // 임시 로그인 코드
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     navigation.replace("Login");
-  //   }, 2500);
-  //   return () => clearTimeout(timer);
-  // }, [navigation]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.replace("Login");
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
     <LinearGradient

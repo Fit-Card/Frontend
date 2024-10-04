@@ -13,45 +13,10 @@ import { mainCards } from "@/mock/mockData";
 export default function MainScreen() {
   // Redux 스토어에서 user 정보 가져오기
   const user = useSelector((state: RootState) => state.user.user);
-  // const [benefitData, setBenefitData] = useState(dummyBenefit);
-  // const [refreshing, setRefreshing] = useState(false);
-
-  // 새로고침 동작 처리
-  // const onRefresh = () => {
-  //   setRefreshing(true);
-  //   // Simulate fetching new data
-  //   setTimeout(() => {
-  //     // refreshBenefit(); // Trigger the refresh in CardBenefit
-  //     setRefreshing(false);
-  //   }, 1000);
-  // };
-
-  // let previousIndex = benefitData.index;
-
-  // const refreshBenefit = () => {
-  //   let randomIndex = Math.floor(Math.random() * benefitData.category.length);
-
-  //   while (randomIndex === previousIndex) {
-  //     randomIndex = Math.floor(Math.random() * benefitData.category.length);
-  //   }
-
-  //   console.log(randomIndex);
-  //   setBenefitData((prevBenefit) => ({
-  //     ...prevBenefit,
-  //     index: randomIndex, // Update index with new random value
-  //   }));
-  // };
+  // const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      // refreshControl={
-      //   <RefreshControl
-      //     refreshing={refreshing}
-      //     onRefresh={onRefr?esh}
-      //   />
-      // }
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.title}>
           {/* {user && (
