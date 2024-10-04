@@ -12,7 +12,6 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios"; // Import axios
 import { mockUser } from "@/mock/mockUser";
-
 import { StackParamList } from "@/navigationTypes";
 
 type CardDetailRouteProp = RouteProp<StackParamList, "CardDetail">;
@@ -22,11 +21,23 @@ const CardDetailScreen = () => {
   const { cardId } = route.params;
 
   const [cardData, setCardData] = useState<any>(null);
-  const [cardDetailData, setCardDetailData] = useState<any[]>([]); // Ensure it's an array to hold categories
+  const [cardDetailData, setCardDetailData] = useState<any[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
   const [cardName, setCardName] = useState<string | null>(null);
   const [cardImageUrl, setCardImageUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
+
+  const categoriesWithIcons: Array<{
+    name: string;
+    title: string;
+    icon: keyof typeof Ionicons.glyphMap;
+  }> = [
+    { name: "FD6", title: "음식점", icon: "restaurant-outline" },
+    { name: "CE7", title: "카페", icon: "cafe-outline" },
+    { name: "CS2", title: "편의점", icon: "cart-outline" },
+    { name: "CT1", title: "문화시설", icon: "film-outline" },
+    { name: "OL7", title: "주유소", icon: "car-outline" },
+  ];
 
   const fetchData = async () => {
     try {
@@ -53,7 +64,7 @@ const CardDetailScreen = () => {
       const response = await axios.post(
         "http://j11a405.p.ssafy.io:8081/cards/benefits/get",
         {
-          cardId: 2278,
+          cardId: 1848,
           level: 1,
         },
         {
@@ -73,7 +84,16 @@ const CardDetailScreen = () => {
       console.error("Error fetching card details: ", error);
     }
   };
+  // 카테고리 아이콘과 타이틀을 매핑하는 함수
+  const getCategoryIcon = (name: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.name === name);
+    return category ? category.icon : "folder-outline"; // 아이콘이 없을 경우 기본 아이콘 반환
+  };
 
+  const getCategoryTitle = (name: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.name === name);
+    return category ? category.title : "알 수 없는 카테고리"; // 타이틀이 없을 경우 기본 타이틀 반환
+  };
   // Fetch both data and detail data when the component mounts
   useEffect(() => {
     const fetchAllData = async () => {
@@ -104,7 +124,6 @@ const CardDetailScreen = () => {
     ));
   };
 
-  // If loading is true, show a loading indicator
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -114,10 +133,8 @@ const CardDetailScreen = () => {
     );
   }
 
-  // Once loading is complete, render the actual content
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      {/* Conditionally render the card image from the URL */}
       {cardImageUrl ? (
         <Image source={{ uri: cardImageUrl }} style={styles.cardImage} />
       ) : (
@@ -133,9 +150,13 @@ const CardDetailScreen = () => {
           <View key={index} style={styles.accordionItem}>
             <TouchableOpacity onPress={() => toggleCategory(index)} style={styles.accordionHeader}>
               <View style={styles.categoryIconContainer}>
-                {/* You can customize this icon based on the category */}
-                <Ionicons name="folder-outline" size={20} color="#5253F0" style={styles.icon} />
-                <Text style={styles.categoryTitle}>{category.name}</Text>
+                <Ionicons
+                  name={getCategoryIcon(category.name)}
+                  size={20}
+                  color="#5253F0"
+                  style={styles.icon}
+                />
+                <Text style={styles.categoryTitle}>{getCategoryTitle(category.name)}</Text>
               </View>
               <Ionicons
                 name={
@@ -147,7 +168,6 @@ const CardDetailScreen = () => {
             </TouchableOpacity>
             {expandedCategories.includes(index) && (
               <View style={styles.accordionContent}>
-                {/* Render the details of the category */}
                 <Text style={styles.categoryDetails}>{category.details}</Text>
               </View>
             )}
