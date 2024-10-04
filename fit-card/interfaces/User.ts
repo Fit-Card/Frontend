@@ -8,7 +8,11 @@ export interface User {
   isCertifiedMydata: boolean;
 }
 
-export interface SignupUser extends User {
+export interface SignupUser {
+  loginId: string;
+  name: string;
+  phoneNumber: string;
+  birthDate: string;
   password: string;
   confirmPassword: string;
 }
