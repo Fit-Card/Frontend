@@ -37,6 +37,7 @@ export default function AddcardScreen() {
 
   //카드 불러오기
   const fetchCards = async () => {
+    console.log(mockUser.token + "  -----------");
     // alert("갱신 가능 카드 불러오기");
     try {
       const response = await axios.post(
