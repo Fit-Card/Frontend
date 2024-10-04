@@ -1,6 +1,7 @@
 // store/userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/interfaces/User"; // 사용자 인터페이스
+import { mockUser } from "@/mock/mockUser";
 
 interface UserState {
   user: User | null;
@@ -19,9 +20,17 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login(state, action: PayloadAction<{ user: User; accessToken: string; refreshToken: string }>) {
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
+      const { user, accessToken, refreshToken } = action.payload;
+      state.user = user;
+      state.accessToken = accessToken;
+      state.refreshToken = refreshToken;
+
+      mockUser.loginId = user.loginId;
+      mockUser.name = user.name;
+      mockUser.birthDate = user.birthDate;
+      mockUser.phoneNumber = user.phoneNumber;
+      mockUser.isCertifiedMydata = user.isCertifiedMydata;
+      mockUser.token = accessToken;
     },
     logout(state) {
       state.user = null;

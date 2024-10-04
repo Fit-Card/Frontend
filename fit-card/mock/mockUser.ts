@@ -1,12 +1,11 @@
 // @/mock/mockUser.ts
 
-export const mockUser = {
-  id: "1",
+export let mockUser = {
   loginId: "test",
-  password: "test",
   name: "핏카츄",
   birthDate: "1990-01-01",
   phoneNumber: "010-1234-5678",
+  isCertifiedMydata: false,
   token:
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwibWVtYmVySWQiOiIzIiwiaWF0IjoxNzI3MzM1MTgyLCJleHAiOjE3MzczMzg3ODJ9.DQCrqiRDmF5qtBdadizEIxOgF0Bz_Om9-u3l0vJC1UI",
 };
