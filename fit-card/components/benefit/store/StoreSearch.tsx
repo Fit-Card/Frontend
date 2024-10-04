@@ -1,66 +1,108 @@
 import React, { useState } from "react";
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 import { StackParamList } from "@/navigationTypes"; // StackParamList 경로 수정
 import SearchInput from "@/components/benefit/TextInputBox";
 import BasicImage from "@/components/benefit/store/BasicImage";
+import { mockUser } from "@/mock/mockUser";
+
+// Define your categories with icons
+const categoriesWithIcons: Array<{
+  name: string;
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}> = [
+  { name: "FD6", title: "음식점", icon: "restaurant-outline" },
+  { name: "CE7", title: "카페", icon: "cafe-outline" },
+  { name: "CS2", title: "편의점", icon: "cart-outline" },
+  { name: "CT1", title: "문화시설", icon: "film-outline" },
+  { name: "OL7", title: "주유소", icon: "car-outline" },
+];
 
 // Navigation 타입 정의
 type SearchScreenNavigationProp = StackNavigationProp<StackParamList, "StoreDetail">;
 
-interface Theater {
-  id: number;
+interface Store {
+  merchantId: number;
   name: string;
-  image: any;
+  category: string;
 }
 
-const theaters: Theater[] = [
-  { id: 1, name: "롯데시네마", image: require("@/assets/images/logo.png") },
-  { id: 2, name: "CGV", image: require("@/assets/images/logo.png") },
-  { id: 3, name: "롯데시네마2", image: require("@/assets/images/logo.png") },
-];
+// Helper function to get category icon
+const getCategoryIcon = (categoryName: string) => {
+  const category = categoriesWithIcons.find((cat) => cat.name === categoryName);
+  return category ? category.icon : "help-outline";
+};
 
 export default function StoreSearch() {
   const [searchText, setSearchText] = useState<string>("");
-  const [filteredTheaters, setFilteredTheaters] = useState<Theater[]>(theaters);
+  const [stores, setStores] = useState<Store[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigation = useNavigation<SearchScreenNavigationProp>();
 
-  const handleSearch = (text: string) => {
-    setSearchText(text);
-    if (text) {
-      const filtered = theaters.filter((theater) =>
-        theater.name.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredTheaters(filtered);
+  const handleSearch = async () => {
+    if (searchText.length > 0) {
+      try {
+        setLoading(true);
+        // Make API call using axios
+        const response = await axios.post(
+          "http://j11a405.p.ssafy.io:8081/merchant/info/search",
+          { merchantNameKeyword: searchText },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${mockUser.token}`, // Add your authorization token
+            },
+          }
+        );
+
+        const data = response.data;
+        if (data && data.data && data.data.merchantResponses) {
+          setStores(data.data.merchantResponses);
+        } else {
+          setStores([]);
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
     } else {
-      setFilteredTheaters(theaters);
+      setStores([]);
     }
   };
 
-  const renderTheaterItem = ({ item }: { item: Theater }) => (
+  const renderStoreItem = ({ item }: { item: Store }) => (
     <TouchableOpacity
-      style={styles.theaterItem}
+      style={styles.storeItem}
       onPress={() =>
-        navigation.navigate("StoreDetail", { storeName: item.name, storeImage: item.image })
-      } // 클릭시 상세 페이지로 이동
+        navigation.navigate("StoreDetail", { storeName: item.name, storeImage: item.category })
+      }
     >
-      <Image source={item.image} style={styles.cardImage} />
-      <Text style={styles.theaterItemText}>{item.name}</Text>
+      <Ionicons
+        name={getCategoryIcon(item.category)}
+        size={24}
+        color="#5250F0"
+        style={styles.icon}
+      />
+      <Text style={styles.storeItemText}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <SearchInput value={searchText} onChangeText={handleSearch} />
-      {searchText === "" ? (
-        <BasicImage />
+      <SearchInput value={searchText} onChangeText={setSearchText} onSubmitEditing={handleSearch} />
+      {loading ? (
+        <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={filteredTheaters}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderTheaterItem}
+          data={stores}
+          keyExtractor={(item) => item.merchantId.toString()}
+          renderItem={renderStoreItem}
           contentContainerStyle={styles.listContainer}
         />
       )}
@@ -80,7 +122,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     marginTop: 10,
   },
-  theaterItem: {
+  storeItem: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
@@ -88,12 +130,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-  cardImage: {
-    width: 45,
-    height: 45,
-    marginRight: 30,
-  },
-  theaterItemText: {
+  storeItemText: {
     fontFamily: "SUITE-Bold",
+    marginLeft: 10, // Spacing between the icon and text
+  },
+  icon: {
+    marginRight: 10,
   },
 });

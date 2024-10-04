@@ -6,9 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 interface SearchInputProps {
   value: string;
   onChangeText: (text: string) => void;
+  onSubmitEditing: () => void;
 }
 
-export default function SearchInput({ value, onChangeText }: SearchInputProps) {
+export default function SearchInput({ value, onChangeText, onSubmitEditing }: SearchInputProps) {
   return (
     <View style={styles.container}>
       <Ionicons name="search" size={20} color="#686E74" style={styles.icon} />
@@ -18,6 +19,7 @@ export default function SearchInput({ value, onChangeText }: SearchInputProps) {
         placeholderTextColor="#686E74"
         value={value}
         onChangeText={onChangeText}
+        onSubmitEditing={onSubmitEditing}
       />
     </View>
   );
