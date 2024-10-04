@@ -59,27 +59,11 @@ export default function CardScreen() {
             </View>
           ))
         ) : (
-          <Text>연령대별 카드를 불러오는 중입니다...</Text>
+          <View style={styles.inner}>
+            <Text>연령대별 카드를 불러오는 중입니다...</Text>
+          </View>
         )}
       </View>
-      {/* <View style={styles.componentWrapper}>
-        <View style={styles.ageGroup}>
-          <AgeGroupCard
-            imagePath={require("@/assets/images/temp-card-3.png")}
-            cardName="카드이름 들어가주세요 2"
-            benefits={["무료 배송", "포인트 적립"]}
-          />
-        </View>
-      </View>
-      <View style={styles.componentWrapper}>
-        <View style={styles.ageGroup}>
-          <AgeGroupCard
-            imagePath={require("@/assets/images/temp-card-4.png")}
-            cardName="카드이름 들어가주세요 3"
-            benefits={["캐시백 혜택", "쇼핑 할인"]}
-          />
-        </View>
-      </View> */}
     </ScrollView>
   );
 }
