@@ -8,7 +8,6 @@ import KeyColors from "@/styles/KeyColor";
 
 import axios from "axios";
 import { mockUser } from "@/mock/mockUser";
-import { current } from "@reduxjs/toolkit";
 
 export default function MypageScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -19,22 +18,10 @@ export default function MypageScreen() {
   useFocusEffect(
     useCallback(() => {
       console.log("Mypage 렌더링");
-      fetchCards();
-      handleSnapToItem(0);
-      setCurrentCardIndex(0);
-      console.log("지금카드: " + currentCardIndex);
-      console.log("총 카드: " + cardData.length);
+      fetchCards(); // 페이지가 focus될 때마다 카드 데이터를 불러옴
+      setCurrentCardIndex(0); // 카드 인덱스 초기화
     }, [])
   );
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentCardIndex(currentCardIndex + 1);
-  //     console.log(currentCardIndex);
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [currentCardIndex, cardData.length]);
 
   interface Card {
     cardName: string;
@@ -42,7 +29,6 @@ export default function MypageScreen() {
   }
 
   const fetchCards = async () => {
-    // alert("카드 전체 불러오기");
     try {
       const response = await axios.post(
         `http://j11a405.p.ssafy.io:8081/members/cards/get/all`,
@@ -53,8 +39,10 @@ export default function MypageScreen() {
           },
         }
       );
-      // console.log("전체 데이터 불러오기...");
+
       const fetchedCardData = response.data.data.memberCards;
+      console.log("전체 데이터 불러오기...");
+      console.log("불러온 배열 길이 : " + fetchedCardData.length);
       setCardData(fetchedCardData);
       setIsLoading(false); // 데이터 로드 완료 후 로딩 상태를 false로 변경
     } catch (error) {
@@ -62,7 +50,6 @@ export default function MypageScreen() {
       setIsLoading(false); // 오류 발생 시에도 로딩 상태를 false로 변경
     }
   };
-  //
 
   const handleSnapToItem = (index: number) => {
     console.log("캐러셀 넘김 : " + index);
@@ -100,22 +87,24 @@ export default function MypageScreen() {
           </View>
           {/* 로딩 중일 때 */}
           {isLoading ? (
-            <Text>카드 데이터를 불러오는 중...</Text>
+            <View style={[mypageStyle.carouselContent]}>
+              <Text>카드 데이터를 불러오는 중...</Text>
+            </View>
           ) : cardData.length > 0 ? (
             <View style={[mypageStyle.carouselContent]}>
-              <>
-                <Carousel
-                  width={300}
-                  height={120}
-                  data={cardData}
-                  scrollAnimationDuration={400}
-                  onSnapToItem={handleSnapToItem} // 카드 변경 시 트리거
-                  renderItem={renderCarouselItem}
-                />
-                <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
-                  {currentCardIndex + 1} {". "} {cardData[currentCardIndex].cardName}
-                </Text>
-              </>
+              <Carousel
+                key={cardData.length} // key로 배열의 길이를 사용하여 렌더링 강제
+                width={300}
+                height={120}
+                data={cardData}
+                scrollAnimationDuration={400}
+                onSnapToItem={handleSnapToItem} // 카드 변경 시 트리거
+                renderItem={renderCarouselItem}
+                defaultIndex={0}
+              />
+              <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
+                {currentCardIndex + 1} {". "} {cardData[currentCardIndex].cardName}
+              </Text>
             </View>
           ) : (
             <View style={[mypageStyle.carouselContent]}>
