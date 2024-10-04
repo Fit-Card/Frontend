@@ -2,19 +2,22 @@
 
 export const recommendedCards = [
   {
+    cardId: 1,
     cardImage: require("@/assets/images/temp-card-4.png"),
     cardName: "카드 이름 1",
-    CardBenefit: ["혜    택: 12만원", "연회비: 4만원"],
+    cardBenefit: ["혜    택: 12만원", "연회비: 4만원"],
   },
   {
+    cardId: 2,
     cardImage: require("@/assets/images/temp-card-2.png"),
     cardName: "카드 이름 2",
-    CardBenefit: ["혜    택: 15만원", "연회비: 5만원"],
+    cardBenefit: ["혜    택: 15만원", "연회비: 5만원"],
   },
   {
+    cardId: 3,
     cardImage: require("@/assets/images/temp-card-3.png"),
     cardName: "카드 이름 3",
-    CardBenefit: ["혜    택: 16만원", "연회비: 6만원"],
+    cardBenefit: ["혜    택: 16만원", "연회비: 6만원"],
   },
 ];
 
@@ -31,3 +34,31 @@ export const dummyBenefit = {
     ["주유소 혜택 1", "주유소 혜택 2", "주유소 혜택 3"],
   ],
 };
+
+// 카드 정보 (card 정보)
+export const mainCards = [
+  {
+    cardId: 1,
+    cardImage: require("@/assets/images/temp-card-2.png"), // 카드 이미지
+    cardName: "싸피카드1 Fit Card", // 카드 이름
+    currentUsage: 187234, // 현재 사용 금액
+    goalUsage: 300000, // 목표 사용 금액
+    cardBenefit: ["혜    택: 10만원", "연회비: 3만원"], // 카드 혜택 정보
+  },
+  {
+    cardId: 2,
+    cardImage: require("@/assets/images/temp-card-3.png"), // 카드 이미지
+    cardName: "싸피카드2 Fit Card", // 카드 이름
+    currentUsage: 25000, // 현재 사용 금액
+    goalUsage: 300000, // 목표 사용 금액
+    cardBenefit: ["혜    택: 10만원", "연회비: 3만원"], // 카드 혜택 정보
+  },
+  {
+    cardId: 3,
+    cardImage: require("@/assets/images/temp-card-4.png"), // 카드 이미지
+    cardName: "싸피카드3 Fit Card", // 카드 이름
+    currentUsage: 178234, // 현재 사용 금액
+    goalUsage: 300000, // 목표 사용 금액
+    cardBenefit: ["혜    택: 10만원", "연회비: 3만원"], // 카드 혜택 정보
+  },
+];

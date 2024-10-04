@@ -1,96 +1,66 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-} from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-import Animated, {
-  Easing,
-  useSharedValue,
-  useAnimatedStyle,
-  interpolate,
-  Extrapolate,
-} from "react-native-reanimated";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import Carousel from "react-native-reanimated-carousel";
 import { StackParamList } from "../navigationTypes";
 import common from "../styles/Common"; // 스타일 파일 가져오기
 import KeyColors from "@/styles/KeyColor";
 
-import { useSelector } from "react-redux"; // Redux의 useSelector 사용
-import { RootState } from "@/store"; // Redux 스토어 타입 가져오기
+import axios from "axios";
+import { mockUser } from "@/mock/mockUser";
 
 export default function MypageScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [currentCardIndex, setCurrentCardIndex] = useState(0); // 현재 카드 인덱스 상태
-  const cardData = [
-    {
-      name: "신한 머시기 카드",
-      image: require("../assets/images/temp-card.png"),
-    },
-    {
-      name: "롯데 저시기 카드",
-      image: require("../assets/images/temp-card.png"),
-    },
-    {
-      name: "우리 어쩌구 카드",
-      image: require("../assets/images/temp-card.png"),
-    },
-  ];
+  const [cardData, setCardData] = useState<Card[]>([]);
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
 
-  const scrollValue = useSharedValue(0); // 캐러셀의 스크롤 상태를 관리
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Mypage 렌더링");
+      fetchCards(); // 페이지가 focus될 때마다 카드 데이터를 불러옴
+      setCurrentCardIndex(0); // 카드 인덱스 초기화
+    }, [])
+  );
+
+  interface Card {
+    cardName: string;
+    cardImageUrl: string;
+  }
+
+  const fetchCards = async () => {
+    try {
+      const response = await axios.post(
+        `http://j11a405.p.ssafy.io:8081/members/cards/get/all`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+          },
+        }
+      );
+
+      const fetchedCardData = response.data.data.memberCards;
+      console.log("전체 데이터 불러오기...");
+      console.log("불러온 배열 길이 : " + fetchedCardData.length);
+      setCardData(fetchedCardData);
+      setIsLoading(false); // 데이터 로드 완료 후 로딩 상태를 false로 변경
+    } catch (error) {
+      console.error("카드 가져오기 오류 발생 : ", error);
+      setIsLoading(false); // 오류 발생 시에도 로딩 상태를 false로 변경
+    }
+  };
 
   const handleSnapToItem = (index: number) => {
+    console.log("캐러셀 넘김 : " + index);
     setCurrentCardIndex(index);
   };
 
-  // 곡선 애니메이션 스타일 정의
-  const animatedCarouselStyle = useAnimatedStyle(() => {
-    // interpolate를 사용하여 X축 이동에 따라 Y축 곡선 이동 설정
-    const translateX = interpolate(
-      scrollValue.value,
-      [-1, 0, 1],
-      [-150, 0, 150], // 카드가 이동할 X축 범위
-      Extrapolate.CLAMP
-    );
-    const translateY = interpolate(
-      scrollValue.value,
-      [-1, 0, 1],
-      [50, 0, 50], // 카드가 이동할 Y축 범위 (곡선 효과)
-      Extrapolate.CLAMP
-    );
-
-    return {
-      transform: [{ translateX: translateX }, { translateY: translateY }],
-    };
-  });
-
-  const renderCarouselItem = ({
-    item,
-  }: {
-    item: { name: string; image: any };
-  }) => (
+  const renderCarouselItem = ({ item }: { item: { cardName: string; cardImageUrl: string } }) => (
     <TouchableOpacity style={[mypageStyle.carouselImageContainer]}>
-      <Image source={item.image} style={[mypageStyle.carouselImage]} />
+      <Image source={{ uri: item.cardImageUrl }} style={[mypageStyle.carouselImage]} />
     </TouchableOpacity>
   );
-  const [modalVisible, setModalVisible] = useState<boolean>(false); // 모달 가시성 상태
-
-  // Redux 스토어에서 user 정보 가져오기
-  const user = useSelector((state: RootState) => state.user.user);
-
-  const handleLogout = () => {
-    alert("로그아웃 로직!");
-    navigation.navigate("Login");
-  };
-
-  const handleCancel = () => {
-    setModalVisible(false);
-  };
 
   return (
     <View>
@@ -98,7 +68,7 @@ export default function MypageScreen() {
         {/* 인삿말 */}
         <View style={[mypageStyle.helloContainer]}>
           <Text style={[common.textBlue, common.textLarge, common.textBold]}>
-            {user!.name}
+            {mockUser.name}
             <Text style={[common.textGray, common.textMedium, common.textBold]}>
               님, 반갑습니다.
             </Text>
@@ -107,26 +77,55 @@ export default function MypageScreen() {
 
         {/* 카드 Carousel */}
         <View style={[mypageStyle.carouselContainer]}>
-          <Carousel
-            width={300}
-            height={120}
-            data={cardData}
-            scrollAnimationDuration={400}
-            onProgressChange={(offsetProgress) => {
-              scrollValue.value = offsetProgress;
-            }} // 스크롤 상태 업데이트
-            onSnapToItem={handleSnapToItem} // 카드 변경 시 트리거
-            renderItem={renderCarouselItem}
-            style={[mypageStyle.cardCarousel]}
-          />
-          <Text
-            style={[mypageStyle.cardNameText, common.textGray, common.textBold]}
-          >
-            {cardData[currentCardIndex].name}
-          </Text>
-          <Animated.View
-            style={[mypageStyle.animatedCard, animatedCarouselStyle]}
-          />
+          <View style={[mypageStyle.carouselSideArrowContainer]}>
+            {cardData.length > 0 && (
+              <Image
+                source={require("@/assets/icons/icon_left.png")}
+                style={mypageStyle.carouselSideArrow}
+              ></Image>
+            )}
+          </View>
+          {/* 로딩 중일 때 */}
+          {isLoading ? (
+            <View style={[mypageStyle.carouselContent]}>
+              <Text>카드 데이터를 불러오는 중...</Text>
+            </View>
+          ) : cardData.length > 0 ? (
+            <View style={[mypageStyle.carouselContent]}>
+              <Carousel
+                key={cardData.length} // key로 배열의 길이를 사용하여 렌더링 강제
+                width={300}
+                height={120}
+                data={cardData}
+                scrollAnimationDuration={400}
+                onSnapToItem={handleSnapToItem} // 카드 변경 시 트리거
+                renderItem={renderCarouselItem}
+                defaultIndex={0}
+              />
+              <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
+                {currentCardIndex + 1} {". "} {cardData[currentCardIndex].cardName}
+              </Text>
+            </View>
+          ) : (
+            <View style={[mypageStyle.carouselContent]}>
+              <Image
+                style={mypageStyle.noCardImage}
+                source={require("../assets/icons/icon_no.png")}
+              ></Image>
+              <Text style={[common.textBlack, common.textBold, { fontSize: 14 }]}>
+                표시할 카드가 없습니다.
+              </Text>
+              <Text style={[common.textBlack, { fontSize: 10 }]}>카드를 갱신해주세요.</Text>
+            </View>
+          )}
+          <View style={[mypageStyle.carouselSideArrowContainer]}>
+            {cardData.length > 0 && (
+              <Image
+                source={require("@/assets/icons/icon_right.png")}
+                style={mypageStyle.carouselSideArrow}
+              ></Image>
+            )}
+          </View>
         </View>
 
         {/* 퀵메뉴 내용들 */}
@@ -154,7 +153,7 @@ export default function MypageScreen() {
               source={require("../assets/icons/icon_delete.png")}
               style={mypageStyle.menuIcon}
             />
-            <Text style={mypageStyle.menuText}>카드 삭제</Text>
+            <Text style={[mypageStyle.menuText]}>카드 삭제</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -178,19 +177,11 @@ export default function MypageScreen() {
               navigation.navigate("PersonalInfo");
             }}
           >
-            <Image
-              source={require("../assets/icons/icon_info.png")}
-              style={mypageStyle.menuIcon}
-            />
+            <Image source={require("../assets/icons/icon_info.png")} style={mypageStyle.menuIcon} />
             <Text style={[mypageStyle.menuText]}>사용자 정보 관리</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={mypageStyle.menuOption}
-            onPress={() => {
-              // 로그아웃 로직
-            }}
-          >
+          <TouchableOpacity style={mypageStyle.menuOption}>
             <Image
               source={require("../assets/icons/icon_signout.png")}
               style={mypageStyle.menuIcon}
@@ -203,9 +194,7 @@ export default function MypageScreen() {
               source={require("../assets/icons/icon_no_red.png")}
               style={mypageStyle.menuIcon}
             />
-            <Text style={[mypageStyle.menuText, common.textRed]}>
-              회원 탈퇴
-            </Text>
+            <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -227,24 +216,27 @@ const mypageStyle = StyleSheet.create({
     justifyContent: "flex-start",
   },
   carouselContainer: {
-    // backgroundColor: "#DBE1E7",
-    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+  },
+  carouselContent: {
+    flex: 1,
     height: 150,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
   },
-  cardCarousel: {
-    // borderWidth: 1,
-    // borderColor: "red",
+  carouselSideArrowContainer: {
+    width: 30,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  animatedCard: {
-    backgroundColor: "transparent", // 보이지 않도록 설정
+  carouselSideArrow: {
+    width: 30,
+    height: 30,
   },
   carouselImageContainer: {
-    // borderWidth: 2,
-    // borderColor: "green",
     width: "100%",
     height: "100%",
     display: "flex",
@@ -290,5 +282,9 @@ const mypageStyle = StyleSheet.create({
     flex: 1,
     display: "flex",
     alignItems: "center",
+  },
+  noCardImage: { width: 60, height: 60 },
+  noCardText: {
+    fontSize: 13,
   },
 });

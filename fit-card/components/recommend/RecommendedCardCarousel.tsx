@@ -1,3 +1,4 @@
+// @/components/recommend/RecommendedCardCarousel.tsx
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
@@ -39,7 +40,7 @@ const RecommendedCardCarousel = ({ cards }: RecommendedCardCarouselProps) => {
               <Image source={item.cardImage} style={styles.cardImage} />
               <Text style={styles.cardTitle}>{item.cardName}</Text>
               <View>
-                {item.CardBenefit.map((benefit, index) => (
+                {item.cardBenefit.map((benefit, index) => (
                   <Text key={index} style={styles.cardBenefit}>
                     {benefit}
                   </Text>

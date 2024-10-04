@@ -3,21 +3,34 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { useDispatch } from "react-redux"; // Redux 사용
-import { login } from "@/store/userSlice"; // User slice의 로그인 액션
-import { mockLogin } from "@/mock/mockLogin"; // mockLogin 함수 불러오기
+import { login as loginAction } from "@/store/userSlice"; // User slice의 로그인 액션
+import { login } from "@/api/auth";
+import { getMember } from "@/api/member";
+import { LoginRequest } from "@/interfaces/LoginRequest";
+import { User } from "@/interfaces/User";
 
 const Loading = ({ navigation }: { navigation: any }) => {
   const dispatch = useDispatch();
 
+  // 임시 자동 로그인
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
-        // mockLogin을 통해 비동기적으로 로그인 검증 및 mockUser 정보 반환
-        const userData = await mockLogin({ loginId: "test", password: "test" });
-        // 성공 시 사용자 정보를 store에 저장
-        dispatch(login(userData));
+        const loginRequest: LoginRequest = {
+          loginId: "user123",
+          password: "password123",
+        };
+        const response = await login(loginRequest);
+
+        // accessToken과 refreshToken을 받아옴
+        const { accessToken, refreshToken } = response.data;
+
+        // accessToken으로 사용자 정보 요청 후 전역 상태 저장
+        const userData: User = await getMember(accessToken);
+        dispatch(loginAction({ user: userData, accessToken, refreshToken }));
+
         // 메인 화면으로 이동
-        navigation.replace("Main");
+        navigation.navigate("Main");
       } catch (error) {
         console.error("자동 로그인 실패", error);
         // 로그인 실패 시 로그인 화면으로 이동
@@ -28,7 +41,7 @@ const Loading = ({ navigation }: { navigation: any }) => {
     return () => clearTimeout(timer);
   }, [dispatch, navigation]);
 
-  // 임시 로그인 코드
+  // 로그인 코드
   // useEffect(() => {
   //   const timer = setTimeout(() => {
   //     navigation.replace("Login");

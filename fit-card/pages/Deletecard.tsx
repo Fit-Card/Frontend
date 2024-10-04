@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Image,
   View,
@@ -10,24 +10,25 @@ import {
   Modal,
   Button,
 } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 import Common from "../styles/Common";
 import KeyColors from "../styles/KeyColor";
-import common from "../styles/Common";
+import axios from "axios";
+import { mockUser } from "@/mock/mockUser";
 
 export default function DeletecardScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null); // 1개의 카드만 선택
   const [modalVisible, setModalVisible] = useState<boolean>(false); // 모달 가시성 상태
-  const [cardData, setCardData] = useState([
-    { id: 1, name: "카드1" },
-    { id: 2, name: "카드2" },
-    { id: 3, name: "카드3" },
-    { id: 4, name: "카드4" },
-    { id: 5, name: "카드5" },
-  ]); // 카드 데이터
+  const [cardData, setCardData] = useState<Card[]>([]);
+
+  interface Card {
+    cardName: string;
+    id: number;
+    cardImageUrl: string;
+  }
 
   const handleCardPress = (cardId: number) => {
     setSelectedCardId(cardId); // 1개의 카드만 선택
@@ -39,30 +40,68 @@ export default function DeletecardScreen() {
     setSelectedCardId(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedCardId !== null) {
-      setCardData((prevCards) =>
-        prevCards.filter((card) => card.id !== selectedCardId)
-      );
+      try {
+        const response = await axios.post(
+          `http://j11a405.p.ssafy.io:8081/members/cards/delete`,
+          {
+            memberCardId: selectedCardId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${mockUser.token}`,
+            },
+          }
+        );
+        console.log(response);
+      } catch (error) {
+        console.log("삭제 실패");
+        console.log(error);
+      }
+      setCardData((prevCards) => prevCards.filter((card) => card.id !== selectedCardId));
       setModalVisible(false);
-      alert("카드 삭제 완료");
       setSelectedCardId(null);
+      alert("카드 삭제 완료");
     }
   };
 
+  const fetchCards = async () => {
+    try {
+      const response = await axios.post(
+        `http://j11a405.p.ssafy.io:8081/members/cards/get/all`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+          },
+        }
+      );
+
+      const fetchedCardData = response.data.data.memberCards;
+      console.log("-받아온 데이터-");
+      console.log(fetchedCardData);
+
+      setCardData(fetchedCardData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCards();
+    }, [])
+  );
+
   return (
     <View style={DeletecardStyle.container}>
-
       <ScrollView contentContainerStyle={DeletecardStyle.scrollContainer}>
         {/* 안내 문구 */}
         <View style={DeletecardStyle.commentContainer}>
           <Text style={[Common.textSmall]}>갱신을 통해 등록한 카드 중에서</Text>
-          <Text style={[Common.textSmall]}>
-            앱에서 삭제하고 싶은 카드를 선택해주세요!
-          </Text>
-          <Text style={[Common.textSmall]}>
-            삭제를 하더라도, 이후 카드갱신에서
-          </Text>
+          <Text style={[Common.textSmall]}>앱에서 삭제하고 싶은 카드를 선택해주세요!</Text>
+          <Text style={[Common.textSmall]}>삭제를 하더라도, 이후 카드갱신에서</Text>
           <Text style={[Common.textSmall]}>다시 등록할 수 있습니다.</Text>
         </View>
 
@@ -73,8 +112,7 @@ export default function DeletecardScreen() {
               style={[
                 DeletecardStyle.card,
                 {
-                  borderColor:
-                    selectedCardId === card.id ? KeyColors.red : "#FFFFFF",
+                  borderColor: selectedCardId === card.id ? KeyColors.red : "#FFFFFF",
                   borderWidth: selectedCardId === card.id ? 2 : 2,
                 },
               ]}
@@ -82,21 +120,17 @@ export default function DeletecardScreen() {
             >
               <View style={DeletecardStyle.cardImageContainer}>
                 <Image
-                  source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
+                  source={{ uri: card.cardImageUrl }} // PNG 파일 경로
                   style={DeletecardStyle.cardImage} // 아이콘 스타일
                   resizeMode="contain"
                 />
               </View>
 
               <View style={DeletecardStyle.cardTextContainer}>
-                <Text style={[Common.textBold, Common.textBlack]}>
-                  {card.name}
-                </Text>
+                <Text style={[Common.textBold, Common.textBlack]}>{card.cardName}</Text>
 
                 {selectedCardId === card.id ? (
-                  <Text style={[DeletecardStyle.selectText, Common.textSmall]}>
-                    선택됨 ●
-                  </Text>
+                  <Text style={[DeletecardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
                 ) : null}
               </View>
             </TouchableOpacity>
@@ -106,7 +140,7 @@ export default function DeletecardScreen() {
 
       {/* 카드 삭제 모달 */}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -117,37 +151,29 @@ export default function DeletecardScreen() {
               <>
                 <View style={DeletecardStyle.modalImageContainer}>
                   <Image
-                    source={require("../assets/icons/icon_creditcard.png")} // PNG 파일 경로
+                    source={{
+                      uri: cardData.find((card) => card.id === selectedCardId)?.cardImageUrl,
+                    }}
                     style={DeletecardStyle.modalImage} // 아이콘 스타일
                     resizeMode="contain"
                   />
                 </View>
-                <Text style={[Common.textBold, Common.textBlack]}>
-                  {cardData.find((card) => card.id === selectedCardId)?.name}
+                <Text style={[Common.textBold, Common.textBlack, DeletecardStyle.modalText]}>
+                  {cardData.find((card) => card.id === selectedCardId)?.cardName}
                 </Text>
 
                 <View style={DeletecardStyle.modalButtonContainer}>
                   <TouchableOpacity
-                    style={[
-                      DeletecardStyle.cancelButton,
-                      DeletecardStyle.modalButton,
-                    ]}
+                    style={[DeletecardStyle.cancelButton, DeletecardStyle.modalButton]}
                     onPress={handleCancel}
                   >
-                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>
-                      선택 취소
-                    </Text>
+                    <Text style={[{ color: "#FFFFFF" }, Common.textBold]}>선택 취소</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[
-                      DeletecardStyle.deleteButton,
-                      DeletecardStyle.modalButton,
-                    ]}
+                    style={[DeletecardStyle.deleteButton, DeletecardStyle.modalButton]}
                     onPress={handleDelete}
                   >
-                    <Text style={[{ color: "#FFFFFF" }, common.textBold]}>
-                      카드 삭제
-                    </Text>
+                    <Text style={[{ color: "#FFFFFF" }, Common.textBold]}>카드 삭제</Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -248,7 +274,10 @@ const DeletecardStyle = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cardImage: {},
+  cardImage: {
+    width: 80,
+    height: 80,
+  },
   cardTextContainer: {
     height: "100%",
     flex: 1,
@@ -302,8 +331,13 @@ const DeletecardStyle = StyleSheet.create({
     padding: 10,
   },
   modalImage: {
-    width: "90%",
-    height: "90%",
+    width: 200,
+    height: 200,
     resizeMode: "contain",
+  },
+  modalText: {
+    paddingBottom: 5,
+    borderBottomWidth: 2,
+    borderColor: KeyColors.blue,
   },
 });
