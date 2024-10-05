@@ -34,14 +34,14 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   bankLogo: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     marginRight: 15,
   },
   textContainer: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "center", // 이름과 카드 수를 양쪽 끝에 배치
+    alignItems: "center",
   },
   bankName: {
     fontSize: 16,

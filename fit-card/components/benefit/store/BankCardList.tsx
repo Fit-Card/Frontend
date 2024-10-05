@@ -5,41 +5,27 @@ import BankCardItem from "@/components/benefit/store/BankCardItem";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "@/navigationTypes";
 
+// 상위에서 받은 데이터 타입 정의
+interface BankCard {
+  cardCompanyId: number;
+  bankName: string;
+  bankImgUrl: string;
+  count: number;
+}
+
+interface BankCardListProps {
+  bankCards: BankCard[]; // bankCards 배열을 props로 받음
+}
+
 type StoreBenefitCardListNavigationProp = StackNavigationProp<
   StackParamList,
   "StoreBenefitCardList"
 >;
 
-const bankData = [
-  {
-    companyId: 1,
-    bankName: "신한 은행",
-    bankLogo: require("@/assets/images/logo.png"),
-    cardCount: 2,
-  },
-  {
-    companyId: 2,
-    bankName: "우리 은행",
-    bankLogo: require("@/assets/images/logo.png"),
-    cardCount: 17,
-  },
-  {
-    companyId: 3,
-    bankName: "기업 은행",
-    bankLogo: require("@/assets/images/logo.png"),
-    cardCount: 4,
-  },
-  {
-    companyId: 4,
-    bankName: "농협 은행",
-    bankLogo: require("@/assets/images/logo.png"),
-    cardCount: 1,
-  },
-];
-
-const BankCardList = () => {
+const BankCardList = ({ bankCards }: BankCardListProps) => {
   const navigation = useNavigation<StoreBenefitCardListNavigationProp>();
 
+  // 카드 아이템을 눌렀을 때 실행될 함수
   const handlePress = (bankName: string, companyId: number) => {
     navigation.navigate("StoreBenefitCardList", {
       companyName: bankName,
@@ -49,14 +35,14 @@ const BankCardList = () => {
 
   return (
     <View style={styles.listContainer}>
-      {bankData.map((bank) => (
+      {bankCards.map((bank) => (
         <BankCardItem
-          key={bank.companyId}
-          companyId={bank.companyId}
+          key={bank.cardCompanyId}
+          companyId={bank.cardCompanyId}
           bankName={bank.bankName}
-          bankLogo={bank.bankLogo}
-          cardCount={bank.cardCount}
-          onPress={() => handlePress(bank.bankName, bank.companyId)}
+          bankLogo={{ uri: bank.bankImgUrl }}
+          cardCount={bank.count}
+          onPress={() => handlePress(bank.bankName, bank.cardCompanyId)} // onPress 속성 전달
         />
       ))}
     </View>

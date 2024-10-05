@@ -19,7 +19,7 @@ export type StackParamList = {
   StoreBenefitCardList: { companyId: number; companyName: string };
   Notice: undefined;
   Noticedetail: { noticeId: string };
-  StoreDetail: { storeName: string; storeImage: any };
+  StoreDetail: { storeName: string; storeId: number; storeCategory: any };
   PersonalInfo: undefined;
   CardDetail: { cardId: number };
   SearchPage: { latitude: number; longitude: number };

@@ -9,18 +9,7 @@ import SearchInput from "@/components/benefit/TextInputBox";
 import BasicImage from "@/components/benefit/store/BasicImage";
 import { mockUser } from "@/mock/mockUser";
 import { ActivityIndicator } from "react-native";
-
-const categoriesWithIcons: Array<{
-  name: string;
-  title: string;
-  icon: keyof typeof Ionicons.glyphMap;
-}> = [
-  { name: "FD6", title: "음식점", icon: "restaurant-outline" },
-  { name: "CE7", title: "카페", icon: "cafe-outline" },
-  { name: "CS2", title: "편의점", icon: "cart-outline" },
-  { name: "CT1", title: "문화시설", icon: "film-outline" },
-  { name: "OL7", title: "주유소", icon: "car-outline" },
-];
+import { categoriesWithIcons } from "@/components/map/LocationType";
 
 // Navigation 타입 정의
 type SearchScreenNavigationProp = StackNavigationProp<StackParamList, "StoreDetail">;
@@ -78,7 +67,11 @@ export default function StoreSearch() {
     <TouchableOpacity
       style={styles.storeItem}
       onPress={() =>
-        navigation.navigate("StoreDetail", { storeName: item.name, storeImage: item.category })
+        navigation.navigate("StoreDetail", {
+          storeName: item.name,
+          storeId: item.merchantId,
+          storeCategory: item.category,
+        })
       }
     >
       <Ionicons
