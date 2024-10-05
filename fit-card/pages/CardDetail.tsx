@@ -27,6 +27,7 @@ const CardDetailScreen = () => {
   const [cardImageUrl, setCardImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState<number>(0); // 선택된 버튼의 인덱스를 관리하는 상태
+  const [imageOrientation, setImageOrientation] = useState<boolean>(false);
 
   const categoriesWithIcons: Array<{
     name: string;
@@ -54,7 +55,6 @@ const CardDetailScreen = () => {
         }
       );
       setCardData(response.data);
-      //console.log(response.data);
     } catch (error) {
       console.error("Error fetching card data: ", error);
     }
@@ -76,7 +76,6 @@ const CardDetailScreen = () => {
           },
         }
       );
-      //console.log(response.data.data.categories);
 
       setCardDetailData(response.data.data.categories);
       setCardName(response.data.data.cardName);
@@ -95,6 +94,12 @@ const CardDetailScreen = () => {
     fetchAllData();
   }, [selectedButtonIndex]);
 
+  const handleImageLoad = (event: any) => {
+    const { width, height } = event.nativeEvent.source;
+    // 이미지가 세로로 더 길 경우 회전 여부 설정
+    setImageOrientation(height > width);
+  };
+
   const toggleCategory = (index: number) => {
     if (expandedCategories.includes(index)) {
       setExpandedCategories(expandedCategories.filter((i) => i !== index));
@@ -102,6 +107,7 @@ const CardDetailScreen = () => {
       setExpandedCategories([...expandedCategories, index]);
     }
   };
+
   const getCategoryIcon = (name: string) => {
     const category = categoriesWithIcons.find((cat) => cat.name === name);
     return category ? category.icon : "folder-outline";
@@ -135,7 +141,6 @@ const CardDetailScreen = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#5253F0" />
-        <Text>Loading data...</Text>
       </View>
     );
   }
@@ -143,7 +148,16 @@ const CardDetailScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       {cardImageUrl ? (
-        <Image source={{ uri: cardImageUrl }} style={styles.cardImage} />
+        <Image
+          source={{ uri: cardImageUrl }}
+          style={[
+            imageOrientation
+              ? styles.cardImageRotated // 세로로 긴 이미지일 때 회전된 크기 적용
+              : styles.cardImage, // 기본 크기 적용
+          ]}
+          onLoad={handleImageLoad}
+          resizeMode="contain"
+        />
       ) : (
         <Image source={require("@/assets/images/temp-card.png")} style={styles.cardImage} />
       )}
@@ -232,9 +246,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   cardImage: {
-    width: 130,
-    height: 90,
-    marginBottom: 20,
+    width: 120,
+    height: 80,
+    marginBottom: 30,
+    marginTop: 10,
+    resizeMode: "contain",
+  },
+  cardImageRotated: {
+    width: 80,
+    height: 120,
+    transform: [{ rotate: "-90deg" }],
     resizeMode: "contain",
   },
   cardName: {
@@ -270,6 +291,7 @@ const styles = StyleSheet.create({
   accordionContainer: {
     width: "100%",
     marginTop: 20,
+    marginBottom: 50,
   },
   accordionItem: {
     marginBottom: 10,
