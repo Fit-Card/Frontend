@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { StackParamList } from "@/navigationTypes"; // StackParamList 경로 수정
+import { StackParamList } from "@/navigationTypes";
 import SearchInput from "@/components/benefit/TextInputBox";
 import BasicImage from "@/components/benefit/store/BasicImage";
 import { mockUser } from "@/mock/mockUser";
@@ -42,7 +42,7 @@ export default function StoreSearch() {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${mockUser.token}`, // Add your authorization token
+              Authorization: `Bearer ${mockUser.token}`,
             },
           }
         );
@@ -61,6 +61,12 @@ export default function StoreSearch() {
     } else {
       setStores([]);
     }
+  };
+
+  // 검색어 및 결과를 초기화하는 함수
+  const clearSearch = () => {
+    setSearchText(""); // 검색창 비우기
+    setStores([]); // 검색 결과도 초기화
   };
 
   const renderStoreItem = ({ item }: { item: Store }) => (
@@ -86,7 +92,12 @@ export default function StoreSearch() {
 
   return (
     <View style={styles.container}>
-      <SearchInput value={searchText} onChangeText={setSearchText} onSubmitEditing={handleSearch} />
+      <SearchInput
+        value={searchText}
+        onChangeText={setSearchText}
+        onSubmitEditing={handleSearch}
+        clearSearch={clearSearch} // clearSearch 함수 전달
+      />
       {searchText === "" ? (
         <BasicImage />
       ) : loading ? (
