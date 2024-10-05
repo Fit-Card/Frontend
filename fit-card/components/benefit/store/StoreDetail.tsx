@@ -40,7 +40,6 @@ export default function StoreDetail() {
           },
         }
       );
-      console.log(response.data);
 
       if (response.data.data.merchantCardCardCompanyResponses) {
         setBankCards(response.data.data.merchantCardCardCompanyResponses);
@@ -88,7 +87,7 @@ export default function StoreDetail() {
         {loading ? (
           <ActivityIndicator size="large" color="#5250F0" />
         ) : (
-          <BankCardList bankCards={bankCards} />
+          <BankCardList bankCards={bankCards} storeId={storeId} isMine={isMine} />
         )}
       </View>
     </ScrollView>

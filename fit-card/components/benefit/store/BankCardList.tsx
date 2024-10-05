@@ -5,7 +5,6 @@ import BankCardItem from "@/components/benefit/store/BankCardItem";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "@/navigationTypes";
 
-// 상위에서 받은 데이터 타입 정의
 interface BankCard {
   cardCompanyId: number;
   bankName: string;
@@ -14,7 +13,9 @@ interface BankCard {
 }
 
 interface BankCardListProps {
-  bankCards: BankCard[]; // bankCards 배열을 props로 받음
+  bankCards: BankCard[];
+  storeId: number;
+  isMine: boolean;
 }
 
 type StoreBenefitCardListNavigationProp = StackNavigationProp<
@@ -22,14 +23,15 @@ type StoreBenefitCardListNavigationProp = StackNavigationProp<
   "StoreBenefitCardList"
 >;
 
-const BankCardList = ({ bankCards }: BankCardListProps) => {
+const BankCardList = ({ bankCards, storeId, isMine }: BankCardListProps) => {
   const navigation = useNavigation<StoreBenefitCardListNavigationProp>();
 
-  // 카드 아이템을 눌렀을 때 실행될 함수
   const handlePress = (bankName: string, companyId: number) => {
     navigation.navigate("StoreBenefitCardList", {
       companyName: bankName,
       companyId: companyId,
+      storeId: storeId,
+      isMine: isMine,
     });
   };
 

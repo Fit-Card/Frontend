@@ -16,7 +16,12 @@ export type StackParamList = {
   StoreSearch: undefined;
   CardSearch: undefined;
   CardList: { companyId: number; companyName: string };
-  StoreBenefitCardList: { companyId: number; companyName: string };
+  StoreBenefitCardList: {
+    companyId: number;
+    companyName: string;
+    storeId: number;
+    isMine: boolean;
+  };
   Notice: undefined;
   Noticedetail: { noticeId: string };
   StoreDetail: { storeName: string; storeId: number; storeCategory: any };
