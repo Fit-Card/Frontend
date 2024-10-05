@@ -8,8 +8,8 @@ import { StackParamList } from "@/navigationTypes"; // StackParamList 경로 수
 import SearchInput from "@/components/benefit/TextInputBox";
 import BasicImage from "@/components/benefit/store/BasicImage";
 import { mockUser } from "@/mock/mockUser";
+import { ActivityIndicator } from "react-native";
 
-// Define your categories with icons
 const categoriesWithIcons: Array<{
   name: string;
   title: string;
@@ -31,7 +31,6 @@ interface Store {
   category: string;
 }
 
-// Helper function to get category icon
 const getCategoryIcon = (categoryName: string) => {
   const category = categoriesWithIcons.find((cat) => cat.name === categoryName);
   return category ? category.icon : "help-outline";
@@ -48,7 +47,6 @@ export default function StoreSearch() {
     if (searchText.length > 0) {
       try {
         setLoading(true);
-        // Make API call using axios
         const response = await axios.post(
           "http://j11a405.p.ssafy.io:8081/merchant/info/search",
           { merchantNameKeyword: searchText },
@@ -96,8 +94,12 @@ export default function StoreSearch() {
   return (
     <View style={styles.container}>
       <SearchInput value={searchText} onChangeText={setSearchText} onSubmitEditing={handleSearch} />
-      {loading ? (
-        <Text>Loading...</Text>
+      {searchText === "" ? (
+        <BasicImage />
+      ) : loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#5250F0" style={styles.largeLoader} />
+        </View>
       ) : (
         <FlatList
           data={stores}
@@ -132,9 +134,17 @@ const styles = StyleSheet.create({
   },
   storeItemText: {
     fontFamily: "SUITE-Bold",
-    marginLeft: 10, // Spacing between the icon and text
+    marginLeft: 10,
   },
   icon: {
     marginRight: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  largeLoader: {
+    transform: [{ scale: 1.5 }],
   },
 });
