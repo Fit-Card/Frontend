@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
     // justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#F7F7F7", // 배경색 설정
-    padding: 20, // 여백 설정
+    // padding: 20,
+    paddingTop: 20,
   },
   loadingContainer: {
     flex: 1,
