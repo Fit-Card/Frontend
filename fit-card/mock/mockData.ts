@@ -1,4 +1,15 @@
 // @/mock/mockData.ts
+import { ConsumptionCategory } from "@/interfaces/ConsumptionCategory";
+
+export const mockConsumptionPattern: ConsumptionCategory = {
+  restaurant: "150000",
+  cafe: "100000",
+  convenienceStores: "50000",
+  culture: "250000",
+  gasStations: "150000",
+  other: "100000",
+  totalAmount: "800000",
+};
 
 export const recommendedCards = [
   {

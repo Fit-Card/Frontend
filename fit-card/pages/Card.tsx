@@ -1,39 +1,76 @@
 // @/pages/Card.tsx
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from "react-native";
 import ConsumptionPattern from "@/components/recommend/ConsumptionPattern";
 import RecommendedCardCarousel from "@/components/recommend/RecommendedCardCarousel";
 import AgeGroupCard from "@/components/recommend/AgeGroupCard";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { recommendedCards } from "@/mock/mockData";
+import { mockConsumptionPattern, recommendedCards } from "@/mock/mockData";
 import { getAgeSpecificCards } from "@/api/members";
+import { getPaymentCategory } from "@/api/members";
+import { ConsumptionCategory } from "@/interfaces/ConsumptionCategory";
 
 export default function CardScreen() {
   const user = useSelector((state: RootState) => state.user.user);
   const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]); // 연령대별 카드 상태
+  const [consumptionPattern, setConsumptionPattern] = useState<ConsumptionCategory>();
+  const [loading, setLoading] = useState(true);
 
   // API 호출 및 데이터 설정
   useEffect(() => {
     const fetchAgeSpecificCards = async () => {
       try {
-        const response = await getAgeSpecificCards(1); // size 1로 API 호출
+        setLoading(true);
+        const response = await getAgeSpecificCards(3); // size 1로 API 호출
         console.log(response.data.memberCardGetByAgeSpecificResponses);
         setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
       } catch (error) {
         console.error("Error fetching age-specific cards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchPaymentCategory = async () => {
+      try {
+        setLoading(true);
+
+        const response = await getPaymentCategory();
+        console.log("paymentCategory: ", response);
+        if (!response) {
+          throw new Error();
+        }
+        setConsumptionPattern(response);
+      } catch (error) {
+        setConsumptionPattern(mockConsumptionPattern);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchAgeSpecificCards();
+    fetchPaymentCategory();
   }, []);
+
+  if (loading) {
+    // 로딩 중이면 로딩 스피너를 표시
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>데이터를 불러오는 중입니다...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 소비패턴 Component */}
       <View style={styles.componentWrapper}>
         <View style={styles.inner}>
-          <ConsumptionPattern user={user!} />
+          {consumptionPattern && (
+            <ConsumptionPattern user={user!} consumptionCategory={consumptionPattern} />
+          )}
         </View>
       </View>
 
@@ -54,7 +91,7 @@ export default function CardScreen() {
               <AgeGroupCard
                 imagePath={{ uri: card.cardImageUrl }} // cardImageUrl을 이미지 경로로 설정
                 cardName={card.cardName} // cardName 설정
-                benefits={[`${card.cardCompanyName} 카드`, "연령대별 인기 카드"]}
+                benefits={[`${card.cardCompanyName} 카드`]}
               />
             </View>
           ))
@@ -75,6 +112,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F7F7F7", // 배경색 설정
     padding: 20, // 여백 설정
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   componentWrapper: {
     width: "100%", // 각 컴포넌트를 감싸는 View의 너비를 전체로 설정
@@ -132,5 +174,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1, // 그림자 불투명도
     shadowRadius: 4, // 그림자 반경
     elevation: 3, // 안드로이드 그림자 효과
+    marginBottom: 10,
   },
 });

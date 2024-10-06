@@ -17,8 +17,8 @@ const Loading = ({ navigation }: { navigation: any }) => {
     const timer = setTimeout(async () => {
       try {
         const loginRequest: LoginRequest = {
-          loginId: "user123",
-          password: "password123",
+          loginId: "test",
+          password: "test",
         };
         const response = await login(loginRequest);
 
