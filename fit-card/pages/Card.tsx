@@ -1,49 +1,32 @@
 // @/pages/Card.tsx
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
 import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from "react-native";
-=======
-import { View, StyleSheet, ScrollView, Text } from "react-native";
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
 import ConsumptionPattern from "@/components/recommend/ConsumptionPattern";
 import RecommendedCardCarousel from "@/components/recommend/RecommendedCardCarousel";
 import AgeGroupCard from "@/components/recommend/AgeGroupCard";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-<<<<<<< HEAD
 import { mockConsumptionPattern, recommendedCards } from "@/mock/mockData";
 import { getAgeSpecificCards } from "@/api/members";
 import { getPaymentCategory } from "@/api/members";
 import { ConsumptionCategory } from "@/interfaces/ConsumptionCategory";
-=======
-import { recommendedCards } from "@/mock/mockData";
-import { getAgeSpecificCards } from "@/api/members";
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
 
 export default function CardScreen() {
   const user = useSelector((state: RootState) => state.user.user);
   const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]); // 연령대별 카드 상태
-<<<<<<< HEAD
   const [consumptionPattern, setConsumptionPattern] = useState<ConsumptionCategory>();
   const [loading, setLoading] = useState(true);
-=======
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
 
   // API 호출 및 데이터 설정
   useEffect(() => {
     const fetchAgeSpecificCards = async () => {
       try {
-<<<<<<< HEAD
         setLoading(true);
         const response = await getAgeSpecificCards(3); // size 1로 API 호출
-=======
-        const response = await getAgeSpecificCards(1); // size 1로 API 호출
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
         console.log(response.data.memberCardGetByAgeSpecificResponses);
         setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
       } catch (error) {
         console.error("Error fetching age-specific cards:", error);
-<<<<<<< HEAD
       } finally {
         setLoading(false);
       }
@@ -63,13 +46,10 @@ export default function CardScreen() {
         setConsumptionPattern(mockConsumptionPattern);
       } finally {
         setLoading(false);
-=======
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
       }
     };
 
     fetchAgeSpecificCards();
-<<<<<<< HEAD
     fetchPaymentCategory();
   }, []);
 
@@ -82,9 +62,6 @@ export default function CardScreen() {
       </View>
     );
   }
-=======
-  }, []);
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -114,11 +91,7 @@ export default function CardScreen() {
               <AgeGroupCard
                 imagePath={{ uri: card.cardImageUrl }} // cardImageUrl을 이미지 경로로 설정
                 cardName={card.cardName} // cardName 설정
-<<<<<<< HEAD
                 benefits={[`${card.cardCompanyName} 카드`]}
-=======
-                benefits={[`${card.cardCompanyName} 카드`, "연령대별 인기 카드"]}
->>>>>>> dc964e2480c568d3a1b76529391c9bb9ee5e650f
               />
             </View>
           ))
