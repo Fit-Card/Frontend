@@ -5,12 +5,10 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { StackParamList } from "../../navigationTypes";
 
-
 type HeaderProps = {
   title: string;
   backgroundColor?: string; // 배경색을 선택적으로 받을 수 있도록 설정
 };
-
 
 function HeaderComponent({ title, backgroundColor = "#fff" }: HeaderProps) {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -29,7 +27,10 @@ function HeaderComponent({ title, backgroundColor = "#fff" }: HeaderProps) {
         </View>
 
         {/* Right Container */}
-        <TouchableOpacity style={styles.rightContainer} onPress={() => navigation.navigate("Notice")}>
+        <TouchableOpacity
+          style={styles.rightContainer}
+          onPress={() => navigation.navigate("Notice")}
+        >
           <Icon name="notifications-none" type="material" size={30} color="#4D4D4D" />
         </TouchableOpacity>
       </View>
@@ -39,12 +40,13 @@ function HeaderComponent({ title, backgroundColor = "#fff" }: HeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    height: 60,
+    height: 90,
     flexDirection: "row",
     paddingHorizontal: 15,
     backgroundColor: "#fff",
     paddingTop: 15,
     paddingBottom: 0,
+    // marginVertical: 10,
   },
   leftContainer: {
     flex: 1,
