@@ -228,15 +228,31 @@ function TabNavigator() {
         },
       })}
     >
-      <Tab.Screen name="홈" component={MainStackNavigator} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="홈"
+        component={MainStackNavigator}
+        options={{ headerShown: false, unmountOnBlur: true }}
+      />
       <Tab.Screen
         name="혜택검색"
         component={SearchStackNavigator} // 스택 네비게이터로 변경
-        options={{ headerShown: false }} // 개별 화면에서 헤더를 관리하므로 여기선 false
+        options={{ headerShown: false, unmountOnBlur: true }} // 개별 화면에서 헤더를 관리하므로 여기선 false
       />
-      <Tab.Screen name="지도검색" component={MapStackNavigator} options={{ headerShown: false }} />
-      <Tab.Screen name="카드추천" component={CardStackNavigator} options={{ headerShown: false }} />
-      <Tab.Screen name="My" component={MypageStackNavigator} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="지도검색"
+        component={MapStackNavigator}
+        options={{ headerShown: false, unmountOnBlur: true }}
+      />
+      <Tab.Screen
+        name="카드추천"
+        component={CardStackNavigator}
+        options={{ headerShown: false, unmountOnBlur: true }}
+      />
+      <Tab.Screen
+        name="My"
+        component={MypageStackNavigator}
+        options={{ headerShown: false, unmountOnBlur: true }}
+      />
     </Tab.Navigator>
   );
 }
