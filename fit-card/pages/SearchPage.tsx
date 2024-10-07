@@ -56,7 +56,7 @@ const SearchPage = () => {
         longitude: branch.longitude,
         kakaoUrl: branch.kakaoUrl,
       }));
-      console.log(response.data.data.branchResponses);
+      //console.log(response.data.data.branchResponses);
 
       if (pageNo === 1) {
         setSearchResults(results); // 처음에는 결과를 덮어씀
