@@ -39,3 +39,6 @@ app.json
 
 # eas config
 eas.json
+
+# google services
+google-services.json
