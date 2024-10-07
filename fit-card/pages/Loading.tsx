@@ -28,6 +28,7 @@ const Loading = ({ navigation }: { navigation: any }) => {
         // accessToken으로 사용자 정보 요청 후 전역 상태 저장
         const userData: User = await getMember(accessToken);
         dispatch(loginAction({ user: userData, accessToken, refreshToken }));
+        console.log(accessToken);
 
         // 메인 화면으로 이동
         navigation.navigate("Main");
@@ -68,7 +69,7 @@ const Loading = ({ navigation }: { navigation: any }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
   },
   logoContainer: {

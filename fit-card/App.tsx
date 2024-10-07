@@ -37,6 +37,28 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // SearchScreen과 CardList를 하나의 스택으로 관리
+function MainStackNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Main"
+        component={MainScreen}
+        options={{ header: () => <HeaderComponent title="홈" /> }}
+      />
+      <Stack.Screen
+        name="Notice"
+        component={NoticeScreen}
+        options={{ header: () => <HeaderComponent title="이벤트 알림" /> }}
+      />
+      <Stack.Screen
+        name="Noticedetail"
+        component={NoticeDetailScreen}
+        options={{ header: () => <HeaderComponent title="상세 보기" /> }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function SearchStackNavigator() {
   return (
     <Stack.Navigator>
@@ -64,6 +86,16 @@ function SearchStackNavigator() {
         name="CardDetail"
         component={CardDetailScreen}
         options={{ header: () => <HeaderComponent title="카드 상세" /> }}
+      />
+      <Stack.Screen
+        name="Notice"
+        component={NoticeScreen}
+        options={{ header: () => <HeaderComponent title="이벤트 알림" /> }}
+      />
+      <Stack.Screen
+        name="Noticedetail"
+        component={NoticeDetailScreen}
+        options={{ header: () => <HeaderComponent title="상세 보기" /> }}
       />
     </Stack.Navigator>
   );
@@ -106,6 +138,28 @@ function MypageStackNavigator() {
   );
 }
 
+function CardStackNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Card"
+        component={CardScreen}
+        options={{ header: () => <HeaderComponent title="카드 추천" /> }}
+      />
+      <Stack.Screen
+        name="Notice"
+        component={NoticeScreen}
+        options={{ header: () => <HeaderComponent title="이벤트 알림" /> }}
+      />
+      <Stack.Screen
+        name="Noticedetail"
+        component={NoticeDetailScreen}
+        options={{ header: () => <HeaderComponent title="상세 보기" /> }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function MapStackNavigator() {
   return (
     <Stack.Navigator>
@@ -128,6 +182,16 @@ function MapStackNavigator() {
         name="Map"
         component={MapScreen}
         options={{ header: () => <HeaderComponent title="지도 검색" /> }}
+      />
+      <Stack.Screen
+        name="Notice"
+        component={NoticeScreen}
+        options={{ header: () => <HeaderComponent title="이벤트 알림" /> }}
+      />
+      <Stack.Screen
+        name="Noticedetail"
+        component={NoticeDetailScreen}
+        options={{ header: () => <HeaderComponent title="상세 보기" /> }}
       />
     </Stack.Navigator>
   );
@@ -164,26 +228,14 @@ function TabNavigator() {
         },
       })}
     >
-      <Tab.Screen
-        name="홈"
-        component={MainScreen}
-        options={{
-          header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" />,
-        }}
-      />
+      <Tab.Screen name="홈" component={MainStackNavigator} options={{ headerShown: false }} />
       <Tab.Screen
         name="혜택검색"
         component={SearchStackNavigator} // 스택 네비게이터로 변경
         options={{ headerShown: false }} // 개별 화면에서 헤더를 관리하므로 여기선 false
       />
       <Tab.Screen name="지도검색" component={MapStackNavigator} options={{ headerShown: false }} />
-      <Tab.Screen
-        name="카드추천"
-        component={CardScreen}
-        options={{
-          header: () => <HeaderComponent title="카드 추천" backgroundColor="#F7F7F7" />,
-        }}
-      />
+      <Tab.Screen name="카드추천" component={CardStackNavigator} options={{ headerShown: false }} />
       <Tab.Screen name="My" component={MypageStackNavigator} options={{ headerShown: false }} />
     </Tab.Navigator>
   );

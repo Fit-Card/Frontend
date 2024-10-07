@@ -1,11 +1,11 @@
 // styles.ts
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 const common = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
   textBlack: {
     color: "#2E303A",
