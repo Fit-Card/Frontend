@@ -163,7 +163,7 @@ function TabNavigator() {
         name="홈"
         component={MainScreen}
         options={{
-          header: () => <HeaderComponent title="홈" backgroundColor="#EDEDED" />,
+          header: () => <HeaderComponent title="홈" backgroundColor="#F7F7F7" />,
         }}
       />
       <Tab.Screen
