@@ -28,6 +28,7 @@ const SearchComponent = ({ location }: SearchComponentProps) => {
           style={styles.searchInput}
           placeholder="검색어를 입력하세요."
           editable={false} // 직접 입력은 못하고 터치하면 SearchPage로 이동
+          maxLength={10}
         />
         <Image
           source={require("@/assets/images/x-icon.png")} // 검색 아이콘

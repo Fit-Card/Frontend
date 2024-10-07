@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from "react-native";
+import axios from "axios";
 import CardList from "./BottomSheetCardList";
+import { mockUser } from "@/mock/mockUser";
 
 type Location = {
   id: number;
@@ -12,50 +14,48 @@ type Location = {
 
 interface BottomSheetContentProps {
   selectedLocation: Location | null;
+  merchantId: number;
 }
 
-const BottomSheetContent = ({ selectedLocation }: BottomSheetContentProps) => {
+const BottomSheetContent = ({ selectedLocation, merchantId }: BottomSheetContentProps) => {
   const [showPaymentInput, setShowPaymentInput] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
+  const [cards, setCards] = useState([]);
 
-  const dummyCards = [
-    {
-      id: 1,
-      image: require("../../assets/images/temp-card.png"),
-      name: "카드 이름 어쩌구 저쩌구2222",
-      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
-    },
-    {
-      id: 2,
-      image: require("../../assets/images/temp-card.png"),
-      name: "카드 이름 어쩌구 저쩌구",
-      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
-    },
-    {
-      id: 3,
-      image: require("../../assets/images/temp-card.png"),
-      name: "카드 이름 어쩌구 저쩌구",
-      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
-    },
-    {
-      id: 4,
-      image: require("../../assets/images/temp-card.png"),
-      name: "카드 이름 어쩌구 저쩌구",
-      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
-    },
-    {
-      id: 5,
-      image: require("../../assets/images/temp-card.png"),
-      name: "카드 이름 어쩌구 저쩌구",
-      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
-    },
-    {
-      id: 6,
-      image: require("../../assets/images/temp-card.png"),
-      name: "카드 이름 어쩌구 저쩌구",
-      description: "카드 혜택 어쩌구 저쩌구 어쩌구 저쩌구!!",
-    },
-  ];
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await axios.post(
+          "http://j11a405.p.ssafy.io:8081/branches/get/membercard",
+          { merchantBranchId: merchantId },
+          {
+            headers: {
+              Authorization: `Bearer ${mockUser.token}`,
+              "Content-Type": "application/json",
+              Accept: "*/*",
+            },
+          }
+        );
+
+        const fetchedCards = response.data.data.branchMemberCardResponseList.map((card: any) => ({
+          id: card.cardVersionId,
+          image: { uri: card.cardImg },
+          name: card.cardName,
+          description: card.benefitDescription,
+        }));
+
+        console.log(fetchCards);
+
+        setCards(fetchedCards);
+      } catch (error) {
+        console.error("Failed to fetch cards:", error);
+      }
+    };
+
+    if (merchantId) {
+      fetchCards();
+    }
+  }, [merchantId]);
 
   return (
     <View style={styles.bottomSheetContent}>
@@ -70,7 +70,7 @@ const BottomSheetContent = ({ selectedLocation }: BottomSheetContentProps) => {
             <View style={styles.iconContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
-                onPress={() => setShowPaymentInput(!showPaymentInput)} // 버튼 클릭 시 상태 변경
+                onPress={() => setShowPaymentInput(!showPaymentInput)}
               >
                 <Image source={require("../../assets/images/calculator.png")} style={styles.icon} />
               </TouchableOpacity>
@@ -96,7 +96,8 @@ const BottomSheetContent = ({ selectedLocation }: BottomSheetContentProps) => {
             </View>
           )}
 
-          <CardList cards={dummyCards} />
+          {/* Replace dummy cards with the fetched cards */}
+          <CardList cards={cards} />
         </>
       ) : (
         <Text>No location selected</Text>

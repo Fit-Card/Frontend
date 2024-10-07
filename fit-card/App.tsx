@@ -124,6 +124,11 @@ function MapStackNavigator() {
         component={SearchPage}
         options={{ header: () => <HeaderComponent title="지도 검색" /> }}
       />
+      <Stack.Screen
+        name="Map"
+        component={MapScreen}
+        options={{ header: () => <HeaderComponent title="지도 검색" /> }}
+      />
     </Stack.Navigator>
   );
 }

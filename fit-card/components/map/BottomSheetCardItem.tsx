@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 interface CardItemProps {
@@ -9,10 +9,22 @@ interface CardItemProps {
 }
 
 const CardItem = ({ image, name, description, onPress }: CardItemProps) => {
+  const [isPortrait, setIsPortrait] = useState<boolean>(false); // State to manage image orientation
+
+  const handleImageLoad = (event: any) => {
+    const { width, height } = event.nativeEvent.source;
+    setIsPortrait(height > width); // Determine if the image is in portrait mode
+  };
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.cardContainer}>
-        <Image source={image} style={styles.cardImage} />
+        <Image
+          source={image}
+          style={[styles.cardImage, isPortrait && { transform: [{ rotate: "-90deg" }] }]} // Conditionally apply rotation
+          onLoad={handleImageLoad}
+          resizeMode="contain"
+        />
         <View style={styles.cardInfo}>
           <Text style={styles.cardName}>{name}</Text>
           <Text style={styles.cardDescription}>{description}</Text>
@@ -36,7 +48,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: 60,
-    height: 40,
+    height: 60,
     borderRadius: 5,
     marginRight: 20,
     marginLeft: 5,
@@ -50,7 +62,7 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     fontSize: 12,
-    color: "#555",
+    color: "#5253F0",
     fontFamily: "SUITE-Bold",
   },
 });

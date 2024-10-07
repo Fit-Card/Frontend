@@ -26,6 +26,7 @@ export default function SearchInput({
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmitEditing}
+        maxLength={10}
       />
       {value.length > 0 && (
         <TouchableOpacity onPress={clearSearch}>
