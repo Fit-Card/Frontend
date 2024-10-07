@@ -1,4 +1,4 @@
-// store/userSlice.ts
+// @/store/userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/interfaces/User"; // 사용자 인터페이스
 import { mockUser } from "@/mock/mockUser";
