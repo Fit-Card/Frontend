@@ -168,7 +168,7 @@ const MapComponent = () => {
       } else {
         setFilteredStores((prevStores) => [...prevStores, ...mappedStores]);
       }
-      console.log(response.data.data.branchResponses);
+      //console.log(response.data.data.branchResponses);
 
       setCurrentPage(pageNo);
       setIsLoadMoreVisible(pageNo < response.data.data.totalPages);
@@ -323,7 +323,12 @@ const MapComponent = () => {
 
       <BottomSheet ref={sheetRef} snapPoints={[250]} index={-1} enablePanDownToClose={true}>
         <BottomSheetScrollView>
-          <BottomSheetContent selectedLocation={selectedLocation} />
+          {selectedLocation && (
+            <BottomSheetContent
+              selectedLocation={selectedLocation}
+              merchantId={selectedLocation.id}
+            />
+          )}
         </BottomSheetScrollView>
       </BottomSheet>
     </View>

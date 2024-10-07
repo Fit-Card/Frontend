@@ -11,6 +11,7 @@ interface CardListProps {
     image: string;
     name: string;
     description: string;
+    benefitAmount?: number;
   }[];
 }
 
@@ -30,6 +31,7 @@ const CardList = ({ cards }: CardListProps) => {
           image={card.image}
           name={card.name}
           description={card.description}
+          benefitAmount={card.benefitAmount}
           onPress={() => handleCardPress(card.id)} // 클릭 시 상세 페이지로 이동
         />
       ))}

@@ -1,7 +1,6 @@
-import React, { useDebugValue, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Text, FlatList, Image, StyleSheet } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { Icon } from "react-native-elements";
 import { StackParamList } from "@/navigationTypes";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
@@ -22,6 +21,7 @@ const CardListScreen = () => {
   const { companyName, companyId } = route.params;
   const [cardsData, setCardsData] = useState<CardInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [imageOrientation, setImageOrientation] = useState<{ [key: number]: boolean }>({});
 
   const handleCardPress = (cardId: number) => {
     navigation.navigate("CardDetail", { cardId });
@@ -61,6 +61,15 @@ const CardListScreen = () => {
     fetchCardListData();
   }, [companyId]);
 
+  // Function to detect image dimensions and check if it's in portrait mode
+  const handleImageLoad = (id: number, event: any) => {
+    const { width, height } = event.nativeEvent.source;
+    setImageOrientation((prev) => ({
+      ...prev,
+      [id]: height > width, // Set to true if image is taller (portrait)
+    }));
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>{companyName}</Text>
@@ -70,7 +79,15 @@ const CardListScreen = () => {
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleCardPress(item.id)}>
             <View style={styles.cardContainer}>
-              <Image source={{ uri: item.image }} style={styles.cardImage} />
+              <Image
+                source={{ uri: item.image }}
+                style={[
+                  styles.cardImage,
+                  imageOrientation[item.id] && { transform: [{ rotate: "-90deg" }] }, // Rotate image if it's portrait
+                ]}
+                onLoad={(event) => handleImageLoad(item.id, event)}
+                resizeMode="contain"
+              />
               <Text style={styles.cardName}>{item.name}</Text>
             </View>
           </TouchableOpacity>
@@ -105,7 +122,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: 60,
-    height: 40,
+    height: 60,
     marginRight: 16,
     borderRadius: 3,
   },

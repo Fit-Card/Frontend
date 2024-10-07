@@ -56,7 +56,7 @@ const SearchPage = () => {
         longitude: branch.longitude,
         kakaoUrl: branch.kakaoUrl,
       }));
-      console.log(response.data.data.branchResponses);
+      //console.log(response.data.data.branchResponses);
 
       if (pageNo === 1) {
         setSearchResults(results); // 처음에는 결과를 덮어씀
@@ -79,6 +79,11 @@ const SearchPage = () => {
     setSearchQuery(text);
   };
 
+  const clearSearchInput = () => {
+    setSearchQuery(""); // Clear the search query when x button is clicked
+    setSearchResults([]); // Optionally, clear the search results as well
+  };
+
   const formatDistance = (distance: number): string => {
     if (distance < 1000) {
       return `${distance}m`;
@@ -93,6 +98,7 @@ const SearchPage = () => {
       store,
     });
   };
+
   const handleLoadMore = () => {
     if (!loading && hasMore) {
       const nextPage = page + 1;
@@ -118,13 +124,22 @@ const SearchPage = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="검색어를 입력하세요"
-        value={searchQuery}
-        onChangeText={handleSearchChange}
-        autoFocus={true}
-      />
+      <View style={styles.searchInputContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="검색어를 입력하세요"
+          value={searchQuery}
+          onChangeText={handleSearchChange}
+          autoFocus={true}
+          maxLength={10}
+        />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity onPress={clearSearchInput}>
+            <Image source={require("@/assets/images/x-icon.png")} style={styles.clearIcon} />
+          </TouchableOpacity>
+        )}
+      </View>
+
       {loading && page === 1 ? ( // 첫 페이지 로딩 중일 때 표시
         <Text>검색 중...</Text>
       ) : (
@@ -133,7 +148,7 @@ const SearchPage = () => {
           renderItem={renderItem}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           onEndReached={handleLoadMore} // 리스트의 끝에 도달했을 때 추가 로딩
-          onEndReachedThreshold={0.3} // 리스트 끝에서 50% 남았을 때 handleLoadMore 호출
+          onEndReachedThreshold={0.3} // 리스트 끝에서 30% 남았을 때 handleLoadMore 호출
           ListFooterComponent={loading && page > 1 ? <Text>더 불러오는 중...</Text> : null} // 추가 페이지 로딩 중일 때 표시
         />
       )}
@@ -147,15 +162,27 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#d0d0d0",
+    borderRadius: 20,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
   searchInput: {
     height: 40,
     paddingLeft: 15,
     backgroundColor: "#fff",
-    borderRadius: 20,
-    marginBottom: 20,
-    borderColor: "#d0d0d0",
-    borderWidth: 2,
+    flex: 1,
     fontFamily: "SUITE-Bold",
+    borderRadius: 30,
+  },
+  clearIcon: {
+    width: 18,
+    height: 18,
+    marginLeft: 10,
   },
   itemContainer: {
     flexDirection: "row",
