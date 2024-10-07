@@ -1,53 +1,105 @@
-import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons"; // 화살표 및 카테고리 아이콘 사용
-
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+import { mockUser } from "@/mock/mockUser";
 import { StackParamList } from "@/navigationTypes";
 
-// 카드 데이터
-const cardsData: Array<{
-  id: number;
-  name: string;
-  image: any;
-  categories: Record<number, string>;
-}> = [
-  {
-    id: 1,
-    name: "신한카드 Mr.Life",
-    image: require("@/assets/images/temp-card.png"),
-    categories: {
-      0: "버거킹 10% 할인\n도미노피자 10% 할인\n엽기떡볶이 10% 할인",
-      1: "스타벅스 10% 할인\n이디야 5% 할인",
-      2: "CU 10% 할인\nGS25 5% 할인",
-      3: "CGV 10% 할인\n롯데시네마 5% 할인",
-      4: "SK 주유소 10% 적립\nGS 주유소 5% 적립",
-    },
-  },
-];
-
-// Route type 정의
 type CardDetailRouteProp = RouteProp<StackParamList, "CardDetail">;
 
 const CardDetailScreen = () => {
   const route = useRoute<CardDetailRouteProp>();
   const { cardId } = route.params;
 
-  const card = cardsData.find((item) => item.id === cardId);
-
-  // 카테고리별로 아코디언 상태를 관리하기 위한 상태
+  const [cardData, setCardData] = useState<any>(null);
+  const [cardDetailData, setCardDetailData] = useState<any[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
+  const [cardName, setCardName] = useState<string | null>(null);
+  const [cardImageUrl, setCardImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedButtonIndex, setSelectedButtonIndex] = useState<number>(0); // 선택된 버튼의 인덱스를 관리하는 상태
+  const [imageOrientation, setImageOrientation] = useState<boolean>(false);
 
-  // 카테고리 목록과 아이콘
-  const categoriesWithIcons: Array<{ name: string; icon: keyof typeof Ionicons.glyphMap }> = [
-    { name: "음식점", icon: "restaurant-outline" },
-    { name: "카페", icon: "cafe-outline" },
-    { name: "편의점", icon: "cart-outline" },
-    { name: "문화", icon: "film-outline" },
-    { name: "주유소", icon: "car-outline" },
+  const categoriesWithIcons: Array<{
+    name: string;
+    title: string;
+    icon: keyof typeof Ionicons.glyphMap;
+  }> = [
+    { name: "FD6", title: "음식점", icon: "restaurant-outline" },
+    { name: "CE7", title: "카페", icon: "cafe-outline" },
+    { name: "CS2", title: "편의점", icon: "cart-outline" },
+    { name: "CT1", title: "문화시설", icon: "film-outline" },
+    { name: "OL7", title: "주유소", icon: "car-outline" },
   ];
 
-  // 아코디언 토글 함수
+  const fetchData = async () => {
+    try {
+      const response = await axios.post(
+        "http://j11a405.p.ssafy.io:8081/cards/performance/get",
+        cardId,
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+        }
+      );
+      setCardData(response.data);
+    } catch (error) {
+      console.error("Error fetching card data: ", error);
+    }
+  };
+
+  const fetchDetailData = async (level: number) => {
+    try {
+      const response = await axios.post(
+        "http://j11a405.p.ssafy.io:8081/cards/benefits/get",
+        {
+          cardId: cardId,
+          level: level,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+        }
+      );
+
+      setCardDetailData(response.data.data.categories);
+      setCardName(response.data.data.cardName);
+      setCardImageUrl(response.data.data.cardImage);
+    } catch (error) {
+      console.error("Error fetching card details: ", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      await fetchData();
+      await fetchDetailData(selectedButtonIndex + 1);
+      setLoading(false);
+    };
+    fetchAllData();
+  }, [selectedButtonIndex]);
+
+  const handleImageLoad = (event: any) => {
+    const { width, height } = event.nativeEvent.source;
+    // 이미지가 세로로 더 길 경우 회전 여부 설정
+    setImageOrientation(height > width);
+  };
+
   const toggleCategory = (index: number) => {
     if (expandedCategories.includes(index)) {
       setExpandedCategories(expandedCategories.filter((i) => i !== index));
@@ -56,26 +108,89 @@ const CardDetailScreen = () => {
     }
   };
 
-  if (!card) {
+  const getCategoryIcon = (name: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.name === name);
+    return category ? category.icon : "folder-outline";
+  };
+
+  const getCategoryTitle = (name: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.name === name);
+    return category ? category.title : "기타";
+  };
+
+  const renderButtons = () => {
+    if (!cardData || !cardData.data) {
+      return null;
+    }
+
+    return cardData.data.map((item: any, index: number) => (
+      <TouchableOpacity
+        key={index}
+        style={[
+          styles.button,
+          selectedButtonIndex === index ? styles.selectedButton : styles.unselectedButton,
+        ]}
+        onPress={() => setSelectedButtonIndex(index)}
+      >
+        <Text style={styles.buttonText}>{index + 1}</Text>
+      </TouchableOpacity>
+    ));
+  };
+
+  if (loading) {
     return (
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text>카드 정보를 찾을 수 없습니다.</Text>
-      </ScrollView>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#5253F0" />
+      </View>
     );
   }
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <Image source={card.image} style={styles.cardImage} />
-      <Text style={styles.cardName}>{card.name}</Text>
+      {cardImageUrl ? (
+        <Image
+          source={{ uri: cardImageUrl }}
+          style={[
+            imageOrientation
+              ? styles.cardImageRotated // 세로로 긴 이미지일 때 회전된 크기 적용
+              : styles.cardImage, // 기본 크기 적용
+          ]}
+          onLoad={handleImageLoad}
+          resizeMode="contain"
+        />
+      ) : (
+        <Image source={require("@/assets/images/temp-card.png")} style={styles.cardImage} />
+      )}
+
+      <Text style={styles.cardName}>{cardName || "Loading card name..."}</Text>
+
+      <View style={styles.buttonContainer}>{renderButtons()}</View>
+
+      <View>
+        <Text style={styles.partText}>
+          {cardData && cardData.data
+            ? `이용 금액 : ${cardData.data[selectedButtonIndex].amount.toLocaleString()}원 이상`
+            : "No amount available"}
+        </Text>
+        <Text style={styles.partText}>
+          {cardData && cardData.data
+            ? `할인 한도 : 월 ${cardData.data[selectedButtonIndex].benefitLimit.toLocaleString()}원`
+            : "No amount available"}
+        </Text>
+      </View>
 
       <View style={styles.accordionContainer}>
-        {categoriesWithIcons.map((category, index) => (
+        {cardDetailData.map((category: any, index: number) => (
           <View key={index} style={styles.accordionItem}>
             <TouchableOpacity onPress={() => toggleCategory(index)} style={styles.accordionHeader}>
               <View style={styles.categoryIconContainer}>
-                <Ionicons name={category.icon} size={20} color="#5253F0" style={styles.icon} />
-                <Text style={styles.categoryTitle}>{category.name}</Text>
+                <Ionicons
+                  name={getCategoryIcon(category.name)}
+                  size={20}
+                  color="#5253F0"
+                  style={styles.icon}
+                />
+                <Text style={styles.categoryTitle}>{getCategoryTitle(category.name)}</Text>
               </View>
               <Ionicons
                 name={
@@ -85,9 +200,34 @@ const CardDetailScreen = () => {
                 color="#333"
               />
             </TouchableOpacity>
+
             {expandedCategories.includes(index) && (
               <View style={styles.accordionContent}>
-                <Text style={styles.categoryDetails}>{card.categories[index]}</Text>
+                {category.benefits.map((benefit: any, benefitIndex: number) => (
+                  <View key={benefitIndex} style={styles.benefitContainer}>
+                    <Text style={styles.benefitTitle}>
+                      {benefit.merchantName === "기타" ? "모든 카테고리" : benefit.merchantName}{" "}
+                      {benefit.discount}
+                    </Text>
+
+                    <Text style={styles.benefitDetail}>
+                      금액 한도: {benefit.amountLimit === "None" ? "없음" : benefit.amountLimit}
+                    </Text>
+                    <Text style={styles.benefitDetail}>
+                      횟수 한도: {benefit.countLimit === "None" ? "없음" : benefit.countLimit}
+                    </Text>
+                    <Text style={styles.benefitDetail}>
+                      최소 결제 금액:{" "}
+                      {benefit.minPayment > 0
+                        ? `${benefit.minPayment.toLocaleString()}원`
+                        : "제한 없음"}
+                    </Text>
+                    <Text style={styles.benefitDetail}>
+                      예외 사항:{" "}
+                      {benefit.exceptionTypes !== "None" ? benefit.exceptionTypes : "없음"}
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
           </View>
@@ -99,26 +239,59 @@ const CardDetailScreen = () => {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    alignItems: "center", // 중앙 정렬
+    alignItems: "center",
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 30, // 스크롤 시 아래쪽 패딩 추가
+    paddingBottom: 30,
     backgroundColor: "#fff",
   },
   cardImage: {
-    width: 130,
-    height: 90,
-    marginBottom: 20,
+    width: 120,
+    height: 80,
+    marginBottom: 30,
+    marginTop: 10,
+    resizeMode: "contain",
+  },
+  cardImageRotated: {
+    width: 80,
+    height: 120,
+    transform: [{ rotate: "-90deg" }],
     resizeMode: "contain",
   },
   cardName: {
-    fontSize: 20,
-    fontFamily: "SUITE-Bold",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
     marginBottom: 10,
+    justifyContent: "center",
+    flexWrap: "wrap",
+    width: "100%",
+  },
+  button: {
+    padding: 5,
+    margin: 5,
+    borderRadius: 20,
+    fontFamily: "SUITE-Bold",
+    paddingHorizontal: 30,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+  selectedButton: {
+    backgroundColor: "#5253F0",
+  },
+  unselectedButton: {
+    backgroundColor: "#CCCCCC",
   },
   accordionContainer: {
     width: "100%",
     marginTop: 20,
+    marginBottom: 50,
   },
   accordionItem: {
     marginBottom: 10,
@@ -155,11 +328,27 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#E1E5EB",
   },
-  categoryDetails: {
-    fontSize: 14,
-    color: "#666",
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  partText: {
     fontFamily: "SUITE-Regular",
-    lineHeight: 22,
+    fontSize: 14,
+  },
+  benefitTitle: {
+    fontFamily: "SUITE-Bold",
+    fontSize: 14,
+    color: "#5250F0",
+  },
+  benefitDetail: {
+    fontFamily: "SUITE-Regular",
+    fontSize: 12,
+  },
+  benefitContainer: {
+    paddingLeft: 15,
+    marginBottom: 5,
   },
 });
 

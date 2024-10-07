@@ -1,21 +1,76 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+// @/pages/Card.tsx
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from "react-native";
 import ConsumptionPattern from "@/components/recommend/ConsumptionPattern";
 import RecommendedCardCarousel from "@/components/recommend/RecommendedCardCarousel";
 import AgeGroupCard from "@/components/recommend/AgeGroupCard";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { recommendedCards } from "@/mock/mockData";
+import { mockConsumptionPattern, recommendedCards } from "@/mock/mockData";
+import { getAgeSpecificCards } from "@/api/members";
+import { getPaymentCategory } from "@/api/members";
+import { ConsumptionCategory } from "@/interfaces/ConsumptionCategory";
 
 export default function CardScreen() {
   const user = useSelector((state: RootState) => state.user.user);
+  const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]); // 연령대별 카드 상태
+  const [consumptionPattern, setConsumptionPattern] = useState<ConsumptionCategory>();
+  const [loading, setLoading] = useState(true);
+
+  // API 호출 및 데이터 설정
+  useEffect(() => {
+    const fetchAgeSpecificCards = async () => {
+      try {
+        setLoading(true);
+        const response = await getAgeSpecificCards(3); // size 1로 API 호출
+        console.log(response.data.memberCardGetByAgeSpecificResponses);
+        setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
+      } catch (error) {
+        console.error("Error fetching age-specific cards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchPaymentCategory = async () => {
+      try {
+        setLoading(true);
+
+        const response = await getPaymentCategory();
+        console.log("paymentCategory: ", response);
+        if (!response) {
+          throw new Error();
+        }
+        setConsumptionPattern(response);
+      } catch (error) {
+        setConsumptionPattern(mockConsumptionPattern);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgeSpecificCards();
+    fetchPaymentCategory();
+  }, []);
+
+  if (loading) {
+    // 로딩 중이면 로딩 스피너를 표시
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>데이터를 불러오는 중입니다...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 소비패턴 Component */}
       <View style={styles.componentWrapper}>
         <View style={styles.inner}>
-          <ConsumptionPattern user={user!} />
+          {consumptionPattern && (
+            <ConsumptionPattern user={user!} consumptionCategory={consumptionPattern} />
+          )}
         </View>
       </View>
 
@@ -30,31 +85,21 @@ export default function CardScreen() {
       {/* 연령대의 카드 Component */}
       <View style={styles.componentWrapper}>
         <Text style={styles.headText}>{user!.name}님 나이대에서 많이 사용하는 카드</Text>
-        <View style={styles.ageGroup}>
-          <AgeGroupCard
-            imagePath={require("@/assets/images/temp-card-2.png")}
-            cardName="카드이름 들어가주세요 1"
-            benefits={["10% 할인", "적립 혜택"]}
-          />
-        </View>
-      </View>
-      <View style={styles.componentWrapper}>
-        <View style={styles.ageGroup}>
-          <AgeGroupCard
-            imagePath={require("@/assets/images/temp-card-3.png")}
-            cardName="카드이름 들어가주세요 2"
-            benefits={["무료 배송", "포인트 적립"]}
-          />
-        </View>
-      </View>
-      <View style={styles.componentWrapper}>
-        <View style={styles.ageGroup}>
-          <AgeGroupCard
-            imagePath={require("@/assets/images/temp-card-4.png")}
-            cardName="카드이름 들어가주세요 3"
-            benefits={["캐시백 혜택", "쇼핑 할인"]}
-          />
-        </View>
+        {ageSpecificCards.length > 0 ? (
+          ageSpecificCards.map((card) => (
+            <View key={card.cardId} style={styles.ageGroup}>
+              <AgeGroupCard
+                imagePath={{ uri: card.cardImageUrl }} // cardImageUrl을 이미지 경로로 설정
+                cardName={card.cardName} // cardName 설정
+                benefits={[`${card.cardCompanyName} 카드`]}
+              />
+            </View>
+          ))
+        ) : (
+          <View style={styles.inner}>
+            <Text>연령대별 카드를 불러오는 중입니다...</Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -66,7 +111,13 @@ const styles = StyleSheet.create({
     // justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#F7F7F7", // 배경색 설정
-    padding: 20, // 여백 설정
+    // padding: 20,
+    paddingTop: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   componentWrapper: {
     width: "100%", // 각 컴포넌트를 감싸는 View의 너비를 전체로 설정
@@ -124,5 +175,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1, // 그림자 불투명도
     shadowRadius: 4, // 그림자 반경
     elevation: 3, // 안드로이드 그림자 효과
+    marginBottom: 10,
   },
 });

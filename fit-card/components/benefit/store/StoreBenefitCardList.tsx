@@ -1,77 +1,115 @@
-import React from "react";
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack"; // 추가
-import { StackParamList } from "@/navigationTypes"; // StackParamList 임포트
+import { StackNavigationProp } from "@react-navigation/stack";
+import axios from "axios";
+import { StackParamList } from "@/navigationTypes";
 
-// 카드 데이터
-const cardsData = [
-  {
-    id: 1,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-    benefit: "영화 10% 할인",
-  },
-  {
-    id: 2,
-    name: "신한카드 Z play",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-    benefit: "영화 5% 할인",
-  },
-  {
-    id: 3,
-    name: "신한카드 Mr.Life",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-    benefit: "영화 10% 할인",
-  },
-  {
-    id: 4,
-    name: "신한카드 Z play",
-    companyId: 1,
-    image: require("@/assets/images/temp-card.png"),
-    benefit: "영화 5% 할인",
-  },
-];
-
-// StackNavigationProp 정의
 type CardListNavigationProp = StackNavigationProp<StackParamList, "CardDetail">;
 
+interface CardBenefit {
+  cardVersionId: number;
+  cardName: string;
+  cardImg: string;
+  benefitDescription: string;
+}
+
 const StoreBenefitCardList = () => {
-  const route = useRoute<RouteProp<StackParamList, "CardList">>();
-  const { companyName, companyId } = route.params;
-  const navigation = useNavigation<CardListNavigationProp>(); // useNavigation에 타입 적용
+  const route = useRoute<RouteProp<StackParamList, "StoreBenefitCardList">>();
+  const { companyName, companyId, storeId, isMine } = route.params;
+  const navigation = useNavigation<CardListNavigationProp>();
 
-  const filteredCards = cardsData.filter((card) => card.companyId === companyId);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [cardBenefits, setCardBenefits] = useState<CardBenefit[]>([]);
+  const [imageOrientation, setImageOrientation] = useState<{ [key: number]: boolean }>({});
 
-  // 카드 터치 시 상세보기 화면으로 이동
-  const handleCardPress = (cardId: number) => {
-    navigation.navigate("CardDetail", { cardId }); // CardDetail로 cardId 전달
+  const fetchCardBenefits = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "http://j11a405.p.ssafy.io:8081/merchant/card/info/get/benefits",
+        {
+          merchantId: storeId,
+          cardCompanyId: companyId,
+          isMine: isMine ? 1 : 0,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwibWVtYmVySWQiOiIzIiwiaWF0IjoxNzI3MzM1MTgyLCJleHAiOjE3MzczMzg3ODJ9.DQCrqiRDmF5qtBdadizEIxOgF0Bz_Om9-u3l0vJC1UI`,
+          },
+        }
+      );
+
+      if (response.data && response.data.data && response.data.data.merchantCardBenefitResponse) {
+        setCardBenefits(response.data.data.merchantCardBenefitResponse);
+      } else {
+        setCardBenefits([]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch card benefits");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCardBenefits();
+  }, [isMine]);
+
+  const handleCardPress = (cardVersionId: number) => {
+    navigation.navigate("CardDetail", { cardId: cardVersionId });
+  };
+
+  const handleImageLoad = (id: number, event: any) => {
+    const { width, height } = event.nativeEvent.source;
+    setImageOrientation((prev) => ({
+      ...prev,
+      [id]: height > width,
+    }));
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>{companyName}</Text>
-
-      <FlatList
-        data={filteredCards}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleCardPress(item.id)}>
-            <View style={styles.cardContainer}>
-              <Image source={item.image} style={styles.cardImage} />
-              <View style={styles.cardInfo}>
-                <Text style={styles.cardName}>{item.name}</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#5250F0" />
+      ) : (
+        <FlatList
+          data={cardBenefits}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleCardPress(item.cardVersionId)}>
+              <View style={styles.cardContainer}>
+                <Image
+                  source={{ uri: item.cardImg }}
+                  style={[
+                    styles.cardImage,
+                    imageOrientation[item.cardVersionId] && { transform: [{ rotate: "-90deg" }] },
+                  ]}
+                  onLoad={(event) => handleImageLoad(item.cardVersionId, event)}
+                  resizeMode="contain"
+                />
+                <View style={styles.cardInfo}>
+                  <Text style={styles.cardName}>{item.cardName}</Text>
+                </View>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{item.benefitDescription}</Text>
+                </View>
               </View>
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{item.benefit}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.id.toString()}
-      />
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item) => item.cardVersionId.toString()}
+        />
+      )}
     </View>
   );
 };
@@ -99,8 +137,8 @@ const styles = StyleSheet.create({
     borderColor: "#e6e6e6",
   },
   cardImage: {
-    width: 60,
-    height: 40,
+    width: 70,
+    height: 70,
     marginRight: 16,
   },
   cardInfo: {

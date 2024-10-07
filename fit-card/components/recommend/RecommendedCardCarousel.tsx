@@ -10,7 +10,7 @@ interface RecommendedCardCarouselProps {
 }
 
 const RecommendedCardCarousel = ({ cards }: RecommendedCardCarouselProps) => {
-  const width = 300; // Adjust based on your design
+  const width = 320; // Adjust based on your design
 
   return (
     <View style={styles.carouselContainer}>

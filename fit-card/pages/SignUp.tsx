@@ -30,7 +30,6 @@ export default function SignUp() {
 
   // State variables for form inputs
   const [user, setUser] = useState<SignupUser>({
-    id: "",
     loginId: "",
     password: "",
     confirmPassword: "",

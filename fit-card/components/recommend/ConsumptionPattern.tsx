@@ -2,16 +2,48 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { User } from "@/interfaces/User";
+import { ConsumptionCategory } from "@/interfaces/ConsumptionCategory";
 
-function ConsumptionPattern({ user }: { user: User }) {
+interface consumptionPatternProps {
+  user: User;
+  consumptionCategory: ConsumptionCategory;
+}
+
+function ConsumptionPattern({ user, consumptionCategory }: consumptionPatternProps) {
   // 각 카테고리별 비율 (식비, 교통, 쇼핑, 기타)
+  const totalAmount = parseFloat(consumptionCategory.totalAmount);
+
   const expenseData = [
-    { label: "식비", percentage: 0.3, color: "#7292FF" },
-    { label: "카페", percentage: 0.25, color: "#FAE9BD" },
-    { label: "쇼핑", percentage: 0.2, color: "#FF8F68" },
-    { label: "교통", percentage: 0.05, color: "#FF6B6B" },
-    { label: "영화", percentage: 0.1, color: "#FFB74D" },
-    { label: "기타", percentage: 0.1, color: "#D9D9D9" },
+    {
+      label: "음식점",
+      percentage: (parseFloat(consumptionCategory.restaurant) / totalAmount).toFixed(2),
+      color: "#7292FF",
+    },
+    {
+      label: "카페",
+      percentage: (parseFloat(consumptionCategory.cafe) / totalAmount).toFixed(2),
+      color: "#FAE9BD",
+    },
+    {
+      label: "편의점",
+      percentage: (parseFloat(consumptionCategory.convenienceStores) / totalAmount).toFixed(2),
+      color: "#FF8F68",
+    },
+    {
+      label: "영화",
+      percentage: (parseFloat(consumptionCategory.culture) / totalAmount).toFixed(2),
+      color: "#FF6B6B",
+    },
+    {
+      label: "주유",
+      percentage: (parseFloat(consumptionCategory.gasStations) / totalAmount).toFixed(2),
+      color: "#FFB74D",
+    },
+    {
+      label: "기타",
+      percentage: (parseFloat(consumptionCategory.other) / totalAmount).toFixed(2),
+      color: "#D9D9D9",
+    },
   ];
 
   const leftLabels = expenseData.slice(0, 3);
@@ -36,7 +68,7 @@ function ConsumptionPattern({ user }: { user: User }) {
             style={[
               styles.progressBar,
               {
-                width: `${item.percentage * 100}%`,
+                width: `${parseFloat(item.percentage) * 100}%`,
                 backgroundColor: item.color,
               },
             ]}
@@ -53,7 +85,10 @@ function ConsumptionPattern({ user }: { user: User }) {
                 <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
                 <Text style={styles.labelText}>
                   {item.label}
-                  <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
+                  <Text style={styles.percentageText}>
+                    {" "}
+                    {Math.round(parseFloat(item.percentage) * 100)}%
+                  </Text>
                 </Text>
               </View>
             ))}
@@ -66,7 +101,10 @@ function ConsumptionPattern({ user }: { user: User }) {
                 <View style={[styles.labelColorBox, { backgroundColor: item.color }]} />
                 <Text style={styles.labelText}>
                   {item.label}
-                  <Text style={styles.percentageText}> {Math.round(item.percentage * 100)}%</Text>
+                  <Text style={styles.percentageText}>
+                    {" "}
+                    {Math.round(parseFloat(item.percentage) * 100)}%
+                  </Text>
                 </Text>
               </View>
             ))}
