@@ -17,8 +17,8 @@ const Loading = ({ navigation }: { navigation: any }) => {
     const timer = setTimeout(async () => {
       try {
         const loginRequest: LoginRequest = {
-          loginId: "user123",
-          password: "password123",
+          loginId: "test",
+          password: "test",
         };
         const response = await login(loginRequest);
 
@@ -28,6 +28,7 @@ const Loading = ({ navigation }: { navigation: any }) => {
         // accessToken으로 사용자 정보 요청 후 전역 상태 저장
         const userData: User = await getMember(accessToken);
         dispatch(loginAction({ user: userData, accessToken, refreshToken }));
+        console.log(accessToken);
 
         // 메인 화면으로 이동
         navigation.navigate("Main");
