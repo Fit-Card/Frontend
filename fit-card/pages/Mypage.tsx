@@ -67,9 +67,9 @@ export default function MypageScreen() {
       <ScrollView style={[mypageStyle.container]}>
         {/* 인삿말 */}
         <View style={[mypageStyle.helloContainer]}>
-          <Text style={[common.textBlue, common.textLarge, common.textBold]}>
+          <Text style={[common.textBlue, common.textLarge, mypageStyle.boldText]}>
             {mockUser.name}
-            <Text style={[common.textGray, common.textMedium, common.textBold]}>
+            <Text style={[common.textGray, common.textMedium, mypageStyle.boldText]}>
               님, 반갑습니다.
             </Text>
           </Text>
@@ -102,7 +102,7 @@ export default function MypageScreen() {
                 renderItem={renderCarouselItem}
                 defaultIndex={0}
               />
-              <Text style={[mypageStyle.cardNameText, common.textGray, common.textBold]}>
+              <Text style={[mypageStyle.cardNameText, common.textGray, mypageStyle.boldText]}>
                 {currentCardIndex + 1} {". "} {cardData[currentCardIndex].cardName}
               </Text>
             </View>
@@ -112,7 +112,7 @@ export default function MypageScreen() {
                 style={mypageStyle.noCardImage}
                 source={require("../assets/icons/icon_no.png")}
               ></Image>
-              <Text style={[common.textBlack, common.textBold, { fontSize: 14 }]}>
+              <Text style={[common.textBlack, mypageStyle.boldText, { fontSize: 14 }]}>
                 표시할 카드가 없습니다.
               </Text>
               <Text style={[common.textBlack, { fontSize: 10 }]}>카드를 갱신해주세요.</Text>
@@ -131,7 +131,7 @@ export default function MypageScreen() {
         {/* 퀵메뉴 내용들 */}
         <View style={[mypageStyle.menuContainer]}>
           <View style={[mypageStyle.menuTitle]}>
-            <Text style={[common.textBold, common.textGray]}>카드 정보</Text>
+            <Text style={[mypageStyle.boldText, common.textGray]}>카드 정보</Text>
           </View>
 
           <TouchableOpacity
@@ -168,7 +168,7 @@ export default function MypageScreen() {
           </TouchableOpacity>
 
           <View style={mypageStyle.menuTitle}>
-            <Text style={[common.textGray, common.textBold]}>사용자 설정</Text>
+            <Text style={[common.textGray, mypageStyle.boldText]}>사용자 설정</Text>
           </View>
 
           <TouchableOpacity
@@ -206,6 +206,10 @@ const mypageStyle = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     width: "100%",
+    height: "100%",
+  },
+  boldText: {
+    fontFamily: "SUITE-Bold",
   },
   helloContainer: {
     display: "flex",
@@ -214,6 +218,7 @@ const mypageStyle = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
     justifyContent: "flex-start",
+    fontFamily: "SUITE-Bold",
   },
   carouselContainer: {
     display: "flex",
@@ -226,6 +231,7 @@ const mypageStyle = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
+    fontFamily: "SUITE-Bold",
   },
   carouselSideArrowContainer: {
     width: 30,
@@ -271,6 +277,7 @@ const mypageStyle = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    fontFamily: "SUITE-Bold",
   },
   menuIcon: {
     width: 28,
@@ -282,6 +289,7 @@ const mypageStyle = StyleSheet.create({
     flex: 1,
     display: "flex",
     alignItems: "center",
+    fontFamily: "SUITE-Bold",
   },
   noCardImage: { width: 60, height: 60 },
   noCardText: {

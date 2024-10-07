@@ -1,6 +1,6 @@
 // @/components/recommend/RecommendedCardCarousel.tsx
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Card } from "@/interfaces/Card";
 import { mockCardInfo } from "@/mock/mockUser";
@@ -10,7 +10,7 @@ interface RecommendedCardCarouselProps {
 }
 
 const RecommendedCardCarousel = ({ cards }: RecommendedCardCarouselProps) => {
-  const width = 320; // Adjust based on your design
+  const width = Dimensions.get("window").width * 0.8; // Adjust based on your design
 
   return (
     <View style={styles.carouselContainer}>
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
     width: "100%",
     overflow: "hidden",
     height: 200,
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 10,
   },
   carouselInner: {

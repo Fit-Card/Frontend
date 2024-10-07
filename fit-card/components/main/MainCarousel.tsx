@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import * as Progress from "react-native-progress";
 import { MainCard } from "@/interfaces/Card";
@@ -19,7 +19,7 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
     setContainerWidth(width);
   };
 
-  const width = 300; // 디자인에 맞게 조정
+  const width = Dimensions.get("window").width * 0.8; // 디자인에 맞게 조정
 
   const renderItem = ({ item }: { item: MainCard }) => {
     const usagePercentage = item.currentUsage / item.goalUsage;
@@ -104,8 +104,8 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
 const styles = StyleSheet.create({
   carouselContainer: {
     width: "80%",
+    height: "80%",
     overflow: "hidden",
-    height: "85%",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
@@ -113,26 +113,30 @@ const styles = StyleSheet.create({
   carouselInner: {
     width: "100%",
     flexDirection: "row",
-    alignContent: "space-between",
+    justifyContent: "center", // 중앙에 카드 배치
+    alignItems: "center", // 카드 중앙 정렬
+    paddingHorizontal: 10, // 각 카드 간격을 위한 패딩 조정
   },
   card: {
     width: "100%",
+    height: "100%",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#fff",
     borderRadius: 10,
+    paddingTop: 30,
     paddingHorizontal: 10,
-    height: "100%",
     // justifyContent: "center",
   },
   cardImage: {
-    width: 120,
-    height: 100,
+    width: 144,
+    height: 120,
     resizeMode: "contain",
     marginBottom: 10,
   },
   cardTitle: {
     fontFamily: "SUITE-Bold",
-    fontSize: 16,
+    fontSize: 20,
     marginBottom: 5,
   },
   usageContainer: {

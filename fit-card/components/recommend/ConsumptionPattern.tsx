@@ -118,7 +118,6 @@ function ConsumptionPattern({ user, consumptionCategory }: consumptionPatternPro
 export default ConsumptionPattern;
 
 const styles = StyleSheet.create({
-  // container: {},
   textContainer: {
     fontSize: 16,
     marginBottom: 20,
@@ -142,7 +141,7 @@ const styles = StyleSheet.create({
   barContainer: {
     flexDirection: "row",
     height: 20,
-    width: "100%",
+    width: "90%",
     backgroundColor: "#f0f0f0",
     borderRadius: 10,
     overflow: "hidden",
