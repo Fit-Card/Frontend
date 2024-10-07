@@ -5,10 +5,11 @@ interface CardItemProps {
   image: any;
   name: string;
   description: string;
+  benefitAmount?: number; // 할인 금액이 있을 수도 없을 수도 있음
   onPress: () => void; // 클릭 이벤트를 받을 프롭 추가
 }
 
-const CardItem = ({ image, name, description, onPress }: CardItemProps) => {
+const CardItem = ({ image, name, description, benefitAmount, onPress }: CardItemProps) => {
   const [isPortrait, setIsPortrait] = useState<boolean>(false); // State to manage image orientation
 
   const handleImageLoad = (event: any) => {
@@ -28,6 +29,11 @@ const CardItem = ({ image, name, description, onPress }: CardItemProps) => {
         <View style={styles.cardInfo}>
           <Text style={styles.cardName}>{name}</Text>
           <Text style={styles.cardDescription}>{description}</Text>
+
+          {/* 할인 금액이 있을 때만 표시 */}
+          {benefitAmount !== undefined && (
+            <Text style={styles.benefitAmount}>할인 금액: {benefitAmount}원</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -64,6 +70,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#5253F0",
     fontFamily: "SUITE-Bold",
+  },
+  benefitAmount: {
+    fontSize: 12,
+    color: "#FF4500", // 할인 금액 강조 색상
+    fontFamily: "SUITE-Bold",
+    marginTop: 5,
   },
 });
 
