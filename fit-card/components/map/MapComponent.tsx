@@ -168,7 +168,7 @@ const MapComponent = () => {
       } else {
         setFilteredStores((prevStores) => [...prevStores, ...mappedStores]);
       }
-      console.log(response.data.data.branchResponses);
+      //console.log(response.data.data.branchResponses);
 
       setCurrentPage(pageNo);
       setIsLoadMoreVisible(pageNo < response.data.data.totalPages);
