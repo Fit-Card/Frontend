@@ -10,45 +10,44 @@ import { LoginRequest } from "@/interfaces/LoginRequest";
 import { User } from "@/interfaces/User";
 
 const Loading = ({ navigation }: { navigation: any }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // 임시 자동 로그인
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      try {
-        const loginRequest: LoginRequest = {
-          loginId: "test",
-          password: "test",
-        };
-        const response = await login(loginRequest);
+  // useEffect(() => {
+  //   const timer = setTimeout(async () => {
+  //     try {
+  //       const loginRequest: LoginRequest = {
+  //         loginId: "test",
+  //         password: "test",
+  //       };
+  //       const response = await login(loginRequest);
 
-        // accessToken과 refreshToken을 받아옴
-        const { accessToken, refreshToken } = response.data;
+  //       // accessToken과 refreshToken을 받아옴
+  //       const { accessToken, refreshToken } = response.data;
 
-        // accessToken으로 사용자 정보 요청 후 전역 상태 저장
-        const userData: User = await getMember(accessToken);
-        dispatch(loginAction({ user: userData, accessToken, refreshToken }));
-        console.log(accessToken);
+  //       // accessToken으로 사용자 정보 요청 후 전역 상태 저장
+  //       const userData: User = await getMember(accessToken);
+  //       dispatch(loginAction({ user: userData, accessToken, refreshToken }));
 
-        // 메인 화면으로 이동
-        navigation.navigate("Main");
-      } catch (error) {
-        console.error("자동 로그인 실패", error);
-        // 로그인 실패 시 로그인 화면으로 이동
-        navigation.replace("Login");
-      }
-    }, 1000);
+  //       // 메인 화면으로 이동
+  //       navigation.navigate("Main");
+  //     } catch (error) {
+  //       console.error("자동 로그인 실패", error);
+  //       // 로그인 실패 시 로그인 화면으로 이동
+  //       navigation.replace("Login");
+  //     }
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [dispatch, navigation]);
+  //   return () => clearTimeout(timer);
+  // }, [dispatch, navigation]);
 
   // 로그인 코드
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     navigation.replace("Login");
-  //   }, 2500);
-  //   return () => clearTimeout(timer);
-  // }, [navigation]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.replace("Login");
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
     <LinearGradient
