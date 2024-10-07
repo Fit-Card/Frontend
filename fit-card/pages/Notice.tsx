@@ -1,5 +1,13 @@
 import React, { useCallback, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+} from "react-native";
 import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { StackParamList } from "@/navigationTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,10 +15,11 @@ import KeyColors from "@/styles/KeyColor";
 import Common from "@/styles/Common";
 import axios from "axios";
 import { mockUser } from "@/mock/mockUser";
+import { url } from "inspector";
 
 export default function NoticeScreen() {
   interface Notice {
-    alarmId: number;
+    cardEventId: number;
     cardName: String;
     cardImage: String;
     alarmTitle: String;
@@ -41,6 +50,7 @@ export default function NoticeScreen() {
 
       const fetchedNoticeData = response.data.data.alarmResponses;
       console.log("전체 알람 불러오기...");
+      console.log(response.data.data.alarmResponses);
       setNoticeData(fetchedNoticeData);
       setIsLoading(false); // 데이터 로드 완료 후 로딩 상태를 false로 변경
     } catch (error) {
@@ -52,16 +62,27 @@ export default function NoticeScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const handleNoticePress = (notice: Notice) => {
-    navigation.navigate("Noticedetail", { noticeId: notice.alarmId });
+    navigation.navigate("Noticedetail", { cardEventId: notice.cardEventId });
+    console.log(`상세보기로 이동...${notice.cardEventId}`);
   };
 
   const renderItem = ({ item }: { item: Notice }) => (
     <TouchableOpacity style={noticeStyle.card} onPress={() => handleNoticePress(item)}>
-      <Text style={[noticeStyle.cardName, Common.textBlack]}>{item.cardName}</Text>
-      <Text style={[noticeStyle.alarmTitle, Common.textGray, { fontSize: 12 }]}>
-        {item.alarmTitle}
-      </Text>
-      {/* {!item.isRead && <Text style={[noticeStyle.unreadText, Common.textSmall]}>~시간 전 ●</Text>} */}
+      <View style={noticeStyle.cardImageContainer}>
+        <Image
+          source={{ uri: item.cardImage }} // PNG 파일 경로
+          style={noticeStyle.cardImage}
+          resizeMode="contain"
+        />
+      </View>
+      <View style={noticeStyle.cardInfoContainer}>
+        <Text style={[noticeStyle.cardName, Common.textBlack]}>{item.cardName}</Text>
+        <Text style={[noticeStyle.alarmTitle, Common.textGray, { fontSize: 12 }]}>
+          {item.alarmTitle}
+        </Text>
+
+        {/* {!item.isRead && <Text style={[noticeStyle.unreadText, Common.textSmall]}>~시간 전 ●</Text>} */}
+      </View>
     </TouchableOpacity>
   );
 
@@ -74,7 +95,7 @@ export default function NoticeScreen() {
       <FlatList
         data={noticeData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.alarmId.toString()}
+        // keyExtractor={(item) => item.alarmId.toString()}
         showsVerticalScrollIndicator={false}
         style={[noticeStyle.cardList]}
       />
@@ -97,7 +118,7 @@ const noticeStyle = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 5,
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     padding: 5,
     position: "relative",
     backgroundColor: "#FFFFFF",
@@ -116,6 +137,21 @@ const noticeStyle = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 5,
+  },
+  cardImageContainer: {
+    width: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRightColor: KeyColors.gray,
+    borderRightWidth: 1,
+  },
+  cardImage: {
+    width: 60,
+    height: 60,
+  },
+  cardInfoContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
   },
   alarmTitle: {
     borderTopWidth: 1.2,

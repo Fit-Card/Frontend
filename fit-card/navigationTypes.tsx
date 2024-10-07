@@ -23,7 +23,7 @@ export type StackParamList = {
     isMine: boolean;
   };
   Notice: undefined;
-  Noticedetail: { noticeId: number };
+  Noticedetail: { cardEventId: number };
   StoreDetail: { storeName: string; storeId: number; storeCategory: any };
   PersonalInfo: undefined;
   CardDetail: { cardId: number };
