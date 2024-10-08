@@ -34,7 +34,7 @@ import SearchPage from "@/pages/SearchPage";
 import { Provider } from "react-redux";
 import store from "@/store";
 import messaging from "@react-native-firebase/messaging";
-import notifee, { AndroidStyle } from "@notifee/react-native";
+import notifee from "@notifee/react-native";
 
 // 스택 네비게이터 정의
 const Stack = createStackNavigator();
