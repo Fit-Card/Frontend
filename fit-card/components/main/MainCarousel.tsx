@@ -56,14 +56,21 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
           <View style={styles.cardDetails}>
             <Text style={styles.cardTitle}>{item.cardName}</Text>
             <Text style={styles.cardPerfomanceTitle}>
-              {(
-                item.memberCardPaymentStatus.performanceEnd -
-                item.memberCardPaymentStatus.totalPayment
-              ).toLocaleString()}
-              원을 더 사용하면
+              <Text style={styles.highlightedText}>
+                {(
+                  item.memberCardPaymentStatus.performanceEnd -
+                  item.memberCardPaymentStatus.totalPayment
+                ).toLocaleString()}
+                원
+              </Text>
+              을 더 사용하면
             </Text>
             <Text style={styles.cardPerfomanceTitle}>
-              다음달 {item.memberCardPaymentStatus.performanceLevel}구간 혜택을 받을 수 있어요!
+              다음달{" "}
+              <Text style={styles.highlightedText}>
+                {item.memberCardPaymentStatus.performanceLevel}구간
+              </Text>{" "}
+              혜택을 받을 수 있어요!
             </Text>
           </View>
         </View>
@@ -270,6 +277,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 5,
     color: "#686E74",
+  },
+  highlightedText: {
+    color: "#5253F0",
+    fontFamily: "SUITE-Bold",
   },
 });
 
