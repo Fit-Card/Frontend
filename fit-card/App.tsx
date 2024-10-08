@@ -1,4 +1,6 @@
+// @/App.tsx
 import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -32,6 +34,7 @@ import SearchPage from "@/pages/SearchPage";
 import { Provider } from "react-redux";
 import store from "@/store";
 import messaging from "@react-native-firebase/messaging";
+import notifee, { AndroidStyle } from "@notifee/react-native";
 
 // 스택 네비게이터 정의
 const Stack = createStackNavigator();
@@ -258,12 +261,90 @@ function TabNavigator() {
   );
 }
 
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  console.log("Message handled in the background!", remoteMessage);
-});
-
 // 앱 시작 시 SplashScreen을 표시하고 로딩이 완료되면 숨김
 export default function App() {
+  const requestUserPermission = async () => {
+    try {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        console.log("Authorization status:", authStatus);
+      }
+      return enabled;
+    } catch (error) {
+      console.error("Permission request error:", error);
+      return false;
+    }
+  };
+
+  const initFCM = async () => {
+    messaging()
+      .getInitialNotification()
+      .then(async (remoteMessage) => {
+        if (remoteMessage) {
+          console.log(
+            "Notification caused app to open from quit state:",
+            remoteMessage.notification
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Initial notification error:", error);
+      });
+
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "Notification caused app to open from background state:",
+        remoteMessage.notification
+      );
+    });
+
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
+      if (remoteMessage.notification) {
+        await notifee.displayNotification({
+          title: remoteMessage.notification.title,
+          body: remoteMessage.notification.body,
+        });
+      }
+    });
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      if (remoteMessage.notification) {
+        Alert.alert(`${remoteMessage.notification.title}`, remoteMessage.notification.body);
+
+        await notifee.displayNotification({
+          title: remoteMessage.notification.title,
+          body: remoteMessage.notification.body,
+          android: {
+            channelId: "default",
+            smallIcon: "ic_launcher", // 작은 아이콘을 변경하려면 이 경로를 사용
+            color: "#4caf50", // 아이콘의 배경색
+            actions: [
+              {
+                title: "View",
+                pressAction: { id: "view" },
+              },
+              {
+                title: "Dismiss",
+                pressAction: { id: "dismiss" },
+              },
+            ],
+          },
+        });
+      }
+    });
+
+    return unsubscribe;
+  };
+
+  useEffect(() => {
+    initFCM();
+  }, []);
+
   const [fontsLoaded] = useFonts({
     "SUITE-Regular": require("./assets/fonts/SUITE-Regular.ttf"),
     "SUITE-Bold": require("./assets/fonts/SUITE-Bold.ttf"),

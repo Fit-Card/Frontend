@@ -20,10 +20,10 @@ import { url } from "inspector";
 export default function NoticeScreen() {
   interface Notice {
     cardEventId: number;
-    cardName: String;
-    cardImage: String;
-    alarmTitle: String;
-    alarmCreatedAt: String;
+    cardName: string;
+    cardImage: string;
+    alarmTitle: string;
+    alarmCreatedAt: string;
   }
 
   const [noticeData, setNoticeData] = useState<Notice[]>([]);
