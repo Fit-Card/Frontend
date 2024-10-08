@@ -23,7 +23,7 @@ import {
   isValidBirthDate,
 } from "@/handlers/validationHandlers";
 import { handleVerifyOtp } from "@/handlers/otpHandlers";
-import { register } from "@/api/auth";
+import { register, send, verify } from "@/api/auth";
 
 export default function SignUp() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -126,29 +126,42 @@ export default function SignUp() {
     return `${minutes}:${remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds}`;
   };
 
+  const parsePhoneNumber = (phoneNumber: string) => {
+    return phoneNumber.replace(/-/g, ""); // Remove all dashes
+  };
+
   // Handle OTP verification request
-  const handleRequestOtp = () => {
+  const handleRequestOtp = async () => {
     if (isValidPhoneNumber(user.phoneNumber)) {
-      setShowOtpField(true);
-      setTimer(180); // Reset the timer to 3 minutes
-      setIsPhoneNumberEditable(false);
-      setIsOtpRequestDisabled(true);
+      try {
+        const parsedPhoneNumber = parsePhoneNumber(user.phoneNumber);
+        await send(parsedPhoneNumber);
+        setShowOtpField(true);
+        setTimer(180);
+        setIsPhoneNumberEditable(false);
+        setIsOtpRequestDisabled(true);
+      } catch (error) {
+        Alert.alert("오류", "유효한 전화번호를 입력해주세요. (예: 010-1234-5678)");
+      }
     } else {
-      Alert.alert("오류", "유효한 전화번호를 입력해주세요. (예: 010-1234-5678)");
+      Alert.alert("오류", "유효한 전화번호를 입력해주세요.\n(예: 010-****-****)");
     }
   };
 
   // OTP 인증 처리
-  const handleVerify = () => {
-    if (handleVerifyOtp(otpCode)) {
+  const handleVerify = async () => {
+    const parsedPhoneNumber = parsePhoneNumber(user.phoneNumber);
+
+    try {
+      const response = await verify(parsedPhoneNumber, otpCode);
       setIsValidOtpRequest(true); // OTP 인증 성공
-      // Alert.alert("성공", "인증이 완료되었습니다.");
       setOtpResult("확인되었습니다.");
       setOtpSuccess(true);
-    } else {
-      // Alert.alert("오류", "인증번호가 일치하지 않습니다.");
+    } catch (error) {
       setOtpResult("인증번호가 일치하지 않습니다.");
       setOtpSuccess(false);
+      setIsPhoneNumberEditable(true); // 전화번호 입력 수정 가능
+      setIsOtpRequestDisabled(false); // 인증하기 버튼 다시 활성화
     }
   };
 

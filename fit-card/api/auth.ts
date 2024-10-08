@@ -45,3 +45,28 @@ export const login = async (user: LoginRequest) => {
     throw error;
   }
 };
+
+export const send = async (phone: string) => {
+  try {
+    const response = await axios.post(`http://j11a405.p.ssafy.io:8081/auth/sms/send`, {
+      phone: phone,
+    });
+    console.log("send message:", response.data.statusCode);
+  } catch (error) {
+    console.error("Error send message:", error);
+    throw error;
+  }
+};
+
+export const verify = async (phone: string, certificationNumber: string) => {
+  try {
+    const response = await axios.post(`http://j11a405.p.ssafy.io:8081/auth/sms/verify`, {
+      phone: phone,
+      certificationNumber: certificationNumber,
+    });
+    console.log("verify response:", response.data.statusCode);
+  } catch (error) {
+    console.error("Error verify:", error);
+    throw error;
+  }
+};

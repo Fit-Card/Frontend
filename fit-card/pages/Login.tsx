@@ -133,7 +133,7 @@ export default function LoginScreen() {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="영문자, 숫자, 특수문자 혼용(8~15자)"
+              placeholder="영문자, 숫자 조합(8~12자)"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
