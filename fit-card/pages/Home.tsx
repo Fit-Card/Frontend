@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Text, View, ScrollView, StyleSheet, RefreshControl } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import CardUsage from "@/components/main/cardUsage";
 import Benefit from "@/components/main/cardBenefit";
 import { useSelector } from "react-redux"; // Redux의 useSelector 사용
@@ -9,9 +9,38 @@ import { mockCardInfo } from "@/mock/mockUser";
 import { dummyBenefit } from "@/mock/mockData";
 import MainCarousel from "@/components/main/MainCarousel";
 import { mainCards } from "@/mock/mockData";
+import axios from "axios";
+import { mockUser } from "@/mock/mockUser";
 
 export default function MainScreen() {
   const user = useSelector((state: RootState) => state.user.user);
+  const [cardData, setCardData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchCardData = async () => {
+      try {
+        const response = await axios.post(
+          "http://j11a405.p.ssafy.io:8081/members/cards/get/performance-and-benefit/3",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${mockUser.token}`, // Replace with your actual token
+              accept: "*/*",
+            },
+          }
+        );
+        const data = response.data.data.memberCardPerformanceAndBenefitResponse;
+        setCardData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching card data", error);
+        setLoading(false); // Disable loading even if there's an error
+      }
+    };
+
+    fetchCardData();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -22,7 +51,11 @@ export default function MainScreen() {
           </Text>
         </View>
 
-        <MainCarousel cards={mainCards} />
+        {loading ? (
+          <ActivityIndicator size="large" color="#5253F0" />
+        ) : (
+          <MainCarousel cards={cardData} />
+        )}
       </View>
     </ScrollView>
   );
@@ -50,7 +83,8 @@ const styles = StyleSheet.create({
   title: {
     width: "100%",
     justifyContent: "flex-start",
-    padding: 20,
+    paddingLeft: 20,
+    paddingTop: 20,
   },
   userName: {
     fontSize: 20,
@@ -60,7 +94,7 @@ const styles = StyleSheet.create({
   context: {
     fontSize: 16,
     fontFamily: "SUITE-Bold",
-    color: "#686E74",
+    color: "#000",
   },
   buttonContainer: {
     marginVertical: 10,

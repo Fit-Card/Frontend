@@ -33,7 +33,6 @@ const RandomBenefit = ({ cardId }: RandomBenefitProps) => {
       <Text style={styles.benefitTitle}>랜덤 혜택1:</Text>
       <Text style={styles.benefitTitle}>랜덤 혜택2:</Text>
       <Text style={styles.benefitTitle}>랜덤 혜택3:</Text>
-      <Text style={styles.benefitTitle}>카드 아이디로 랜덤 혜택 조회하려고 하고 있습니다.</Text>
       {benefits.map((benefit, index) => (
         <Text key={index} style={styles.benefitText}>
           {benefit}

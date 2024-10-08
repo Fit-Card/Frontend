@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import * as Progress from "react-native-progress";
 import { MainCard } from "@/interfaces/Card";
-import RandomBenefit from "./RandomBenefit";
+import { categoriesWithIcons } from "@/components/map/LocationType";
+import Ionicons from "react-native-vector-icons/Ionicons"; // Ionicons 사용
 
 interface MainCarouselProps {
   cards: MainCard[];
@@ -12,57 +13,110 @@ interface MainCarouselProps {
 const MainCarousel = ({ cards }: MainCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const carouselRef = useRef<any>(null); // 캐러셀 참조 추가
+  const [imageOrientation, setImageOrientation] = useState<{ [key: number]: boolean }>({});
+  const carouselRef = useRef<any>(null);
 
   const onLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
     setContainerWidth(width);
   };
 
-  const width = Dimensions.get("window").width * 0.8; // 디자인에 맞게 조정
+  const width = Dimensions.get("window").width * 0.9;
+
+  const handleImageLoad = (id: number, event: any) => {
+    const { width, height } = event.nativeEvent.source;
+    setImageOrientation((prev) => ({
+      ...prev,
+      [id]: height > width,
+    }));
+  };
+
+  const getIconForCategory = (merchantName: string) => {
+    const category = categoriesWithIcons.find((cat) => cat.title === merchantName);
+    return category ? category.icon : "help-outline";
+  };
 
   const renderItem = ({ item }: { item: MainCard }) => {
-    const usagePercentage = item.currentUsage / item.goalUsage;
+    const usagePercentage =
+      item.memberCardPaymentStatus.totalPayment / item.memberCardPaymentStatus.performanceEnd;
 
     return (
       <View style={styles.carouselInner}>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>{item.cardName}</Text>
-          <Image source={item.cardImage} style={styles.cardImage} />
+        <View style={styles.cardContainer}>
+          <Image
+            source={{ uri: item.cardImage }}
+            style={[
+              styles.cardImage,
+              imageOrientation[item.cardId] && { transform: [{ rotate: "-90deg" }] },
+            ]}
+            onLoad={(event) => handleImageLoad(item.cardId, event)}
+            resizeMode="contain"
+          />
 
-          <View style={styles.usageContainer} onLayout={onLayout}>
-            {/* Progress Bar */}
-            <View style={{ position: "relative", width: containerWidth }}>
-              <Progress.Bar
-                progress={usagePercentage}
-                width={containerWidth}
-                height={10}
-                color={"#5253F0"}
-                unfilledColor={"#ccc"}
-                borderWidth={0}
-              />
-              <Text
-                style={[
-                  styles.currentUsageText,
-                  {
-                    left: usagePercentage * containerWidth - 30,
-                  },
-                ]}
-              >
-                {item.currentUsage}원
-              </Text>
-            </View>
+          <View style={styles.cardDetails}>
+            <Text style={styles.cardTitle}>{item.cardName}</Text>
+            <Text style={styles.cardPerfomanceTitle}>
+              {(
+                item.memberCardPaymentStatus.performanceEnd -
+                item.memberCardPaymentStatus.totalPayment
+              ).toLocaleString()}
+              원을 더 사용하면
+            </Text>
+            <Text style={styles.cardPerfomanceTitle}>
+              다음달 {item.memberCardPaymentStatus.performanceLevel}구간 혜택을 받을 수 있어요!
+            </Text>
           </View>
+        </View>
 
-          <RandomBenefit cardId={cards[currentIndex].cardId} />
+        <View style={styles.progressBarWrapper} onLayout={onLayout}>
+          <Progress.Bar
+            progress={usagePercentage}
+            width={containerWidth}
+            height={12}
+            color={"#5253F0"}
+            unfilledColor={"#e0e0e0"}
+            borderWidth={0}
+            borderRadius={10}
+          />
 
-          {/* <View>
-            {item.cardBenefit.map((benefit, index) => (
-              <Text key={index} style={styles.cardBenefit}>
-                {benefit}
-              </Text>
-            ))}
-          </View> */}
+          <Image
+            source={require("@/assets/images/flag.png")}
+            style={[
+              styles.flagIcon,
+              {
+                right: -10,
+              },
+            ]}
+          />
+
+          <View style={styles.progressTextContainer}>
+            <Text style={styles.startText}>{item.memberCardPaymentStatus.performanceStart}원</Text>
+            <Text style={styles.endText}>
+              {item.memberCardPaymentStatus.totalPayment.toLocaleString()}원/
+              {item.memberCardPaymentStatus.performanceEnd.toLocaleString()}원
+            </Text>
+          </View>
+        </View>
+
+        <View>
+          <Text style={styles.recommendComment}>이런 혜택은 어떠세요?</Text>
+        </View>
+
+        <View style={styles.benefitsContainer}>
+          {item.cardBenefits.benefitSimples.map((benefit, index) => (
+            <View key={index} style={styles.benefitItem}>
+              <Ionicons
+                name={getIconForCategory(benefit.merchantCategory)}
+                size={24}
+                color={"#5253F0"}
+                style={styles.benefitIcon}
+              />
+              <View style={styles.benefitTextContainer}>
+                <Text style={styles.merchantName}>{benefit.merchantName}</Text>
+                <Text style={styles.discountInfo}>{benefit.discountInfo}</Text>
+              </View>
+            </View>
+          ))}
         </View>
       </View>
     );
@@ -70,11 +124,10 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
 
   return (
     <View style={styles.carouselContainer}>
-      {/* Carousel */}
       <Carousel
         ref={carouselRef}
         width={width}
-        height={400}
+        height={360}
         data={cards}
         renderItem={renderItem}
         mode="parallax"
@@ -82,13 +135,12 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
         }}
-        overscrollEnabled={false} // Prevent overscroll
+        overscrollEnabled={false}
         onSnapToItem={(index) => {
           setCurrentIndex(index);
         }}
       />
 
-      {/* 페이지 인디케이터 */}
       <View style={styles.paginationContainer}>
         {cards.map((_, index) => (
           <View
@@ -103,8 +155,8 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    width: "80%",
-    height: "80%",
+    width: "90%",
+    height: "88%",
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
@@ -112,50 +164,85 @@ const styles = StyleSheet.create({
   },
   carouselInner: {
     width: "100%",
-    flexDirection: "row",
-    justifyContent: "center", // 중앙에 카드 배치
-    alignItems: "center", // 카드 중앙 정렬
-    paddingHorizontal: 10, // 각 카드 간격을 위한 패딩 조정
-  },
-  card: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingTop: 30,
     paddingHorizontal: 10,
-    // justifyContent: "center",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   cardImage: {
-    width: 144,
-    height: 120,
+    width: 100,
+    height: 100,
     resizeMode: "contain",
-    marginBottom: 10,
+    marginRight: 20,
+  },
+  cardDetails: {
+    flex: 1,
+    justifyContent: "center",
   },
   cardTitle: {
     fontFamily: "SUITE-Bold",
-    fontSize: 20,
-    marginBottom: 5,
+    fontSize: 15,
+    marginBottom: 10,
+    color: "#000",
   },
-  usageContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 10,
+  progressBarWrapper: {
+    position: "relative",
+    marginTop: 30,
   },
-  currentUsageText: {
+  flagIcon: {
     position: "absolute",
-    top: -20,
-    fontSize: 12,
-    fontFamily: "SUITE-Bold",
-    color: "#5253F0",
+    top: -30,
+    width: 35,
+    height: 30,
+    resizeMode: "contain",
   },
-  cardBenefit: {
-    fontSize: 14,
-    color: "#555",
+  progressTextContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 5,
+  },
+  startText: {
+    fontSize: 13,
+    color: "#333",
     fontFamily: "SUITE-Bold",
-    marginVertical: 2,
+  },
+  endText: {
+    fontSize: 13,
+    color: "#333",
+    fontFamily: "SUITE-Bold",
+  },
+  benefitsContainer: {
+    marginTop: 15,
+  },
+  benefitItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  benefitTextContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginLeft: 10,
+  },
+  benefitIcon: {
+    marginRight: 10,
+    marginLeft: 5,
+  },
+  merchantName: {
+    fontSize: 16,
+    color: "#000",
+    fontFamily: "SUITE-Regular",
+  },
+  discountInfo: {
+    fontSize: 16,
+    color: "#000",
+    fontFamily: "SUITE-Regular",
+    textAlign: "right",
+    marginRight: 5,
   },
   paginationContainer: {
     flexDirection: "row",
@@ -171,6 +258,18 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     backgroundColor: "#5253F0",
+  },
+  recommendComment: {
+    fontSize: 18,
+    color: "#000",
+    fontFamily: "SUITE-Bold",
+    marginTop: 30,
+  },
+  cardPerfomanceTitle: {
+    fontFamily: "SUITE-Bold",
+    fontSize: 12,
+    marginBottom: 5,
+    color: "#686E74",
   },
 });
 
