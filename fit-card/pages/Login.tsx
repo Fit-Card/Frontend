@@ -79,7 +79,7 @@ export default function LoginScreen() {
     };
 
     try {
-      console.log(loginRequest);
+      // console.log(loginRequest);
       // 로그인 요청 보내기
       const response = await login(loginRequest);
 

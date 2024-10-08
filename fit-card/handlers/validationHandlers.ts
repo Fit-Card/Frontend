@@ -9,7 +9,7 @@ export const handleCheckDuplicate = async (
   setIsLoginIdEmpty: React.Dispatch<React.SetStateAction<boolean | null>>,
   setIsDuplicate: React.Dispatch<React.SetStateAction<boolean | null>>
 ) => {
-  console.log("아이디 중복 확인:", user.loginId);
+  // console.log("아이디 중복 확인:", user.loginId);
 
   if (!user.loginId) {
     setIsLoginIdEmpty(true);
@@ -22,7 +22,7 @@ export const handleCheckDuplicate = async (
     // 서버에 아이디 중복 확인 요청
     const isDuplicate = await checkid(user.loginId);
     setIsDuplicate(isDuplicate); // 서버로부터 받은 중복 결과 설정
-    console.log(isDuplicate);
+    // console.log(isDuplicate);
   } catch (error) {
     console.error("아이디 중복 확인 중 오류 발생:", error);
   }

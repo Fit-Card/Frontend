@@ -85,11 +85,9 @@ export default function SignUp() {
       user.birthDate &&
       user.phoneNumber &&
       isDuplicate === false &&
-      isValidOtpRequest === true
-      // && isValidBirthDate(user.birthDate)
+      isValidOtpRequest === true &&
+      isValidBirthDate(user.birthDate)
     ) {
-      // 회원가입 정보 전송
-
       try {
         // 회원가입 정보 전송
         console.log(user);
