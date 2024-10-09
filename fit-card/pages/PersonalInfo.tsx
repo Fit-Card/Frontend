@@ -45,33 +45,63 @@ export default function PersonalInfoScreen() {
     }
   };
 
-  // 유저 정보를 업데이트하는 함수
-  const updateInfo = async (field: string) => {
+    // 전화번호 형식 맞추기 함수
+    const formatPhoneNumber = (phone: string) => {
+      const cleaned = phone.replace(/\D/g, ""); // 숫자만 남기기
+      const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
+      if (match) {
+        return `${match[1]}-${match[2]}-${match[3]}`;
+      }
+      return phone; // 형식이 맞지 않으면 그대로 반환
+    };
+
+  // 전화번호 수정 요청
+  const updatePhoneNumber = async () => {
+    const formattedPhoneNumber = formatPhoneNumber(newPhoneNumber);
+    if (!/^\d{3}-\d{4}-\d{4}$/.test(formattedPhoneNumber)) {
+      Alert.alert("형식 오류", "전화번호 형식이 맞지 않습니다. 다시 입력해주세요.");
+      return;
+    }
     try {
-      // 업데이트 요청 보냄
       await axios.post(
-        "http://j11a405.p.ssafy.io:8081/member/update",
-        {
-          newPassword: field === "password" ? newPassword : undefined,
-          newPhoneNumber: field === "phoneNumber" ? newPhoneNumber : undefined,
-        },
+        "http://j11a405.p.ssafy.io:8081/member/update-phone",
+        { newPhoneNumber: formattedPhoneNumber },
         {
           headers: {
             Authorization: `Bearer ${mockUser.token}`,
           },
         }
       );
-      Alert.alert("수정 완료", "정보가 성공적으로 수정되었습니다.");
+      Alert.alert("수정 완료", "전화번호가 성공적으로 수정되었습니다.");
       setIsEditingPhoneNumber(false);
-      setIsEditingPassword(false);
-      fetchInfo(); // 수정 후 정보를 다시 불러옴
+      fetchInfo();
     } catch (error) {
-      console.error("유저 정보 수정 실패", error);
-      Alert.alert("수정 실패", "정보 수정에 실패했습니다.");
+      console.error("전화번호 수정 실패", error);
+      Alert.alert("수정 실패", "전화번호 수정에 실패했습니다.");
     }
   };
 
-  // 페이지가 focus될 때마다 유저 정보를 불러옴
+  // 비밀번호 수정 요청
+  const updatePassword = async () => {
+    try {
+      await axios.post(
+        "http://j11a405.p.ssafy.io:8081/member/update",
+        { password: prevPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${mockUser.token}`,
+          },
+        }
+      );
+      Alert.alert("수정 완료", "비밀번호가 성공적으로 수정되었습니다.");
+      setIsEditingPassword(false);
+      fetchInfo();
+    } catch (error) {
+      console.error("비밀번호 수정 실패", error);
+      Alert.alert("수정 실패", "비밀번호 수정에 실패했습니다.");
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchInfo();
@@ -126,7 +156,7 @@ export default function PersonalInfoScreen() {
                     />
                     <TouchableOpacity
                       style={[styles.confirmButton]}
-                      onPress={() => updateInfo("phoneNumber")}
+                      onPress={updatePhoneNumber}
                     >
                       <Text style={[styles.confirmButtonText]}>수정 확인</Text>
                     </TouchableOpacity>
@@ -161,7 +191,7 @@ export default function PersonalInfoScreen() {
                     />
                     <TouchableOpacity
                       style={[styles.confirmButton]}
-                      onPress={() => updateInfo("password")}
+                      onPress={updatePassword}
                     >
                       <Text style={[styles.confirmButtonText]}>수정 확인</Text>
                     </TouchableOpacity>
