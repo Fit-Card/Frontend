@@ -4,7 +4,7 @@ import Carousel from "react-native-reanimated-carousel";
 import * as Progress from "react-native-progress";
 import { MainCard } from "@/interfaces/Card";
 import { categoriesWithIcons } from "@/components/map/LocationType";
-import Ionicons from "react-native-vector-icons/Ionicons"; // Ionicons 사용
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface MainCarouselProps {
   cards: MainCard[];
@@ -22,6 +22,7 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
   };
 
   const width = Dimensions.get("window").width * 0.9;
+  const height = Dimensions.get("window").height * 0.6;
 
   const handleImageLoad = (id: number, event: any) => {
     const { width, height } = event.nativeEvent.source;
@@ -134,7 +135,7 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
       <Carousel
         ref={carouselRef}
         width={width}
-        height={360}
+        height={height}
         data={cards}
         renderItem={renderItem}
         mode="parallax"

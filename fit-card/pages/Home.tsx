@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
-import CardUsage from "@/components/main/cardUsage";
-import Benefit from "@/components/main/cardBenefit";
-import { useSelector } from "react-redux"; // Redux의 useSelector 사용
-import { RootState } from "@/store"; // RootState 타입
-import { recommendedCards } from "@/mock/mockData";
-import { mockCardInfo } from "@/mock/mockUser";
-import { dummyBenefit } from "@/mock/mockData";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 import MainCarousel from "@/components/main/MainCarousel";
-import { mainCards } from "@/mock/mockData";
 import axios from "axios";
 import { mockUser } from "@/mock/mockUser";
 
@@ -71,14 +65,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   innerContainer: {
-    justifyContent: "flex-start",
     alignItems: "center",
     borderRadius: 20,
     backgroundColor: "#fff",
     width: "100%",
-    paddingBottom: 30,
     borderWidth: 2.5,
     borderColor: "#e1e1e1",
+    // justifyContent: "flex-start",
+    // paddingBottom: 30,
   },
   title: {
     width: "100%",
