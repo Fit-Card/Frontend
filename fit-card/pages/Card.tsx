@@ -39,7 +39,7 @@ export default function CardScreen() {
         setLoading(true);
 
         const response = await getRecommendCards();
-        console.log("recommendCards:", response);
+        // console.log("recommendCards:", response);
         setRecommendCards(response.data.memberCardRecommendResponses);
       } catch (error) {
         console.error("Error fetching recommend cards:", error);
@@ -54,9 +54,6 @@ export default function CardScreen() {
 
         const response = await getPaymentCategory();
         // console.log("paymentCategory: ", response);
-        if (!response) {
-          throw new Error();
-        }
         setConsumptionPattern(response);
       } catch (error) {
         setConsumptionPattern(mockConsumptionPattern);
@@ -172,6 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: "flex-start",
     marginLeft: "5%",
+    fontSize: 18,
   },
   ageGroup: {
     width: "90%",
