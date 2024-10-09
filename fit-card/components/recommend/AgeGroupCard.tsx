@@ -1,46 +1,53 @@
 // @/components/recommend/AgeGroup.tsx
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackParamList } from "@/navigationTypes";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-// AgeGroupCard 컴포넌트의 props 타입 정의
+type CardListNavigationProp = StackNavigationProp<StackParamList, "CardDetail">;
+
 interface AgeGroupCardProps {
-  imagePath: any; // 카드 이미지 경로
-  cardName: string; // 카드 이름
-  benefits: string[]; // 혜택 내용 배열
+  cardId: number;
+  imagePath: any;
+  cardName: string;
+  benefits: string[];
 }
 
-function AgeGroupCard({ imagePath, cardName, benefits }: AgeGroupCardProps) {
+function AgeGroupCard({ cardId, imagePath, cardName, benefits }: AgeGroupCardProps) {
+  const handleCardPress = (cardId: number) => {
+    navigation.navigate("CardDetail", { cardId });
+  };
+
+  const navigation = useNavigation<CardListNavigationProp>();
   const [imageOrientation, setImageOrientation] = useState<boolean>(false);
 
   const handleImageLoad = (event: any) => {
     const { width, height } = event.nativeEvent.source;
-    // 이미지가 세로로 더 길 경우 회전 여부 설정
     setImageOrientation(height > width);
   };
 
   return (
-    <View style={styles.cardContainer}>
-      {/* 카드 이미지 */}
-      <Image
-        source={imagePath}
-        style={[
-          imageOrientation
-            ? styles.cardImageRotated // 세로로 긴 이미지일 때 회전된 크기 적용
-            : styles.cardImage, // 기본 크기 적용
-        ]}
-        onLoad={handleImageLoad}
-        resizeMode="contain"
-      />
-      {/* 카드 정보(이름 및 혜택) */}
-      <View style={styles.cardInfo}>
-        {benefits.map((benefit, index) => (
-          <Text key={index} style={styles.benefitText}>
-            {benefit}
-          </Text>
-        ))}
-        <Text style={styles.cardName}>{cardName}</Text>
+    <TouchableOpacity onPress={() => handleCardPress(cardId)}>
+      <View style={styles.cardContainer}>
+        {/* 카드 이미지 */}
+        <Image
+          source={imagePath}
+          style={[imageOrientation ? styles.cardImageRotated : styles.cardImage]}
+          onLoad={handleImageLoad}
+          resizeMode="contain"
+        />
+        {/* 카드 정보(이름 및 혜택) */}
+        <View style={styles.cardInfo}>
+          {benefits.map((benefit, index) => (
+            <Text key={index} style={styles.benefitText}>
+              {benefit}
+            </Text>
+          ))}
+          <Text style={styles.cardName}>{cardName}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -54,19 +61,17 @@ const styles = StyleSheet.create({
     width: "100%", // 카드의 너비를 부모 View에 맞게 설정
   },
   cardImage: {
-    width: 80,
-    height: 50,
+    width: 100,
+    height: 100,
     marginRight: 25,
-    marginLeft: 9,
-    marginVertical: 13,
-    // marginTop: 10,
+    marginHorizontal: 20,
     resizeMode: "contain",
   },
   cardImageRotated: {
-    width: 50,
-    height: 80,
-    marginLeft: 25,
-    marginRight: 42,
+    width: 100,
+    height: 100,
+    marginRight: 25,
+    marginHorizontal: 20,
     transform: [{ rotate: "-90deg" }],
     resizeMode: "contain",
   },

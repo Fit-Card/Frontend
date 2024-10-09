@@ -42,6 +42,14 @@ export default function CardScreen() {
       try {
         const response = await getAgeSpecificCards(3);
         setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
+        for (
+          let index = 0;
+          index < response.data.memberCardGetByAgeSpecificResponses.length;
+          index++
+        ) {
+          const element = response.data.memberCardGetByAgeSpecificResponses[index];
+          console.log("cardId:", element.cardId);
+        }
       } catch (error) {
         console.error("Error fetching age-specific cards:", error);
       }
@@ -108,6 +116,7 @@ export default function CardScreen() {
           ageSpecificCards.map((card) => (
             <View key={card.cardId} style={styles.ageGroup}>
               <AgeGroupCard
+                cardId={card.cardId}
                 imagePath={{ uri: card.cardImageUrl }}
                 cardName={card.cardName}
                 benefits={[`${card.cardCompanyName} 카드`]}

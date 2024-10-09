@@ -160,6 +160,11 @@ function CardStackNavigator() {
         component={NoticeDetailScreen}
         options={{ header: () => <HeaderComponent title="상세 보기" /> }}
       />
+      <Stack.Screen
+        name="CardDetail"
+        component={CardDetailScreen}
+        options={{ header: () => <HeaderComponent title="카드 상세" /> }}
+      />
     </Stack.Navigator>
   );
 }
