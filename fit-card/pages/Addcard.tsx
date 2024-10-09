@@ -9,7 +9,11 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
-import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  NavigationProp,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 
 import Common from "../styles/Common"; // 스타일 파일 가져오기
@@ -82,7 +86,10 @@ export default function AddcardScreen() {
       );
 
       console.log("카드 등록 성공: ", response.data);
-      Alert.alert("카드 등록", `${selectedCardIds.length}개의 카드가 등록되었습니다.`);
+      Alert.alert(
+        "카드 등록",
+        `${selectedCardIds.length}개의 카드가 등록되었습니다.`
+      );
       navigation.navigate("Mypage");
     } catch (error) {
       console.error("카드 등록 실패: ", error);
@@ -102,55 +109,83 @@ export default function AddcardScreen() {
         {/* 안내 문구 */}
         <View style={AddcardStyle.commentContainer}>
           <Text style={[Common.textSmall]}>소유하고 계신 카드 중에서</Text>
-          <Text style={[Common.textSmall]}>앱에서 표시하고 싶은 카드를 선택해주세요!</Text>
-          <Text style={[Common.textSmall]}>카드 갱신 이후에 소유 카드 정보는</Text>
+          <Text style={[Common.textSmall]}>
+            앱에서 표시하고 싶은 카드를 선택해주세요!
+          </Text>
+          <Text style={[Common.textSmall]}>
+            카드 갱신 이후에 소유 카드 정보는
+          </Text>
           <Text style={[Common.textSmall]}>다음 갱신까지 폐기됩니다.</Text>
         </View>
 
-        <View style={AddcardStyle.cardListContainer}>
-          {cardData.map((card) => (
-            <TouchableOpacity
-              key={card.financialUserCardId}
-              style={[
-                AddcardStyle.card,
-                {
-                  borderColor: selectedCardIds.includes(card.financialUserCardId)
-                    ? KeyColors.blue
-                    : "#FFFFFF",
-                  borderWidth: selectedCardIds.includes(card.financialUserCardId) ? 2 : 2,
-                },
-              ]}
-              onPress={() => {
-                const newSelectedCardIds = [...selectedCardIds];
-                const index = newSelectedCardIds.indexOf(card.financialUserCardId);
-                if (index !== -1) {
-                  // 카드가 이미 선택되어있을 경우 : 제거
-                  newSelectedCardIds.splice(index, 1);
-                } else {
-                  // 카드가 새로 선택된 경우 : 추가
-                  newSelectedCardIds.push(card.financialUserCardId);
-                }
-                setSelectedCardIds(newSelectedCardIds);
-              }}
-            >
-              <View style={AddcardStyle.cardImageContainer}>
-                <Image
-                  source={{ uri: card.cardImageUrl }} // PNG 파일 경로
-                  style={AddcardStyle.cardImage} // 아이콘 스타일
-                  resizeMode="contain"
-                />
-              </View>
+        {cardData.length === 0 ? (
+          <View style={AddcardStyle.noCardContainer}>
+            <Image
+              style={AddcardStyle.noCardImage}
+              source={require("../assets/icons/icon_no.png")}
+            ></Image>
+            <Text style={[Common.textBold, Common.textBlack]}>
+              갱신할 카드가 없습니다
+            </Text>
+          </View>
+        ) : (
+          <View style={AddcardStyle.cardListContainer}>
+            {cardData.map((card) => (
+              <TouchableOpacity
+                key={card.financialUserCardId}
+                style={[
+                  AddcardStyle.card,
+                  {
+                    borderColor: selectedCardIds.includes(
+                      card.financialUserCardId
+                    )
+                      ? KeyColors.blue
+                      : "#FFFFFF",
+                    borderWidth: selectedCardIds.includes(
+                      card.financialUserCardId
+                    )
+                      ? 2
+                      : 2,
+                  },
+                ]}
+                onPress={() => {
+                  const newSelectedCardIds = [...selectedCardIds];
+                  const index = newSelectedCardIds.indexOf(
+                    card.financialUserCardId
+                  );
+                  if (index !== -1) {
+                    // 카드가 이미 선택되어있을 경우 : 제거
+                    newSelectedCardIds.splice(index, 1);
+                  } else {
+                    // 카드가 새로 선택된 경우 : 추가
+                    newSelectedCardIds.push(card.financialUserCardId);
+                  }
+                  setSelectedCardIds(newSelectedCardIds);
+                }}
+              >
+                <View style={AddcardStyle.cardImageContainer}>
+                  <Image
+                    source={{ uri: card.cardImageUrl }} // PNG 파일 경로
+                    style={AddcardStyle.cardImage} // 아이콘 스타일
+                    resizeMode="contain"
+                  />
+                </View>
 
-              <View style={AddcardStyle.cardTextContainer}>
-                <Text style={[Common.textBold, Common.textBlack]}>{card.cardName}</Text>
+                <View style={AddcardStyle.cardTextContainer}>
+                  <Text style={[Common.textBold, Common.textBlack]}>
+                    {card.cardName}
+                  </Text>
 
-                {selectedCardIds.includes(card.financialUserCardId) ? (
-                  <Text style={[AddcardStyle.selectText, Common.textSmall]}>선택됨 ●</Text>
-                ) : null}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+                  {selectedCardIds.includes(card.financialUserCardId) ? (
+                    <Text style={[AddcardStyle.selectText, Common.textSmall]}>
+                      선택됨 ●
+                    </Text>
+                  ) : null}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       <View style={AddcardStyle.submitButtonContainer}>
@@ -158,16 +193,21 @@ export default function AddcardScreen() {
           style={[
             AddcardStyle.submitButton,
             {
-              backgroundColor: selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
+              backgroundColor:
+                selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
             },
           ]}
           onPress={handleSubmit}
           disabled={selectedCardIds.length === 0}
         >
           {selectedCardIds.length === 0 ? (
-            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>선택 필요</Text>
+            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>
+              선택 필요
+            </Text>
           ) : (
-            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>갱신 하기</Text>
+            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>
+              갱신 하기
+            </Text>
           )}
           {selectedCardIds.length === 0 ? (
             <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
@@ -205,6 +245,15 @@ const AddcardStyle = StyleSheet.create({
     borderRadius: 10,
     width: 250,
     gap: 1,
+  },
+  noCardContainer: {
+    width: width - 40,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 200,
+  },
+  noCardImage: { 
+    width: 60, height: 60 
   },
   cardListContainer: {
     width: width - 40,
