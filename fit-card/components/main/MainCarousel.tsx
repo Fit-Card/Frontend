@@ -11,6 +11,13 @@ interface MainCarouselProps {
 }
 
 const MainCarousel = ({ cards }: MainCarouselProps) => {
+  if (cards.length === 0) {
+    return (
+      <View style={styles.exceptionContainer}>
+        <Text style={styles.exceptionTitle}>카드를 등록해주세요.</Text>
+      </View>
+    );
+  }
   const [currentIndex, setCurrentIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [imageOrientation, setImageOrientation] = useState<{ [key: number]: boolean }>({});
@@ -56,23 +63,31 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
 
           <View style={styles.cardDetails}>
             <Text style={styles.cardTitle}>{item.cardName}</Text>
-            <Text style={styles.cardPerfomanceTitle}>
-              <Text style={styles.highlightedText}>
-                {(
-                  item.memberCardPaymentStatus.performanceEnd -
-                  item.memberCardPaymentStatus.totalPayment
-                ).toLocaleString()}
-                원
-              </Text>
-              을 더 사용하면
-            </Text>
-            <Text style={styles.cardPerfomanceTitle}>
-              다음달{" "}
-              <Text style={styles.highlightedText}>
-                {item.memberCardPaymentStatus.performanceLevel}구간
-              </Text>{" "}
-              혜택을 받을 수 있어요!
-            </Text>
+            {item.memberCardPaymentStatus.performanceEnd -
+              item.memberCardPaymentStatus.totalPayment >
+            0 ? (
+              <View>
+                <Text style={styles.cardPerfomanceTitle}>
+                  <Text style={styles.highlightedText}>
+                    {(
+                      item.memberCardPaymentStatus.performanceEnd -
+                      item.memberCardPaymentStatus.totalPayment
+                    ).toLocaleString()}
+                    원
+                  </Text>
+                  을 더 사용하면
+                </Text>
+                <Text style={styles.cardPerfomanceTitle}>
+                  다음달{" "}
+                  <Text style={styles.highlightedText}>
+                    {item.memberCardPaymentStatus.performanceLevel}구간
+                  </Text>{" "}
+                  혜택을 받을 수 있어요!
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.exceedPerformenceTitle}>목표 실적을 달성했어요!</Text>
+            )}
           </View>
         </View>
 
@@ -162,6 +177,24 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
 };
 
 const styles = StyleSheet.create({
+  exceptionContainer: {
+    marginTop: 100,
+    marginBottom: 150,
+    // borderWidth: 2,
+    // padding: 50,
+    // borderRadius: 20,
+    // borderColor: "#ccc",
+    // alignItems: "center",
+  },
+  exceptionTitle: {
+    fontFamily: "SUITE-Bold",
+    fontSize: 22,
+  },
+  image: {
+    width: 80,
+    height: 80,
+    marginBottom: 20,
+  },
   carouselContainer: {
     width: "90%",
     height: "88%",
@@ -276,6 +309,12 @@ const styles = StyleSheet.create({
   cardPerfomanceTitle: {
     fontFamily: "SUITE-Bold",
     fontSize: 12,
+    marginBottom: 5,
+    color: "#686E74",
+  },
+  exceedPerformenceTitle: {
+    fontFamily: "SUITE-Bold",
+    fontSize: 18,
     marginBottom: 5,
     color: "#686E74",
   },
