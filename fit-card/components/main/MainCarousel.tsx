@@ -152,7 +152,7 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
       <Carousel
         ref={carouselRef}
         width={width}
-        height={height}
+        height={700}
         data={cards}
         renderItem={renderItem}
         mode="parallax"
@@ -205,35 +205,40 @@ const styles = StyleSheet.create({
   },
   carouselContainer: {
     width: "90%",
-    height: "88%",
+    height: "90%",
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
+    marginTop: -20,
+    // paddingHorizontal: 10,
   },
   carouselInner: {
     width: "100%",
     paddingHorizontal: 10,
   },
   cardContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
   },
   cardImage: {
-    width: 100,
-    height: 100,
+    width: 180,
+    height: 180,
     resizeMode: "contain",
-    marginRight: 20,
+    // marginRight: 20,
+    // marginBottom: 200,
   },
   cardDetails: {
-    flex: 1,
-    justifyContent: "center",
+    alignItems: "center",
+    // flex: 1,
+    // justifyContent: "center",
+    // textAlign: "center",
   },
   cardTitle: {
     fontFamily: "SUITE-Bold",
     fontSize: 15,
     marginBottom: 10,
     color: "#000",
+    height: 30,
   },
   progressBarWrapper: {
     position: "relative",

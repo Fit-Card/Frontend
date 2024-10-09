@@ -26,14 +26,15 @@ export default function MainScreen() {
         );
         const data = response.data.data.memberCardPerformanceAndBenefitResponse;
         setCardData(data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching card data", error);
-        setLoading(false); // Disable loading even if there's an error
+        setLoading(true);
       }
     };
 
+    setLoading(true);
     fetchCardData();
+    setLoading(false);
   }, []);
 
   return (
@@ -57,7 +58,7 @@ export default function MainScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: 700,
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#F7F7F7",
@@ -71,8 +72,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 2.5,
     borderColor: "#e1e1e1",
-    // justifyContent: "flex-start",
-    // paddingBottom: 30,
   },
   title: {
     width: "100%",
