@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, TouchableOpacity, Text, Image } from "react-native";
+import { View, TouchableOpacity, Text, Image, ActivityIndicator } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import * as Location from "expo-location";
@@ -11,7 +11,7 @@ import BottomSheetContent from "@/components/map/BottomSheetContent";
 import styles from "@/components/map/MapComponentStyle";
 import SearchComponent from "@/components/map/SingleSearch";
 import { StackParamList } from "@/navigationTypes";
-import { LocationType } from "@/components/map/LocationType";
+import { LocationType, CustomMarkerProps } from "@/components/map/LocationType";
 import { mockUser } from "@/mock/mockUser";
 import axios from "axios";
 
@@ -59,7 +59,7 @@ const MapComponent = () => {
         setSelectedLocation(store);
       }
 
-      console.log("처음 region", region);
+      //console.log("처음 region", region);
     };
 
     initializeLocation();
@@ -147,11 +147,6 @@ const MapComponent = () => {
       const leftLongitude = region.longitude - region.longitudeDelta / 2;
       const rightLongitude = region.longitude + region.longitudeDelta / 2;
 
-      console.log(leftLatitude);
-      console.log(rightLatitude);
-      console.log(leftLongitude);
-      console.log(rightLongitude);
-
       const branchResponses = response.data.data.branchResponses;
       const mappedStores = branchResponses.map((branch: any) => ({
         id: branch.merchantBranchId,
@@ -202,6 +197,65 @@ const MapComponent = () => {
   };
 
   const displayedStores = filteredStores.slice(0, currentPage * ITEMS_PER_PAGE);
+
+  const CustomMarker = React.memo(({ store, onPress, selectedLocation }: CustomMarkerProps) => {
+    return (
+      <Marker
+        key={store.id}
+        coordinate={{
+          latitude: store.latitude,
+          longitude: store.longitude,
+        }}
+        onPress={() =>
+          onPress(
+            store.id,
+            store.name,
+            store.address,
+            store.distance,
+            store.latitude,
+            store.longitude,
+            store.kakaoUrl
+          )
+        }
+        tracksViewChanges={false}
+      >
+        <Image
+          source={
+            selectedLocation && selectedLocation.id === store.id
+              ? require("@/assets/images/normal-marker.png")
+              : require("@/assets/images/active-marker.png")
+          }
+          style={{
+            width: selectedLocation && selectedLocation.id === store.id ? 30 : 30,
+            height: selectedLocation && selectedLocation.id === store.id ? 30 : 30,
+          }}
+          resizeMode="contain"
+        />
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={{
+              fontSize: 10,
+              color: "black",
+              marginTop: 4,
+              fontFamily: "SUITE-Bold",
+              flexWrap: "wrap",
+              textAlign: "center",
+            }}
+          >
+            {store.name}
+          </Text>
+        </View>
+      </Marker>
+    );
+  });
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -256,71 +310,22 @@ const MapComponent = () => {
         showsMyLocationButton={false}
       >
         {displayedStores.map((store) => (
-          <Marker
+          <CustomMarker
             key={store.id}
-            coordinate={{
-              latitude: store.latitude,
-              longitude: store.longitude,
-            }}
-            onPress={() =>
-              handleMarkerPress(
-                store.id,
-                store.name,
-                store.address,
-                store.distance,
-                store.latitude,
-                store.longitude,
-                store.kakaoUrl
-              )
-            }
-          >
-            <Image
-              source={
-                selectedLocation && selectedLocation.id === store.id
-                  ? require("@/assets/images/normal-marker.png")
-                  : require("@/assets/images/active-marker.png")
-              }
-              style={{
-                width: selectedLocation && selectedLocation.id === store.id ? 40 : 40,
-                height: selectedLocation && selectedLocation.id === store.id ? 40 : 40,
-              }}
-              resizeMode="contain"
-            />
-          </Marker>
+            store={store}
+            onPress={handleMarkerPress}
+            selectedLocation={selectedLocation}
+          />
         ))}
 
         {store && store.latitude && store.longitude && (
-          <Marker
-            coordinate={{ latitude: store.latitude, longitude: store.longitude }}
-            onPress={() =>
-              handleMarkerPress(
-                store.id,
-                store.name,
-                store.address,
-                store.distance,
-                store.latitude,
-                store.longitude,
-                store.kakaoUrl
-              )
-            }
-          >
-            {selectedLocation?.id === store.id ? (
-              <Image
-                source={require("@/assets/images/normal-marker.png")}
-                style={{ width: 40, height: 40 }}
-                resizeMode="contain"
-              />
-            ) : (
-              <Image
-                source={require("@/assets/images/active-marker.png")}
-                style={{ width: 40, height: 40 }}
-                resizeMode="contain"
-              />
-            )}
-          </Marker>
+          <CustomMarker
+            store={store}
+            onPress={handleMarkerPress}
+            selectedLocation={selectedLocation}
+          />
         )}
       </MapView>
-
       <BottomSheet ref={sheetRef} snapPoints={[250]} index={-1} enablePanDownToClose={true}>
         <BottomSheetScrollView>
           {selectedLocation && (

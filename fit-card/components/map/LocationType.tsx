@@ -10,6 +10,20 @@ export type LocationType = {
   kakaoUrl: string;
 };
 
+export interface CustomMarkerProps {
+  store: LocationType;
+  onPress: (
+    id: number,
+    name: string,
+    address: string,
+    distance: number,
+    latitude: number,
+    longitude: number,
+    kakaoUrl: string
+  ) => void;
+  selectedLocation: LocationType | null;
+}
+
 export type SelectedLocationType = {
   id: number;
   name: string;
