@@ -18,6 +18,7 @@ export default function NoticeDetailScreen() {
   const route = useRoute<RouteProp<StackParamList, "Noticedetail">>();
   const { cardEventId } = route.params; // 전달된 cardEventId 파라미터
   const [noticeDetail, setNoticeDetail] = useState<NoticeDetail | null>(null);
+  const [rotateImage, setRotateImage] = useState(false); // 이미지 회전 여부 상태
 
   interface NoticeDetail {
     cardName: string;
@@ -53,6 +54,13 @@ export default function NoticeDetailScreen() {
       );
       console.log(`전달된 번호 : ${cardEventId} 에 대한 정보 불러오는 중...`);
       setNoticeDetail(response.data.data); // 상태 업데이트
+
+      // 이미지의 세로 길이가 가로 길이보다 긴 경우 회전
+      Image.getSize(response.data.data.cardImage, (width, height) => {
+        if (height > width) {
+          setRotateImage(true);
+        }
+      });
     } catch (error) {
       console.log("오류 발생!" + error);
     }
@@ -74,7 +82,10 @@ export default function NoticeDetailScreen() {
               {noticeDetail.cardImage ? (
                 <Image
                   source={{ uri: noticeDetail.cardImage }}
-                  style={NoticeDetailStyle.noticeImage}
+                  style={[
+                    NoticeDetailStyle.noticeImage,
+                    rotateImage ? { transform: [{ rotate: "-90deg" }] } : {},
+                  ]}
                   resizeMode="contain"
                 />
               ) : (
@@ -114,8 +125,9 @@ export default function NoticeDetailScreen() {
                   style={NoticeDetailStyle.eventLink}
                   onPress={() => Linking.openURL(noticeDetail.eventUrl)}
                 >
-                  <Text 
-                  style={NoticeDetailStyle.eventLinkText}>이벤트 페이지 방문하기  🔔</Text>
+                  <Text style={NoticeDetailStyle.eventLinkText}>
+                    이벤트 페이지 방문하기 🔔
+                  </Text>
                 </TouchableOpacity>
               ) : null}
 
@@ -199,7 +211,7 @@ const NoticeDetailStyle = StyleSheet.create({
   },
   eventLinkText: {
     color: "white",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   createdAt: {
     fontSize: 10,

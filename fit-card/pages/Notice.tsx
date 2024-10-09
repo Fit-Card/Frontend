@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -28,6 +28,8 @@ export default function NoticeScreen() {
 
   const [noticeData, setNoticeData] = useState<Notice[]>([]);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
+  const [rotateImageStates, setRotateImageStates] = useState<{ [key: number]: boolean }>({}); // 카드 별 회전 상태 관리
+
 
   useFocusEffect(
     useCallback(() => {
@@ -71,7 +73,10 @@ export default function NoticeScreen() {
       <View style={noticeStyle.cardImageContainer}>
         <Image
           source={{ uri: item.cardImage }} // PNG 파일 경로
-          style={noticeStyle.cardImage}
+          style={[
+            noticeStyle.cardImage,
+            rotateImageStates[item.cardEventId] ? { transform: [{ rotate: "-90deg" }] } : {},
+          ]}
           resizeMode="contain"
         />
       </View>
@@ -85,6 +90,21 @@ export default function NoticeScreen() {
       </View>
     </TouchableOpacity>
   );
+
+    // 카드 이미지의 가로 세로 비율에 따라 회전 여부를 결정하는 함수
+    const checkImageRotation = (notice: Notice) => {
+      Image.getSize(notice.cardImage, (width, height) => {
+        setRotateImageStates((prev) => ({
+          ...prev,
+          [notice.cardEventId]: height > width, // 세로가 더 긴 경우 true 설정
+        }));
+      });
+    };
+  
+    useEffect(() => {
+      // 카드 데이터가 변경될 때마다 각 카드의 이미지 회전 여부를 체크
+      noticeData.forEach(checkImageRotation);
+    }, [noticeData]);
 
   return (
     <SafeAreaView style={noticeStyle.container}>
