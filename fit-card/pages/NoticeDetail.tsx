@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, Linking } from "react-native";
+import { View, Text, StyleSheet, Image, Linking, ScrollView } from "react-native";
 import {
   useNavigation,
   NavigationProp,
@@ -11,6 +11,7 @@ import { StackParamList } from "../navigationTypes";
 import axios from "axios";
 import { mockUser } from "@/mock/mockUser";
 import KeyColors from "@/styles/KeyColor";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function NoticeDetailScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -65,65 +66,146 @@ export default function NoticeDetailScreen() {
   }, [noticeDetail]);
 
   return (
-    <View style={NoticeDetailStyle.container}>
-      {noticeDetail ? (
-        <>
-          <View style={NoticeDetailStyle.noticeImageContainer}>
-            {noticeDetail.cardImage ? (
-              <Image
-                source={{ uri: noticeDetail.cardImage }}
-                style={NoticeDetailStyle.noticeImage}
-                resizeMode="contain"
-              />
-            ) : (
-              <Text>이미지가 없습니다.</Text>
-            )}
-          </View>
-          <View style={NoticeDetailStyle.noticeContentContainer}>
-            <Text style={NoticeDetailStyle.title}>{noticeDetail.alarmTitle}</Text>
-            <Text style={NoticeDetailStyle.content}>{noticeDetail.alarmContent}</Text>
-            <Text style={NoticeDetailStyle.eventInfo}>대상 카드: {noticeDetail.targetCards}</Text>
-            <Text style={NoticeDetailStyle.eventInfo}>
-              이벤트 기간: {noticeDetail.eventStartDate} ~ {noticeDetail.eventEndDate}
-            </Text>
-            {noticeDetail.eventUrl ? (
-              <Text
-                style={NoticeDetailStyle.eventLink}
-                onPress={() => Linking.openURL(noticeDetail.eventUrl)}
-              >
-                이벤트 상세 정보 보기
+    <ScrollView contentContainerStyle={NoticeDetailStyle.scrollContainer}>
+      <View style={NoticeDetailStyle.container}>
+        {noticeDetail ? (
+          <>
+            <View style={NoticeDetailStyle.noticeImageContainer}>
+              {noticeDetail.cardImage ? (
+                <Image
+                  source={{ uri: noticeDetail.cardImage }}
+                  style={NoticeDetailStyle.noticeImage}
+                  resizeMode="contain"
+                />
+              ) : (
+                <Text>이미지가 없습니다.</Text>
+              )}
+            </View>
+            <View style={NoticeDetailStyle.noticeContentContainer}>
+              <View style={NoticeDetailStyle.noticeSection}>
+                <Text style={NoticeDetailStyle.infoTitle}>
+                  {noticeDetail.alarmTitle}
+                </Text>
+              </View>
+
+              <View style={NoticeDetailStyle.noticeSection}>
+                <Text style={NoticeDetailStyle.infoChapter}>이벤트 내용</Text>
+                <Text style={NoticeDetailStyle.infoText}>
+                  {noticeDetail.alarmContent}
+                </Text>
+              </View>
+
+              <View style={NoticeDetailStyle.noticeSection}>
+                <Text style={NoticeDetailStyle.infoChapter}>대상 카드</Text>
+                <Text style={NoticeDetailStyle.infoText}>
+                  {noticeDetail.targetCards}
+                </Text>
+              </View>
+
+              <View style={NoticeDetailStyle.noticeSection}>
+                <Text style={NoticeDetailStyle.infoChapter}>이벤트 기간</Text>
+                <Text style={NoticeDetailStyle.eventInfo}>
+                  {noticeDetail.eventStartDate} ~ {noticeDetail.eventEndDate}
+                </Text>
+              </View>
+
+              {noticeDetail.eventUrl ? (
+                <TouchableOpacity
+                  style={NoticeDetailStyle.eventLink}
+                  onPress={() => Linking.openURL(noticeDetail.eventUrl)}
+                >
+                  <Text 
+                  style={NoticeDetailStyle.eventLinkText}>이벤트 페이지 방문하기  🔔</Text>
+                </TouchableOpacity>
+              ) : null}
+
+              <Text style={NoticeDetailStyle.createdAt}>
+                게시일 - {noticeDetail.alarmCreatedAt}
               </Text>
-            ) : null}
-            <Text style={NoticeDetailStyle.createdAt}>생성일: {noticeDetail.alarmCreatedAt}</Text>
-          </View>
-        </>
-      ) : (
-        <Text>공지 정보를 불러오는 중...</Text>
-      )}
-    </View>
+            </View>
+          </>
+        ) : (
+          <Text>공지 정보를 불러오는 중...</Text>
+        )}
+      </View>
+    </ScrollView>
   );
 }
 
 const NoticeDetailStyle = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#fff",
+    paddingVertical: 10,
   },
   noticeImageContainer: {
-    backgroundColor: KeyColors.lightGray,
     width: "100%",
     height: 150,
     marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: KeyColors.lightGray,
   },
   noticeImage: {
     width: 150,
     height: 150,
   },
   noticeContentContainer: {
-    padding: 5,
+    width: "100%",
+    paddingHorizontal: 10,
+  },
+  noticeSection: {
+    borderBottomWidth: 1,
+    borderBottomColor: KeyColors.lightGray,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+  },
+  infoTitle: {
+    fontWeight: "bold",
+    margin: "auto",
+    color: KeyColors.black,
+    fontSize: 18,
+    textAlign: "center",
+  },
+  infoChapter: {
+    color: KeyColors.blue,
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  infoText: {
+    fontSize: 12,
+    color: KeyColors.black,
+  },
+  eventInfo: {
+    fontSize: 12,
+    color: KeyColors.black,
+  },
+  eventLink: {
+    marginTop: 10,
+    backgroundColor: KeyColors.blue,
     alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    borderRadius: 4,
+  },
+  eventLinkText: {
+    color: "white",
+    fontWeight: "bold"
+  },
+  createdAt: {
+    fontSize: 10,
+    color: KeyColors.gray,
+    marginTop: 30,
+    paddingBottom: 10,
+    textAlign: "center",
   },
 });
