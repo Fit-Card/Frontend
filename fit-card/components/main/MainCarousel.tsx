@@ -14,7 +14,9 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
   if (cards.length === 0) {
     return (
       <View style={styles.exceptionContainer}>
-        <Text style={styles.exceptionTitle}>카드를 등록해주세요.</Text>
+        <Image style={styles.exceptionImage} source={require("@/assets/icons/icon_no.png")} />
+        <Text style={styles.exceptionTitle}>표시할 카드가 없습니다.</Text>
+        <Text style={styles.exceptionText}>카드를 갱신해주세요.</Text>
       </View>
     );
   }
@@ -180,15 +182,21 @@ const styles = StyleSheet.create({
   exceptionContainer: {
     marginTop: 100,
     marginBottom: 150,
-    // borderWidth: 2,
-    // padding: 50,
-    // borderRadius: 20,
-    // borderColor: "#ccc",
-    // alignItems: "center",
+    alignItems: "center",
+  },
+  exceptionImage: {
+    width: 80,
+    height: 80,
   },
   exceptionTitle: {
     fontFamily: "SUITE-Bold",
     fontSize: 22,
+    marginVertical: 5,
+  },
+  exceptionText: {
+    fontFamily: "SUITE-Bold",
+    fontSize: 16,
+    color: "#333",
   },
   image: {
     width: 80,

@@ -14,57 +14,51 @@ import { RecommendCard } from "@/interfaces/Card";
 
 export default function CardScreen() {
   const user = useSelector((state: RootState) => state.user.user);
-  const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]); // 연령대별 카드 상태
-  const [recommendCards, setRecommendCards] = useState<RecommendCard[]>([]); // 연령대별 카드 상태
   const [consumptionPattern, setConsumptionPattern] = useState<ConsumptionCategory>();
+  const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]);
+  const [recommendCards, setRecommendCards] = useState<RecommendCard[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // API 호출 및 데이터 설정
   useEffect(() => {
-    const fetchAgeSpecificCards = async () => {
+    const fetchPaymentCategory = async () => {
       try {
-        setLoading(true);
-        const response = await getAgeSpecificCards(3); // size 1로 API 호출
-        // console.log(response.data.memberCardGetByAgeSpecificResponses);
-        setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
+        const response = await getPaymentCategory();
+        setConsumptionPattern(response);
       } catch (error) {
-        console.error("Error fetching age-specific cards:", error);
-      } finally {
-        setLoading(false);
+        setConsumptionPattern(mockConsumptionPattern);
       }
     };
 
     const fetchRecommendCards = async () => {
       try {
-        setLoading(true);
-
         const response = await getRecommendCards();
-        // console.log("recommendCards:", response);
         setRecommendCards(response.data.memberCardRecommendResponses);
       } catch (error) {
         console.error("Error fetching recommend cards:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
-    const fetchPaymentCategory = async () => {
+    const fetchAgeSpecificCards = async () => {
+      try {
+        const response = await getAgeSpecificCards(3);
+        setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
+      } catch (error) {
+        console.error("Error fetching age-specific cards:", error);
+      }
+    };
+
+    const fetchAllData = async () => {
       try {
         setLoading(true);
-
-        const response = await getPaymentCategory();
-        // console.log("paymentCategory: ", response);
-        setConsumptionPattern(response);
+        await Promise.all([fetchPaymentCategory(), fetchRecommendCards(), fetchAgeSpecificCards()]);
       } catch (error) {
-        setConsumptionPattern(mockConsumptionPattern);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAgeSpecificCards();
-    fetchRecommendCards();
-    fetchPaymentCategory();
+    fetchAllData();
   }, []);
 
   if (loading) {
@@ -81,8 +75,12 @@ export default function CardScreen() {
       {/* 소비패턴 Component */}
       <View style={styles.componentWrapper}>
         <View style={styles.inner}>
-          {consumptionPattern && (
+          {consumptionPattern && parseInt(consumptionPattern.totalAmount) > 0 ? (
             <ConsumptionPattern user={user!} consumptionCategory={consumptionPattern} />
+          ) : (
+            <View style={styles.exceptionContainer}>
+              <Text style={styles.exceptionText}>지출내역이 존재하지 않습니다.</Text>
+            </View>
           )}
         </View>
       </View>
@@ -90,9 +88,17 @@ export default function CardScreen() {
       {/* 추천 카드 Component */}
       <View style={styles.componentWrapper}>
         <Text style={styles.headText}>{user!.name}님의 카드 vs 추천 카드</Text>
-        <View style={styles.carouselInner}>
-          <RecommendedCardCarousel cards={recommendCards} />
-        </View>
+        {recommendCards.length > 0 ? (
+          <View style={styles.carouselInner}>
+            <RecommendedCardCarousel cards={recommendCards} />
+          </View>
+        ) : (
+          <View style={styles.inner}>
+            <View style={styles.exceptionContainer}>
+              <Text style={styles.exceptionText}>카드를 등록해주세요.</Text>
+            </View>
+          </View>
+        )}
       </View>
 
       {/* 연령대의 카드 Component */}
@@ -102,15 +108,15 @@ export default function CardScreen() {
           ageSpecificCards.map((card) => (
             <View key={card.cardId} style={styles.ageGroup}>
               <AgeGroupCard
-                imagePath={{ uri: card.cardImageUrl }} // cardImageUrl을 이미지 경로로 설정
-                cardName={card.cardName} // cardName 설정
+                imagePath={{ uri: card.cardImageUrl }}
+                cardName={card.cardName}
                 benefits={[`${card.cardCompanyName} 카드`]}
               />
             </View>
           ))
         ) : (
           <View style={styles.inner}>
-            <Text>연령대별 카드를 불러오는 중입니다...</Text>
+            <Text style={styles.exceptionText}>카드를 등록해주세요.</Text>
           </View>
         )}
       </View>
@@ -119,6 +125,18 @@ export default function CardScreen() {
 }
 
 const styles = StyleSheet.create({
+  exceptionContainer: {
+    width: "90%",
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  exceptionText: {
+    fontFamily: "SUITE-Bold",
+    marginBottom: 10,
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     // justifyContent: "flex-start",
@@ -139,14 +157,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   inner: {
-    width: "90%", // 상자의 너비 (화면의 90%)
-    backgroundColor: "#FFFFFF", // 상자의 배경색
-    padding: 20, // 상자 내부 여백
+    width: "90%",
+    backgroundColor: "#FFFFFF",
+    padding: 20,
     paddingBottom: 15,
-    borderRadius: 10, // 상자 모서리 둥글게
-    marginBottom: 10, // 컴포넌트 간의 간격
-    minHeight: 150, // 각 컴포넌트 상자의 최소 높이
-    justifyContent: "center", // 상자 내부의 컴포넌트 세로 정렬
+    borderRadius: 10,
+    marginBottom: 10,
+    minHeight: 150,
+    justifyContent: "center",
     alignItems: "center",
     borderWidth: 2.5,
     borderColor: "#e1e1e1",

@@ -41,7 +41,7 @@ const RecommendedCardCarousel = ({ cards }: RecommendedCardCarouselProps) => {
                 onLoad={(event) => handleImageLoad(item.memberCardId, event)}
               />
               <Text style={styles.cardTitle}>{item.memberCardName.replace(" ", "\n")}</Text>
-              <Text>{item.memberCardBenefitAmount}</Text>
+              <Text>할인 금액: {item.memberCardBenefitAmount}원</Text>
             </View>
 
             {/* 추천 카드 */}
@@ -59,7 +59,7 @@ const RecommendedCardCarousel = ({ cards }: RecommendedCardCarouselProps) => {
                   onLoad={(event) => handleImageLoad(item.recommendCardPerformanceId, event)}
                 />
                 <Text style={styles.cardTitle}>{item.recommendCardName.replace(" ", "\n")}</Text>
-                <Text>{item.recommendCardBenefitAmount}</Text>
+                <Text>할인 금액: {item.recommendCardBenefitAmount}원</Text>
               </View>
             ) : (
               <View style={styles.card}>
