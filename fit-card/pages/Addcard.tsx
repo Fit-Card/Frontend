@@ -9,11 +9,7 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
-import {
-  useNavigation,
-  NavigationProp,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
 
 import Common from "../styles/Common"; // 스타일 파일 가져오기
@@ -26,8 +22,8 @@ export default function AddcardScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const [selectedCardIds, setSelectedCardIds] = useState<number[]>([]);
-  // 카드 데이터
   const [cardData, setCardData] = useState<Card[]>([]);
+  const [rotateImageStates, setRotateImageStates] = useState<{ [key: number]: boolean }>({}); // 카드 별 회전 상태 관리
 
   interface Card {
     cardCode: string;
@@ -39,10 +35,7 @@ export default function AddcardScreen() {
     financialUserCardId: number;
   }
 
-  //카드 불러오기
   const fetchCards = async () => {
-    console.log(mockUser.token + "  -----------");
-    // alert("갱신 가능 카드 불러오기");
     try {
       const response = await axios.post(
         `http://j11a405.p.ssafy.io:8081/members/cards/get/renewal`,
@@ -53,14 +46,12 @@ export default function AddcardScreen() {
           },
         }
       );
-      console.log(response.data.data.memberCardRenewals);
       setCardData(response.data.data.memberCardRenewals);
     } catch (error) {
       console.error("카드 가져오기 오류 발생 : ", error);
     }
-  }; //fetchCards 끝
+  };
 
-  // 카드 등록
   const handleSubmit = async () => {
     if (selectedCardIds.length === 0) {
       Alert.alert("카드 선택", "선택된 카드가 없습니다.");
@@ -72,8 +63,6 @@ export default function AddcardScreen() {
     };
 
     try {
-      console.log("전송 시도...보내는 카드는");
-      console.log(selectedCardIds);
       const response = await axios.post(
         `http://j11a405.p.ssafy.io:8081/members/cards/post`,
         requestBody,
@@ -85,7 +74,6 @@ export default function AddcardScreen() {
         }
       );
 
-      console.log("카드 등록 성공: ", response.data);
       Alert.alert(
         "카드 등록",
         `${selectedCardIds.length}개의 카드가 등록되었습니다.`
@@ -95,7 +83,7 @@ export default function AddcardScreen() {
       console.error("카드 등록 실패: ", error);
       Alert.alert("카드 등록 실패", "카드 등록 중 오류가 발생했습니다.");
     }
-  }; //handleSubmit 끝
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -103,10 +91,24 @@ export default function AddcardScreen() {
     }, [])
   );
 
+  // 카드 이미지의 가로 세로 비율에 따라 회전 여부를 결정하는 함수
+  const checkImageRotation = (card: Card) => {
+    Image.getSize(card.cardImageUrl, (width, height) => {
+      setRotateImageStates((prev) => ({
+        ...prev,
+        [card.financialUserCardId]: height > width, // 세로가 더 긴 경우 true 설정
+      }));
+    });
+  };
+
+  useEffect(() => {
+    // 카드 데이터가 변경될 때마다 각 카드의 이미지 회전 여부를 체크
+    cardData.forEach(checkImageRotation);
+  }, [cardData]);
+
   return (
     <View style={AddcardStyle.container}>
       <ScrollView contentContainerStyle={AddcardStyle.scrollContainer}>
-        {/* 안내 문구 */}
         <View style={AddcardStyle.commentContainer}>
           <Text style={[Common.textSmall]}>소유하고 계신 카드 중에서</Text>
           <Text style={[Common.textSmall]}>
@@ -123,7 +125,7 @@ export default function AddcardScreen() {
             <Image
               style={AddcardStyle.noCardImage}
               source={require("../assets/icons/icon_no.png")}
-            ></Image>
+            />
             <Text style={[Common.textBold, Common.textBlack]}>
               갱신할 카드가 없습니다
             </Text>
@@ -154,10 +156,8 @@ export default function AddcardScreen() {
                     card.financialUserCardId
                   );
                   if (index !== -1) {
-                    // 카드가 이미 선택되어있을 경우 : 제거
                     newSelectedCardIds.splice(index, 1);
                   } else {
-                    // 카드가 새로 선택된 경우 : 추가
                     newSelectedCardIds.push(card.financialUserCardId);
                   }
                   setSelectedCardIds(newSelectedCardIds);
@@ -165,8 +165,11 @@ export default function AddcardScreen() {
               >
                 <View style={AddcardStyle.cardImageContainer}>
                   <Image
-                    source={{ uri: card.cardImageUrl }} // PNG 파일 경로
-                    style={AddcardStyle.cardImage} // 아이콘 스타일
+                    source={{ uri: card.cardImageUrl }}
+                    style={[
+                      AddcardStyle.cardImage,
+                      rotateImageStates[card.financialUserCardId] ? { transform: [{ rotate: "-90deg" }] } : {},
+                    ]}
                     resizeMode="contain"
                   />
                 </View>
@@ -282,9 +285,9 @@ const AddcardStyle = StyleSheet.create({
     elevation: 5,
   },
   selectText: {
-    position: "absolute", // Absolute position
-    bottom: 0, // 5px from bottom
-    right: 0, // 10px from right
+    position: "absolute",
+    bottom: 0,
+    right: 0,
     color: KeyColors.blue,
   },
   headerContainer: {
@@ -292,44 +295,41 @@ const AddcardStyle = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 1, // Ensure header is on top
-    backgroundColor: "#fff",
+    height: 50,
     alignItems: "center",
-    padding: 10,
+    justifyContent: "center",
+    backgroundColor: KeyColors.lightGray,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   },
   submitButtonContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 10,
-    backgroundColor: "#fff",
     alignItems: "center",
+    justifyContent: "center",
+    padding: 5,
     borderTopWidth: 1,
     borderTopColor: "#ddd",
+    backgroundColor: "white"
   },
   submitButton: {
-    width: width - 40,
-    height: 50,
-    borderRadius: 6,
     alignItems: "center",
     justifyContent: "center",
+    padding: 10,
+    width: "100%",
+    borderRadius: 4,
   },
   cardImageContainer: {
+    width: 80,
     height: "100%",
-    minWidth: 100,
-    display: "flex",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
   },
   cardImage: {
-    width: 80,
-    height: 80,
+    width: "100%",
+    height: "100%",
   },
   cardTextContainer: {
-    height: "100%",
     flex: 1,
-    position: "relative",
-    display: "flex",
+    justifyContent: "center",
   },
 });

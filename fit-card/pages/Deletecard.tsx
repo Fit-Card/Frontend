@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
   View,
@@ -23,6 +23,7 @@ export default function DeletecardScreen() {
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null); // 1개의 카드만 선택
   const [modalVisible, setModalVisible] = useState<boolean>(false); // 모달 가시성 상태
   const [cardData, setCardData] = useState<Card[]>([]);
+  const [rotateImageStates, setRotateImageStates] = useState<{ [key: number]: boolean }>({}); // 카드 별 회전 상태 관리
 
   interface Card {
     cardName: string;
@@ -94,6 +95,20 @@ export default function DeletecardScreen() {
     }, [])
   );
 
+  const checkImageRotation = (card: Card) => {
+    Image.getSize(card.cardImageUrl, (width, height) => {
+      setRotateImageStates((prev) => ({
+        ...prev,
+        [card.id]: height > width, // 세로가 더 긴 경우 true 설정
+      }));
+    });
+  };
+
+  useEffect(() => {
+    // 카드 데이터가 변경될 때마다 각 카드의 이미지 회전 여부를 체크
+    cardData.forEach(checkImageRotation);
+  }, [cardData]);
+
   return (
     <View style={DeletecardStyle.container}>
       <ScrollView contentContainerStyle={DeletecardStyle.scrollContainer}>
@@ -121,7 +136,10 @@ export default function DeletecardScreen() {
               <View style={DeletecardStyle.cardImageContainer}>
                 <Image
                   source={{ uri: card.cardImageUrl }} // PNG 파일 경로
-                  style={DeletecardStyle.cardImage} // 아이콘 스타일
+                  style={[
+                    DeletecardStyle.cardImage,
+                    rotateImageStates[card.id] ? { transform: [{ rotate: "-90deg" }] } : {},
+                  ]} // 아이콘 스타일
                   resizeMode="contain"
                 />
               </View>
@@ -154,7 +172,10 @@ export default function DeletecardScreen() {
                     source={{
                       uri: cardData.find((card) => card.id === selectedCardId)?.cardImageUrl,
                     }}
-                    style={DeletecardStyle.modalImage} // 아이콘 스타일
+                    style={[
+                      DeletecardStyle.modalImage,
+                      rotateImageStates[selectedCardId] ? { transform: [{ rotate: "-90deg" }] } : {},
+                    ]}
                     resizeMode="contain"
                   />
                 </View>

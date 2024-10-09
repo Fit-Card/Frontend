@@ -1,9 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
-import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import {
+  useNavigation,
+  NavigationProp,
+  useFocusEffect,
+} from "@react-navigation/native";
 import Carousel from "react-native-reanimated-carousel";
 import { StackParamList } from "../navigationTypes";
-import common from "../styles/Common"; // 스타일 파일 가져오기
+import common from "../styles/Common";
 import KeyColors from "@/styles/KeyColor";
 
 import axios from "axios";
@@ -56,20 +68,50 @@ export default function MypageScreen() {
     setCurrentCardIndex(index);
   };
 
-  const renderCarouselItem = ({ item }: { item: { cardName: string; cardImageUrl: string } }) => (
+  const renderCarouselItem = ({
+    item,
+  }: {
+    item: { cardName: string; cardImageUrl: string };
+  }) => (
     <TouchableOpacity style={[mypageStyle.carouselImageContainer]}>
-      <Image source={{ uri: item.cardImageUrl }} style={[mypageStyle.carouselImage]} />
+      <Image
+        source={{ uri: item.cardImageUrl }}
+        style={[mypageStyle.carouselImage]}
+      />
     </TouchableOpacity>
   );
+
+  // Pagination component to display dots
+  const Pagination = () => {
+    return (
+      <View style={mypageStyle.paginationContainer}>
+        {cardData.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              mypageStyle.paginationDot,
+              currentCardIndex === index
+                ? mypageStyle.paginationDotActive
+                : mypageStyle.paginationDotInactive,
+            ]}
+          />
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View>
       <ScrollView style={[mypageStyle.container]}>
         {/* 인삿말 */}
         <View style={[mypageStyle.helloContainer]}>
-          <Text style={[common.textBlue, common.textLarge, mypageStyle.boldText]}>
+          <Text
+            style={[common.textBlue, common.textLarge, mypageStyle.boldText]}
+          >
             {mockUser.name}
-            <Text style={[common.textGray, common.textMedium, mypageStyle.boldText]}>
+            <Text
+              style={[common.textGray, common.textMedium, mypageStyle.boldText]}
+            >
               님, 반갑습니다.
             </Text>
           </Text>
@@ -77,14 +119,14 @@ export default function MypageScreen() {
 
         {/* 카드 Carousel */}
         <View style={[mypageStyle.carouselContainer]}>
-          <View style={[mypageStyle.carouselSideArrowContainer]}>
+          {/* <View style={[mypageStyle.carouselSideArrowContainer]}>
             {cardData.length > 0 && (
               <Image
                 source={require("@/assets/icons/icon_left.png")}
                 style={mypageStyle.carouselSideArrow}
               ></Image>
             )}
-          </View>
+          </View> */}
           {/* 로딩 중일 때 */}
           {isLoading ? (
             <View style={[mypageStyle.carouselContent]}>
@@ -102,36 +144,55 @@ export default function MypageScreen() {
                 renderItem={renderCarouselItem}
                 defaultIndex={0}
               />
-              <Text style={[mypageStyle.cardNameText, common.textGray, mypageStyle.boldText]}>
+              <Text
+                style={[
+                  mypageStyle.cardNameText,
+                  common.textGray,
+                  mypageStyle.boldText,
+                ]}
+              >
                 {currentCardIndex + 1} {". "} {cardData[currentCardIndex].cardName}
               </Text>
+
+              {/* Pagination dots */}
+              <Pagination />
             </View>
           ) : (
             <View style={[mypageStyle.carouselContent]}>
               <Image
                 style={mypageStyle.noCardImage}
                 source={require("../assets/icons/icon_no.png")}
-              ></Image>
-              <Text style={[common.textBlack, mypageStyle.boldText, { fontSize: 14 }]}>
+              />
+              <Text
+                style={[
+                  common.textBlack,
+                  mypageStyle.boldText,
+                  { fontSize: 14 },
+                ]}
+              >
                 표시할 카드가 없습니다.
               </Text>
-              <Text style={[common.textBlack, { fontSize: 10 }]}>카드를 갱신해주세요.</Text>
+              <Text style={[common.textBlack, { fontSize: 10 }]}>
+                카드를 갱신해주세요.
+              </Text>
             </View>
           )}
-          <View style={[mypageStyle.carouselSideArrowContainer]}>
+          {/* <View style={[mypageStyle.carouselSideArrowContainer]}>
             {cardData.length > 0 && (
               <Image
                 source={require("@/assets/icons/icon_right.png")}
                 style={mypageStyle.carouselSideArrow}
               ></Image>
             )}
-          </View>
+          </View> */}
         </View>
 
         {/* 퀵메뉴 내용들 */}
         <View style={[mypageStyle.menuContainer]}>
           <View style={[mypageStyle.menuTitle]}>
-            <Text style={[mypageStyle.boldText, common.textGray]}>카드 정보</Text>
+            <Text style={[mypageStyle.boldText, common.textGray]}>
+              카드 정보
+            </Text>
           </View>
 
           <TouchableOpacity
@@ -168,7 +229,9 @@ export default function MypageScreen() {
           </TouchableOpacity>
 
           <View style={mypageStyle.menuTitle}>
-            <Text style={[common.textGray, mypageStyle.boldText]}>사용자 설정</Text>
+            <Text style={[common.textGray, mypageStyle.boldText]}>
+              사용자 설정
+            </Text>
           </View>
 
           <TouchableOpacity
@@ -177,7 +240,10 @@ export default function MypageScreen() {
               navigation.navigate("PersonalInfo");
             }}
           >
-            <Image source={require("../assets/icons/icon_info.png")} style={mypageStyle.menuIcon} />
+            <Image
+              source={require("../assets/icons/icon_info.png")}
+              style={mypageStyle.menuIcon}
+            />
             <Text style={[mypageStyle.menuText]}>사용자 정보 관리</Text>
           </TouchableOpacity>
 
@@ -194,7 +260,9 @@ export default function MypageScreen() {
               source={require("../assets/icons/icon_no_red.png")}
               style={mypageStyle.menuIcon}
             />
-            <Text style={[mypageStyle.menuText, common.textRed]}>회원 탈퇴</Text>
+            <Text style={[mypageStyle.menuText, common.textRed]}>
+              회원 탈퇴
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -233,15 +301,15 @@ const mypageStyle = StyleSheet.create({
     paddingHorizontal: 10,
     fontFamily: "SUITE-Bold",
   },
-  carouselSideArrowContainer: {
-    width: 30,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  carouselSideArrow: {
-    width: 30,
-    height: 30,
-  },
+  // carouselSideArrowContainer: {
+  //   width: 30,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
+  // carouselSideArrow: {
+  //   width: 30,
+  //   height: 30,
+  // },
   carouselImageContainer: {
     width: "100%",
     height: "100%",
@@ -294,5 +362,22 @@ const mypageStyle = StyleSheet.create({
   noCardImage: { width: 60, height: 60 },
   noCardText: {
     fontSize: 13,
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  paginationDot: {
+    width:8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: KeyColors.blue,
+  },
+  paginationDotInactive: {
+    backgroundColor: "#ccc",
   },
 });
