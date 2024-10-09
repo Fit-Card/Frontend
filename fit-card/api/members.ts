@@ -21,6 +21,26 @@ export const getPaymentCategory = async () => {
   }
 };
 
+// 추천 카드 목록 조회
+export const getRecommendCards = async () => {
+  try {
+    const response = await axios.post(
+      `http://j11a405.p.ssafy.io:8081/members/cards/recommends/get`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${mockUser.token}`,
+          "Content-Type": "application/json",
+          Accept: "*/*",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error get recommend cards:", error);
+  }
+};
+
 // 연령대별 카드 목록 조회
 export const getAgeSpecificCards = async (size: number) => {
   try {

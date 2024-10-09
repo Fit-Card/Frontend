@@ -6,14 +6,16 @@ import RecommendedCardCarousel from "@/components/recommend/RecommendedCardCarou
 import AgeGroupCard from "@/components/recommend/AgeGroupCard";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { mockConsumptionPattern, recommendedCards } from "@/mock/mockData";
-import { getAgeSpecificCards } from "@/api/members";
+import { mockConsumptionPattern } from "@/mock/mockData";
+import { getAgeSpecificCards, getRecommendCards } from "@/api/members";
 import { getPaymentCategory } from "@/api/members";
 import { ConsumptionCategory } from "@/interfaces/ConsumptionCategory";
+import { RecommendCard } from "@/interfaces/Card";
 
 export default function CardScreen() {
   const user = useSelector((state: RootState) => state.user.user);
   const [ageSpecificCards, setAgeSpecificCards] = useState<any[]>([]); // 연령대별 카드 상태
+  const [recommendCards, setRecommendCards] = useState<RecommendCard[]>([]); // 연령대별 카드 상태
   const [consumptionPattern, setConsumptionPattern] = useState<ConsumptionCategory>();
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +25,24 @@ export default function CardScreen() {
       try {
         setLoading(true);
         const response = await getAgeSpecificCards(3); // size 1로 API 호출
-        console.log(response.data.memberCardGetByAgeSpecificResponses);
+        // console.log(response.data.memberCardGetByAgeSpecificResponses);
         setAgeSpecificCards(response.data.memberCardGetByAgeSpecificResponses);
       } catch (error) {
         console.error("Error fetching age-specific cards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchRecommendCards = async () => {
+      try {
+        setLoading(true);
+
+        const response = await getRecommendCards();
+        console.log("recommendCards:", response);
+        setRecommendCards(response.data.memberCardRecommendResponses);
+      } catch (error) {
+        console.error("Error fetching recommend cards:", error);
       } finally {
         setLoading(false);
       }
@@ -37,7 +53,7 @@ export default function CardScreen() {
         setLoading(true);
 
         const response = await getPaymentCategory();
-        console.log("paymentCategory: ", response);
+        // console.log("paymentCategory: ", response);
         if (!response) {
           throw new Error();
         }
@@ -50,11 +66,11 @@ export default function CardScreen() {
     };
 
     fetchAgeSpecificCards();
+    fetchRecommendCards();
     fetchPaymentCategory();
   }, []);
 
   if (loading) {
-    // 로딩 중이면 로딩 스피너를 표시
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -78,7 +94,7 @@ export default function CardScreen() {
       <View style={styles.componentWrapper}>
         <Text style={styles.headText}>{user!.name}님의 카드 vs 추천 카드</Text>
         <View style={styles.carouselInner}>
-          <RecommendedCardCarousel cards={recommendedCards} />
+          <RecommendedCardCarousel cards={recommendCards} />
         </View>
       </View>
 
