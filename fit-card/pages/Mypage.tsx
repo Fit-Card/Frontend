@@ -26,6 +26,8 @@ export default function MypageScreen() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0); // 현재 카드 인덱스 상태
   const [cardData, setCardData] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
+  const [rotateImageStates, setRotateImageStates] = useState<{ [key: number]: boolean }>({}); // 카드 별 회전 상태 관리
+
 
   useFocusEffect(
     useCallback(() => {
@@ -70,15 +72,20 @@ export default function MypageScreen() {
 
   const renderCarouselItem = ({
     item,
+    index,
   }: {
     item: { cardName: string; cardImageUrl: string };
+    index: number;
   }) => (
-    <TouchableOpacity style={[mypageStyle.carouselImageContainer]}>
+    <View style={[mypageStyle.carouselImageContainer]}>
       <Image
         source={{ uri: item.cardImageUrl }}
-        style={[mypageStyle.carouselImage]}
+        style={[
+          mypageStyle.carouselImage,
+          rotateImageStates[index] ? { transform: [{ rotate: "-90deg" }] } : {},
+        ]}
       />
-    </TouchableOpacity>
+    </View>
   );
 
   // Pagination component to display dots
@@ -99,6 +106,22 @@ export default function MypageScreen() {
       </View>
     );
   };
+
+    // 카드 이미지의 가로 세로 비율에 따라 회전 여부를 결정하는 함수
+    const checkImageRotation = (card: Card, index: number) => {
+      Image.getSize(card.cardImageUrl, (width, height) => {
+        setRotateImageStates((prev) => ({
+          ...prev,
+          [index]: height > width, // 세로가 더 긴 경우 true 설정
+        }));
+      });
+    };
+  
+    useEffect(() => {
+      // 카드 데이터가 변경될 때마다 각 카드의 이미지 회전 여부를 체크
+      setRotateImageStates(Array(cardData.length).fill(false));
+      cardData.forEach((card, index) => checkImageRotation(card, index));
+    }, [cardData]);
 
   return (
     <View>
@@ -318,8 +341,8 @@ const mypageStyle = StyleSheet.create({
     justifyContent: "center",
   },
   carouselImage: {
-    width: 200,
-    height: 80,
+    width: 120,
+    height: 120,
     resizeMode: "contain",
   },
   cardNameText: {
