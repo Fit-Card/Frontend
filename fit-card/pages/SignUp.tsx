@@ -98,7 +98,10 @@ export default function SignUp() {
         console.log("Registration successful:", response);
 
         // 회원가입 완료 후 로그인 화면으로 이동
-        navigation.navigate("Login");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
       } catch (error) {
         console.error("Registration failed:", error);
       }
