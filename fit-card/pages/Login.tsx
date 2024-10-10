@@ -121,6 +121,7 @@ export default function LoginScreen() {
               placeholder="아이디 입력"
               value={loginId}
               onChangeText={setLoginId}
+              maxLength={20}
             />
           </View>
           <View style={styles.inputWrapper}>
@@ -137,7 +138,7 @@ export default function LoginScreen() {
               secureTextEntry
               value={password}
               onChangeText={setPassword}
-              maxLength={15}
+              maxLength={12}
             />
           </View>
         </View>
