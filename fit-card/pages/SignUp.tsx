@@ -200,7 +200,7 @@ export default function SignUp() {
           style={styles.input}
           placeholder="비밀번호"
           secureTextEntry
-          maxLength={100}
+          maxLength={12}
           value={user.password}
           onChangeText={(text) => handleChange("password", text, user, setUser)}
         />

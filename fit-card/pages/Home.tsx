@@ -5,6 +5,7 @@ import { RootState } from "@/store";
 import MainCarousel from "@/components/main/MainCarousel";
 import axios from "axios";
 import { mockUser } from "@/mock/mockUser";
+import * as Notifications from "expo-notifications";
 
 export default function MainScreen() {
   const user = useSelector((state: RootState) => state.user.user);
@@ -39,6 +40,22 @@ export default function MainScreen() {
 
     fetchCardData();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const requestNotificationPermission = async () => {
+        const { status } = await Notifications.requestPermissionsAsync();
+
+        if (status === "granted") {
+          console.log("Notification permissions granted.");
+        } else {
+          console.log("알림 권한이 거부되었습니다.", "앱 설정에서 알림 권한을 허용해주세요.");
+        }
+      };
+
+      requestNotificationPermission();
+    }
+  }, [loading]);
 
   return (
     <View style={{ backgroundColor: "#F7F7F7", flexGrow: 1 }}>
