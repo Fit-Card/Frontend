@@ -114,10 +114,18 @@ export default function DeletecardScreen() {
       <ScrollView contentContainerStyle={DeletecardStyle.scrollContainer}>
         {/* 안내 문구 */}
         <View style={DeletecardStyle.commentContainer}>
-          <Text style={[Common.textSmall]}>갱신을 통해 등록한 카드 중에서</Text>
-          <Text style={[Common.textSmall]}>앱에서 삭제하고 싶은 카드를 선택해주세요!</Text>
-          <Text style={[Common.textSmall]}>삭제를 하더라도, 이후 카드갱신에서</Text>
-          <Text style={[Common.textSmall]}>다시 등록할 수 있습니다.</Text>
+          <Text style={[{ fontSize: 12, fontFamily: "SUITE-Regular" }]}>
+            갱신을 통해 등록한 카드 중에서
+          </Text>
+          <Text style={[{ fontSize: 12, fontFamily: "SUITE-Regular" }]}>
+            앱에서 삭제하고 싶은 카드를 선택해주세요!
+          </Text>
+          <Text style={[{ fontSize: 12, fontFamily: "SUITE-Regular" }]}>
+            삭제를 하더라도, 이후 카드갱신에서
+          </Text>
+          <Text style={[{ fontSize: 12, fontFamily: "SUITE-Regular" }]}>
+            다시 등록할 수 있습니다.
+          </Text>
         </View>
 
         <View style={DeletecardStyle.cardListContainer}>

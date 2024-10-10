@@ -27,7 +27,6 @@ const common = StyleSheet.create({
   },
   textSmall: {
     fontSize: 12, // 예시로 폰트 사이즈 설정
-    fontFamily: "SUITE-Bold",
   },
   textBold: {
     // fontWeight: "bold",

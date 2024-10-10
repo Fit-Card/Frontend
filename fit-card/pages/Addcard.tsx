@@ -107,16 +107,16 @@ export default function AddcardScreen() {
     <View style={AddcardStyle.container}>
       <ScrollView contentContainerStyle={AddcardStyle.scrollContainer}>
         <View style={AddcardStyle.commentContainer}>
-          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Regular", fontSize: 12 }]}>
             소유하고 계신 카드 중에서
           </Text>
-          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Regular", fontSize: 12 }]}>
             앱에서 표시하고 싶은 카드를 선택해주세요!
           </Text>
-          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Regular", fontSize: 12 }]}>
             카드 갱신 이후에 소유 카드 정보는
           </Text>
-          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Regular", fontSize: 12 }]}>
             다음 갱신까지 폐기됩니다.
           </Text>
         </View>

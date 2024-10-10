@@ -108,8 +108,10 @@ export default function NoticeScreen() {
   return (
     <SafeAreaView style={noticeStyle.container}>
       <View style={noticeStyle.commentContainer}>
-        <Text style={[Common.textSmall]}>소유하고 계신 카드에 관련된</Text>
-        <Text style={[Common.textSmall]}>이벤트들을 모아봤어요!</Text>
+        <Text style={[{ fontSize: 12, fontFamily: "SUITE-Regular" }]}>
+          소유하고 계신 카드에 관련된
+        </Text>
+        <Text style={[{ fontSize: 12, fontFamily: "SUITE-Regular" }]}>이벤트들을 모아봤어요!</Text>
       </View>
       <FlatList
         data={noticeData}
