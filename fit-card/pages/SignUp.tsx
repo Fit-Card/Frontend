@@ -78,13 +78,16 @@ export default function SignUp() {
     setIsPhoneNumberEmpty(!user.phoneNumber);
 
     if (
+      // 입력 유무
       user.loginId &&
       user.password &&
       user.confirmPassword &&
       user.name &&
       user.birthDate &&
       user.phoneNumber &&
+      // 유효성 검사
       isDuplicate === false &&
+      isValidPassword(user.password, user.confirmPassword) &&
       isValidOtpRequest === true &&
       isValidBirthDate(user.birthDate)
     ) {

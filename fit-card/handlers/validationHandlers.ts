@@ -21,8 +21,12 @@ export const handleCheckDuplicate = async (
   try {
     // 서버에 아이디 중복 확인 요청
     const isDuplicate = await checkid(user.loginId);
-    setIsDuplicate(isDuplicate); // 서버로부터 받은 중복 결과 설정
-    // console.log(isDuplicate);
+    setIsDuplicate(isDuplicate);
+    if (isDuplicate === true) {
+      console.log("이미 사용 중인 아이디입니다:", user.loginId);
+    } else {
+      console.log("사용 가능한 아이디입니다:", user.loginId);
+    }
   } catch (error) {
     console.error("아이디 중복 확인 중 오류 발생:", error);
   }

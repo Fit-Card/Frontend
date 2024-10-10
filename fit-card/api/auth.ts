@@ -9,8 +9,7 @@ export const checkid = async (userId: string) => {
     const response = await axios.post(`http://j11a405.p.ssafy.io:8081/auth/checkid`, {
       loginId: userId,
     });
-    console.log(response.data.message);
-    return response.data.data.duplicated; // 서버에서 반환한 데이터
+    return response.data.data.duplicated;
   } catch (error) {
     console.error("Error checking user ID:", error);
     throw error;
