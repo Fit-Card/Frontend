@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions, ActivityIndicator } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import * as Progress from "react-native-progress";
 import { MainCard } from "@/interfaces/Card";
@@ -8,9 +8,18 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface MainCarouselProps {
   cards: MainCard[];
+  loading: boolean;
 }
 
-const MainCarousel = ({ cards }: MainCarouselProps) => {
+const MainCarousel = ({ cards, loading }: MainCarouselProps) => {
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#5253F0" />
+      </View>
+    );
+  }
+
   if (cards.length === 0) {
     return (
       <View style={styles.exceptionContainer}>
@@ -179,6 +188,12 @@ const MainCarousel = ({ cards }: MainCarouselProps) => {
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    // flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 588,
+  },
   exceptionContainer: {
     marginTop: 100,
     marginBottom: 150,

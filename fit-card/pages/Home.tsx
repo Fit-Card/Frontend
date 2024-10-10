@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
+import { Text, View, ScrollView, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import MainCarousel from "@/components/main/MainCarousel";
@@ -13,6 +13,7 @@ export default function MainScreen() {
 
   useEffect(() => {
     const fetchCardData = async () => {
+      setLoading(true);
       try {
         const response = await axios.post(
           "http://j11a405.p.ssafy.io:8081/members/cards/get/performance-and-benefit/3",
@@ -29,12 +30,15 @@ export default function MainScreen() {
       } catch (error) {
         console.error("Error fetching card data", error);
         setLoading(true);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
 
-    setLoading(true);
+    // setLoading(true);
     fetchCardData();
-    setLoading(false);
   }, []);
 
   return (
@@ -46,11 +50,7 @@ export default function MainScreen() {
           </Text>
         </View>
 
-        {loading ? (
-          <ActivityIndicator size="large" color="#5253F0" />
-        ) : (
-          <MainCarousel cards={cardData} />
-        )}
+        <MainCarousel cards={cardData} loading={loading} />
       </View>
     </ScrollView>
   );
