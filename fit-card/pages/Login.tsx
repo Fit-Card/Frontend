@@ -98,7 +98,7 @@ export default function LoginScreen() {
       });
     } catch (error: any) {
       // 실패 시 에러 메시지 출력
-      Alert.alert("로그인 실패", error.message);
+      Alert.alert("로그인에 실패하였습니다.", "아이디 또는 비밀번호를 확인해주세요.");
     }
   };
 
