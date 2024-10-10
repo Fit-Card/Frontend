@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Modal,
-  Button,
+  Alert,
 } from "react-native";
 import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { StackParamList } from "../navigationTypes";
@@ -63,7 +63,7 @@ export default function DeletecardScreen() {
       setCardData((prevCards) => prevCards.filter((card) => card.id !== selectedCardId));
       setModalVisible(false);
       setSelectedCardId(null);
-      alert("카드 삭제 완료");
+      Alert.alert("카드 삭제", "카드 삭제 완료");
     }
   };
 
@@ -174,7 +174,9 @@ export default function DeletecardScreen() {
                     }}
                     style={[
                       DeletecardStyle.modalImage,
-                      rotateImageStates[selectedCardId] ? { transform: [{ rotate: "-90deg" }] } : {},
+                      rotateImageStates[selectedCardId]
+                        ? { transform: [{ rotate: "-90deg" }] }
+                        : {},
                     ]}
                     resizeMode="contain"
                   />

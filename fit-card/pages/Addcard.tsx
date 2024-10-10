@@ -74,10 +74,7 @@ export default function AddcardScreen() {
         }
       );
 
-      Alert.alert(
-        "카드 등록",
-        `${selectedCardIds.length}개의 카드가 등록되었습니다.`
-      );
+      Alert.alert("카드 등록", `${selectedCardIds.length}개의 카드가 등록되었습니다.`);
       navigation.navigate("Mypage");
     } catch (error) {
       console.error("카드 등록 실패: ", error);
@@ -110,14 +107,18 @@ export default function AddcardScreen() {
     <View style={AddcardStyle.container}>
       <ScrollView contentContainerStyle={AddcardStyle.scrollContainer}>
         <View style={AddcardStyle.commentContainer}>
-          <Text style={[Common.textSmall]}>소유하고 계신 카드 중에서</Text>
-          <Text style={[Common.textSmall]}>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
+            소유하고 계신 카드 중에서
+          </Text>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
             앱에서 표시하고 싶은 카드를 선택해주세요!
           </Text>
-          <Text style={[Common.textSmall]}>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
             카드 갱신 이후에 소유 카드 정보는
           </Text>
-          <Text style={[Common.textSmall]}>다음 갱신까지 폐기됩니다.</Text>
+          <Text style={[Common.textSmall, { fontFamily: "SUITE-Bold", fontSize: 13 }]}>
+            다음 갱신까지 폐기됩니다.
+          </Text>
         </View>
 
         {cardData.length === 0 ? (
@@ -126,9 +127,7 @@ export default function AddcardScreen() {
               style={AddcardStyle.noCardImage}
               source={require("../assets/icons/icon_no.png")}
             />
-            <Text style={[Common.textBold, Common.textBlack]}>
-              갱신할 카드가 없습니다
-            </Text>
+            <Text style={[Common.textBold, Common.textBlack]}>갱신할 카드가 없습니다</Text>
           </View>
         ) : (
           <View style={AddcardStyle.cardListContainer}>
@@ -138,23 +137,15 @@ export default function AddcardScreen() {
                 style={[
                   AddcardStyle.card,
                   {
-                    borderColor: selectedCardIds.includes(
-                      card.financialUserCardId
-                    )
+                    borderColor: selectedCardIds.includes(card.financialUserCardId)
                       ? KeyColors.blue
                       : "#FFFFFF",
-                    borderWidth: selectedCardIds.includes(
-                      card.financialUserCardId
-                    )
-                      ? 2
-                      : 2,
+                    borderWidth: selectedCardIds.includes(card.financialUserCardId) ? 2 : 2,
                   },
                 ]}
                 onPress={() => {
                   const newSelectedCardIds = [...selectedCardIds];
-                  const index = newSelectedCardIds.indexOf(
-                    card.financialUserCardId
-                  );
+                  const index = newSelectedCardIds.indexOf(card.financialUserCardId);
                   if (index !== -1) {
                     newSelectedCardIds.splice(index, 1);
                   } else {
@@ -168,19 +159,25 @@ export default function AddcardScreen() {
                     source={{ uri: card.cardImageUrl }}
                     style={[
                       AddcardStyle.cardImage,
-                      rotateImageStates[card.financialUserCardId] ? { transform: [{ rotate: "-90deg" }] } : {},
+                      rotateImageStates[card.financialUserCardId]
+                        ? { transform: [{ rotate: "-90deg" }] }
+                        : {},
                     ]}
                     resizeMode="contain"
                   />
                 </View>
 
                 <View style={AddcardStyle.cardTextContainer}>
-                  <Text style={[Common.textBold, Common.textBlack]}>
-                    {card.cardName}
-                  </Text>
+                  <Text style={[Common.textBold, Common.textBlack]}>{card.cardName}</Text>
 
                   {selectedCardIds.includes(card.financialUserCardId) ? (
-                    <Text style={[AddcardStyle.selectText, Common.textSmall]}>
+                    <Text
+                      style={[
+                        AddcardStyle.selectText,
+                        Common.textSmall,
+                        { fontFamily: "SUITE-Bold" },
+                      ]}
+                    >
                       선택됨 ●
                     </Text>
                   ) : null}
@@ -196,28 +193,27 @@ export default function AddcardScreen() {
           style={[
             AddcardStyle.submitButton,
             {
-              backgroundColor:
-                selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
+              backgroundColor: selectedCardIds.length > 0 ? KeyColors.blue : KeyColors.gray,
             },
           ]}
           onPress={handleSubmit}
           disabled={selectedCardIds.length === 0}
         >
           {selectedCardIds.length === 0 ? (
-            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>
+            <Text style={[Common.textBold, { color: "#FFFFFF", fontSize: 16, paddingBottom: 3 }]}>
               선택 필요
             </Text>
           ) : (
-            <Text style={[Common.textBold, { color: "#FFFFFF" }]}>
+            <Text style={[Common.textBold, { color: "#FFFFFF", fontSize: 16, paddingBottom: 3 }]}>
               갱신 하기
             </Text>
           )}
           {selectedCardIds.length === 0 ? (
-            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
+            <Text style={[{ color: "#FFFFFF", fontFamily: "SUITE-Bold", fontSize: 11 }]}>
               카드를 탭해서 선택해주세요.
             </Text>
           ) : (
-            <Text style={[Common.textSmall, { color: "#FFFFFF" }]}>
+            <Text style={[{ color: "#FFFFFF", fontFamily: "SUITE-Bold", fontSize: 11 }]}>
               {selectedCardIds.length}개 선택됨
             </Text>
           )}
@@ -248,6 +244,7 @@ const AddcardStyle = StyleSheet.create({
     borderRadius: 10,
     width: 250,
     gap: 1,
+    fontFamily: "SUITE-Bold",
   },
   noCardContainer: {
     width: width - 40,
@@ -255,8 +252,9 @@ const AddcardStyle = StyleSheet.create({
     justifyContent: "center",
     height: 200,
   },
-  noCardImage: { 
-    width: 60, height: 60 
+  noCardImage: {
+    width: 60,
+    height: 60,
   },
   cardListContainer: {
     width: width - 40,
@@ -308,7 +306,7 @@ const AddcardStyle = StyleSheet.create({
     padding: 5,
     borderTopWidth: 1,
     borderTopColor: "#ddd",
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   submitButton: {
     alignItems: "center",
@@ -323,13 +321,16 @@ const AddcardStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 15,
+    paddingLeft: 20,
   },
   cardImage: {
     width: "100%",
     height: "100%",
+    marginHorizontal: 10,
   },
   cardTextContainer: {
     flex: 1,
     justifyContent: "center",
+    marginLeft: 15,
   },
 });

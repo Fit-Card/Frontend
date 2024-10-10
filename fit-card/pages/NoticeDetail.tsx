@@ -32,6 +32,18 @@ export default function NoticeDetailScreen() {
     alarmCreatedAt: string;
   }
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}:${seconds}`;
+  };
+
   useFocusEffect(
     useCallback(() => {
       console.log(`상세보기 LOAD`);
@@ -94,23 +106,17 @@ export default function NoticeDetailScreen() {
             </View>
             <View style={NoticeDetailStyle.noticeContentContainer}>
               <View style={NoticeDetailStyle.noticeSection}>
-                <Text style={NoticeDetailStyle.infoTitle}>
-                  {noticeDetail.alarmTitle}
-                </Text>
+                <Text style={NoticeDetailStyle.infoTitle}>{noticeDetail.alarmTitle}</Text>
               </View>
 
               <View style={NoticeDetailStyle.noticeSection}>
                 <Text style={NoticeDetailStyle.infoChapter}>이벤트 내용</Text>
-                <Text style={NoticeDetailStyle.infoText}>
-                  {noticeDetail.alarmContent}
-                </Text>
+                <Text style={NoticeDetailStyle.infoText}>{noticeDetail.alarmContent}</Text>
               </View>
 
               <View style={NoticeDetailStyle.noticeSection}>
                 <Text style={NoticeDetailStyle.infoChapter}>대상 카드</Text>
-                <Text style={NoticeDetailStyle.infoText}>
-                  {noticeDetail.targetCards}
-                </Text>
+                <Text style={NoticeDetailStyle.infoText}>{noticeDetail.targetCards}</Text>
               </View>
 
               <View style={NoticeDetailStyle.noticeSection}>
@@ -125,14 +131,12 @@ export default function NoticeDetailScreen() {
                   style={NoticeDetailStyle.eventLink}
                   onPress={() => Linking.openURL(noticeDetail.eventUrl)}
                 >
-                  <Text style={NoticeDetailStyle.eventLinkText}>
-                    이벤트 페이지 방문하기 🔔
-                  </Text>
+                  <Text style={NoticeDetailStyle.eventLinkText}>이벤트 페이지 방문하기 🔔</Text>
                 </TouchableOpacity>
               ) : null}
 
               <Text style={NoticeDetailStyle.createdAt}>
-                게시일 - {noticeDetail.alarmCreatedAt}
+                게시일 - {formatDate(noticeDetail.alarmCreatedAt)}
               </Text>
             </View>
           </>
@@ -181,7 +185,7 @@ const NoticeDetailStyle = StyleSheet.create({
     paddingVertical: 15,
   },
   infoTitle: {
-    fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
     margin: "auto",
     color: KeyColors.black,
     fontSize: 18,
@@ -190,12 +194,13 @@ const NoticeDetailStyle = StyleSheet.create({
   infoChapter: {
     color: KeyColors.blue,
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
     marginBottom: 5,
   },
   infoText: {
     fontSize: 12,
-    color: KeyColors.black,
+    color: KeyColors.gray,
+    fontFamily: "SUITE-Bold",
   },
   eventInfo: {
     fontSize: 12,
@@ -211,7 +216,8 @@ const NoticeDetailStyle = StyleSheet.create({
   },
   eventLinkText: {
     color: "white",
-    fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
+    fontSize: 16,
   },
   createdAt: {
     fontSize: 10,
@@ -219,5 +225,6 @@ const NoticeDetailStyle = StyleSheet.create({
     marginTop: 30,
     paddingBottom: 10,
     textAlign: "center",
+    fontFamily: "SUITE-Bold",
   },
 });

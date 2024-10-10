@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   exceptionText: {
     fontFamily: "SUITE-Bold",
     marginBottom: 10,
-    fontSize: 18,
+    fontSize: 16,
   },
   container: {
     flexGrow: 1,

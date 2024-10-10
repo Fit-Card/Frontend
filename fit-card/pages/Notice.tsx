@@ -30,7 +30,6 @@ export default function NoticeScreen() {
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
   const [rotateImageStates, setRotateImageStates] = useState<{ [key: number]: boolean }>({}); // 카드 별 회전 상태 관리
 
-
   useFocusEffect(
     useCallback(() => {
       console.log("Notice 렌더링");
@@ -91,20 +90,20 @@ export default function NoticeScreen() {
     </TouchableOpacity>
   );
 
-    // 카드 이미지의 가로 세로 비율에 따라 회전 여부를 결정하는 함수
-    const checkImageRotation = (notice: Notice) => {
-      Image.getSize(notice.cardImage, (width, height) => {
-        setRotateImageStates((prev) => ({
-          ...prev,
-          [notice.cardEventId]: height > width, // 세로가 더 긴 경우 true 설정
-        }));
-      });
-    };
-  
-    useEffect(() => {
-      // 카드 데이터가 변경될 때마다 각 카드의 이미지 회전 여부를 체크
-      noticeData.forEach(checkImageRotation);
-    }, [noticeData]);
+  // 카드 이미지의 가로 세로 비율에 따라 회전 여부를 결정하는 함수
+  const checkImageRotation = (notice: Notice) => {
+    Image.getSize(notice.cardImage, (width, height) => {
+      setRotateImageStates((prev) => ({
+        ...prev,
+        [notice.cardEventId]: height > width, // 세로가 더 긴 경우 true 설정
+      }));
+    });
+  };
+
+  useEffect(() => {
+    // 카드 데이터가 변경될 때마다 각 카드의 이미지 회전 여부를 체크
+    noticeData.forEach(checkImageRotation);
+  }, [noticeData]);
 
   return (
     <SafeAreaView style={noticeStyle.container}>
@@ -155,7 +154,7 @@ const noticeStyle = StyleSheet.create({
   },
   cardName: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
     marginBottom: 5,
   },
   cardImageContainer: {
@@ -176,8 +175,9 @@ const noticeStyle = StyleSheet.create({
   alarmTitle: {
     borderTopWidth: 1.2,
     borderColor: KeyColors.lightGray,
-    paddingVertical: 5,
+    paddingVertical: 7,
     maxWidth: "80%",
+    fontFamily: "SUITE-Bold",
   },
   commentContainer: {
     backgroundColor: KeyColors.lightGray,

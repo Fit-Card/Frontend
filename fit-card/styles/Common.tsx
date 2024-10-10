@@ -26,10 +26,12 @@ const common = StyleSheet.create({
     fontSize: 16, // 예시로 폰트 사이즈 설정
   },
   textSmall: {
-    fontSize: 10, // 예시로 폰트 사이즈 설정
+    fontSize: 12, // 예시로 폰트 사이즈 설정
+    fontFamily: "SUITE-Bold",
   },
   textBold: {
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontFamily: "SUITE-Bold",
   },
 });
 

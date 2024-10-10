@@ -45,15 +45,15 @@ export default function PersonalInfoScreen() {
     }
   };
 
-    // 전화번호 형식 맞추기 함수
-    const formatPhoneNumber = (phone: string) => {
-      const cleaned = phone.replace(/\D/g, ""); // 숫자만 남기기
-      const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
-      if (match) {
-        return `${match[1]}-${match[2]}-${match[3]}`;
-      }
-      return phone; // 형식이 맞지 않으면 그대로 반환
-    };
+  // 전화번호 형식 맞추기 함수
+  const formatPhoneNumber = (phone: string) => {
+    const cleaned = phone.replace(/\D/g, ""); // 숫자만 남기기
+    const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
+    if (match) {
+      return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+    return phone; // 형식이 맞지 않으면 그대로 반환
+  };
 
   // 전화번호 수정 요청
   const updatePhoneNumber = async () => {
@@ -154,10 +154,7 @@ export default function PersonalInfoScreen() {
                       onChangeText={setNewPhoneNumber}
                       keyboardType="phone-pad"
                     />
-                    <TouchableOpacity
-                      style={[styles.confirmButton]}
-                      onPress={updatePhoneNumber}
-                    >
+                    <TouchableOpacity style={[styles.confirmButton]} onPress={updatePhoneNumber}>
                       <Text style={[styles.confirmButtonText]}>수정 확인</Text>
                     </TouchableOpacity>
                   </>
@@ -189,10 +186,7 @@ export default function PersonalInfoScreen() {
                       onChangeText={setNewPassword}
                       secureTextEntry
                     />
-                    <TouchableOpacity
-                      style={[styles.confirmButton]}
-                      onPress={updatePassword}
-                    >
+                    <TouchableOpacity style={[styles.confirmButton]} onPress={updatePassword}>
                       <Text style={[styles.confirmButtonText]}>수정 확인</Text>
                     </TouchableOpacity>
                   </>
@@ -227,6 +221,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 20,
     backgroundColor: "#fff",
+    height: "100%",
   },
   infoContainer: {
     marginBottom: 20,
@@ -237,14 +232,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   label: {
-    fontSize: 12,
-    fontWeight: "bold",
+    fontSize: 18,
     color: KeyColors.black,
-    paddingBottom: 5,
+    paddingTop: 5,
+    paddingBottom: 8,
+    fontFamily: "SUITE-Bold",
   },
   infoContent: {
     fontSize: 16,
     color: KeyColors.blue,
+    fontFamily: "SUITE-Bold",
   },
   infoSection: {
     borderBottomColor: KeyColors.lightGray,
@@ -262,8 +259,8 @@ const styles = StyleSheet.create({
   },
   editButton: {
     color: KeyColors.blue,
-    fontWeight: "bold",
-    fontSize: 12,
+    fontFamily: "SUITE-Bold",
+    fontSize: 14,
   },
   confirmButton: {
     backgroundColor: KeyColors.blue,
