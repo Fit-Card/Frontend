@@ -33,26 +33,27 @@ export default function MainScreen() {
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 500);
+        }, 300);
       }
     };
 
-    // setLoading(true);
     fetchCardData();
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.innerContainer}>
-        <View style={styles.title}>
-          <Text style={styles.userName}>
-            {user!.name} <Text style={styles.context}>님의 카드 실적 현황</Text>
-          </Text>
-        </View>
+    <View style={{ backgroundColor: "#F7F7F7", flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.innerContainer}>
+          <View style={styles.title}>
+            <Text style={styles.userName}>
+              {user!.name} <Text style={styles.context}>님의 카드 실적 현황</Text>
+            </Text>
+          </View>
 
-        <MainCarousel cards={cardData} loading={loading} />
-      </View>
-    </ScrollView>
+          <MainCarousel cards={cardData} loading={loading} />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
